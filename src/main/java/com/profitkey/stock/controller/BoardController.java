@@ -1,5 +1,8 @@
 package com.profitkey.stock.controller;
 
+import com.profitkey.stock.annotation.ApiErrorExceptions;
+import com.profitkey.stock.docs.BoardExceptionDocs;
+import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.domain.dto.BoardDto;
 import com.profitkey.stock.domain.response.BoardListResponse;
 import com.profitkey.stock.service.BoardService;
@@ -18,36 +21,38 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    @Operation(summary = "게시판 목록조회",
-        description = """
-                        게시판 목록을 목록을 조회한다!!!!!!!
-                        """)
+    @Operation(summary = SwaggerDocs.SUMMARY_BOARD_LIST,
+               description = SwaggerDocs.DESCRIPTION_BOARD_LIST)
+    @ApiErrorExceptions(BoardExceptionDocs.class)
     @GetMapping
     public ResponseEntity<List<BoardListResponse>> getBoards() {
         List<BoardListResponse> boards = boardService.getAllBoards();
-        log.info("jayce 1111111111111111");
         return ResponseEntity.ok(boards);
     }
 
-    // 게시판 상세조회
+    @Operation(summary = SwaggerDocs.SUMMARY_BOARD_DETAIL,
+               description = SwaggerDocs.DESCRIPTION_BOARD_DETAIL)
     @GetMapping("/{id}")
     public ResponseEntity<BoardDto> getBoardById(@PathVariable Long id) {
         return null;
     }
 
-    // 게시글 작성
+    @Operation(summary = SwaggerDocs.SUMMARY_BOARD_CRAETE,
+               description = SwaggerDocs.DESCRIPTION_BOARD_CRAETE)
     @PostMapping
     public ResponseEntity<BoardDto> createBoard() {
         return null;
     }
 
-    // 게시글 수정
+    @Operation(summary = SwaggerDocs.SUMMARY_BOARD_UPDATE,
+               description = SwaggerDocs.DESCRIPTION_BOARD_UPDATE)
     @PutMapping("/{id}")
     public ResponseEntity<BoardDto> updateBoard(@PathVariable Long id) {
         return null;
     }
 
-    // 게시글 삭제
+    @Operation(summary = SwaggerDocs.SUMMARY_BOARD_DELETE,
+               description = SwaggerDocs.DESCRIPTION_BOARD_DELETE)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBoard(@PathVariable Long id) {
         return null;

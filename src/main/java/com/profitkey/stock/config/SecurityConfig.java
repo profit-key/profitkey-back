@@ -22,9 +22,21 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/images/**", "/js/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()  // Swagger 경로 예외 추가
+                        .requestMatchers(
+                                "/login",
+                                "/images/**",
+                                "/js/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/api/board/**" // 게시판 조회 API 경로 허용
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
+
                 .formLogin(form -> form
                         .defaultSuccessUrl("/", true)
                         .permitAll()
@@ -32,10 +44,10 @@ public class SecurityConfig {
                 .logout(logout -> logout.permitAll());
 
         // OAuth2 로그인 설정 주석 처리된 부분은 다시 활성화하면 됩니다.
-        //.oauth2Login(oauth2 -> oauth2
-        //      .loginPage("/login")
-        //      .permitAll()
-        //);
+//        .oauth2Login(oauth2 -> oauth2
+//              .loginPage("/login")
+//              .permitAll()
+//        );
 
         return http.build();
     }

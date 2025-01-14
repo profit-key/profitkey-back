@@ -12,9 +12,9 @@ java {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
-//repositories {
-//	mavenCentral()
-//}
+repositories {
+	mavenCentral()
+}
 
 configurations {
 	compileOnly {

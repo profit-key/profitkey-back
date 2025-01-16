@@ -9,4 +9,3 @@ public class RequestMatcherPaths {
     public static final String[] AUTHENTICATED_PATHS = {"/api/social/**"
     };
 }
-리

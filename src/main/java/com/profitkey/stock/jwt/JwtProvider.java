@@ -1,4 +1,4 @@
-package com.profitkey.stock.config;
+package com.profitkey.stock.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;  // 변경된 부분

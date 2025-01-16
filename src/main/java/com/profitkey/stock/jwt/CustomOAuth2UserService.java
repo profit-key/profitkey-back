@@ -1,4 +1,4 @@
-package com.profitkey.stock.config;
+package com.profitkey.stock.jwt;
 
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;

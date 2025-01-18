@@ -50,7 +50,7 @@ public class SwaggerConfig {
 
 	@Bean
 	public GroupedOpenApi customOpenApi() {
-		// 스웨거 스캔 범위 지정록
+ㅇ		// 스웨거 스캔 범위 지정
 		return GroupedOpenApi.builder().group("profitkey").packagesToScan("com.profitkey.stock").build();
 	}
 

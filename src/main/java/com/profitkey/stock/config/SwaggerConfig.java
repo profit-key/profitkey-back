@@ -1,21 +1,6 @@
 package com.profitkey.stock.config;
 
 import static java.util.stream.Collectors.*;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springdoc.core.customizers.OperationCustomizer;
-import org.springdoc.core.models.GroupedOpenApi;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.method.HandlerMethod;
-
 import com.profitkey.stock.annotation.ApiErrorCode;
 import com.profitkey.stock.annotation.ApiErrorExceptions;
 import com.profitkey.stock.annotation.DisableSwaggerSecurity;
@@ -25,7 +10,6 @@ import com.profitkey.stock.dto.ErrorResponse;
 import com.profitkey.stock.dto.ExampleHolder;
 import com.profitkey.stock.exception.BaseErrorCode;
 import com.profitkey.stock.exception.ProfitCodeException;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -36,7 +20,19 @@ import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.servers.Server;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.customizers.OperationCustomizer;
+import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.HandlerMethod;
 
 @Configuration
 @RequiredArgsConstructor
@@ -47,13 +43,14 @@ public class SwaggerConfig {
 	public OpenAPI swaggerApi() {
 		return new OpenAPI().info(new Info().title("Stock API Documentation")
 			.description("Stock service API documentation")
-			.version("v1.0.0")).servers(List.of(new Server().url("https://dev-server.profitkey.click")  // HTTPS URL 설정
+			// .version("v1.0.0")).servers(List.of(new Server().url("https://dev-server.profitkey.click")  // HTTPS URL 설정
+			.version("v1.0.0")).servers(List.of(new Server().url("http://localhost:8080")  // HTTPS URL 설정
 		));
 	}
 
 	@Bean
 	public GroupedOpenApi customOpenApi() {
-		// 스웨거 스캔 범위 지정
+ㅇ		// 스웨거 스캔 범위 지정
 		return GroupedOpenApi.builder().group("profitkey").packagesToScan("com.profitkey.stock").build();
 	}
 

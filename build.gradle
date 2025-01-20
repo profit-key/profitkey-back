@@ -46,8 +46,16 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
     //Oatuh2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+<<<<<<< HEAD
     // XML Parsing
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2'
+=======
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+>>>>>>> feature/social-login
 }
 
 tasks.named('test') {

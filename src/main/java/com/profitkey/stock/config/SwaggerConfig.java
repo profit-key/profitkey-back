@@ -5,6 +5,7 @@ import com.profitkey.stock.annotation.ApiErrorCode;
 import com.profitkey.stock.annotation.ApiErrorExceptions;
 import com.profitkey.stock.annotation.DisableSwaggerSecurity;
 import com.profitkey.stock.annotation.ExplainError;
+import com.profitkey.stock.config.environment.EnvironmentChecker;
 import com.profitkey.stock.dto.ErrorReason;
 import com.profitkey.stock.dto.ErrorResponse;
 import com.profitkey.stock.dto.ExampleHolder;
@@ -32,19 +33,18 @@ import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.web.method.HandlerMethod;
 
 @Configuration
 @RequiredArgsConstructor
 public class SwaggerConfig {
 	private final ApplicationContext applicationContext;
+	private final EnvironmentChecker environmentChecker;
 
 	@Bean
 	public OpenAPI swaggerApi() {
-		return new OpenAPI().info(new Info().title("Stock API Documentation")
-			.description("Stock service API documentation")
-			.version("v1.0.0")).servers(List.of(new Server().url("https://dev-server.profitkey.click")  // HTTPS URL 설정
-		));
+		return environmentChecker.getSwaggerInfoByEnv();
 	}
 
 	@Bean

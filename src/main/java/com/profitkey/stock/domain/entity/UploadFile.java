@@ -22,33 +22,33 @@ import lombok.AccessLevel;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UploadFile {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(name = "file_name", nullable = false)
-    private String fileName;
+	@Column(name = "file_name", nullable = false)
+	private String fileName;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false, nullable = false)
-    private LocalDateTime createdAt;
+	@CreationTimestamp
+	@Column(name = "created_at", updatable = false, nullable = false)
+	private LocalDateTime createdAt;
 
-    @Column(name = "file_key", nullable = false)
-    private String fileKey;
+	@Column(name = "file_key", nullable = false)
+	private String fileKey;
 
-    @ManyToOne()
-    @JoinColumn(name = "faq_id", nullable = true)
-    private Faq faq;
+	@ManyToOne()
+	@JoinColumn(name = "faq_id", nullable = true)
+	private Faq faq;
 
-    @ManyToOne()
-    @JoinColumn(name = "board_id", nullable = true)
-    private Board board;
+	@ManyToOne()
+	@JoinColumn(name = "board_id", nullable = true)
+	private Board board;
 
-    @Builder
-    private UploadFile(String fileName, String fileKey, Faq faq) {
-        this.fileName = fileName;
-        this.fileKey = fileKey;
-        this.faq = faq;
-    }
+	@Builder
+	private UploadFile(String fileName, String fileKey, Faq faq) {
+		this.fileName = fileName;
+		this.fileKey = fileKey;
+		this.faq = faq;
+	}
 }
 

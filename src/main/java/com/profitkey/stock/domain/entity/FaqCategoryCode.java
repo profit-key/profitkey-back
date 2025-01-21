@@ -25,35 +25,35 @@ import lombok.AccessLevel;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FaqCategoryCode {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(name = "display_order")
-    private Integer displayOrder;
+	@Column(name = "display_order")
+	private Integer displayOrder;
 
-    @Column(name="ctg_name", nullable = false, length = 50, unique = true)
-    private String categoryName;
+	@Column(name = "ctg_name", nullable = false, length = 50, unique = true)
+	private String categoryName;
 
-    @Column(nullable = false)
-    private Boolean published = true;
+	@Column(nullable = false)
+	private Boolean published = true;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false, nullable = false)
-    private LocalDateTime createdAt;
+	@CreationTimestamp
+	@Column(name = "created_at", updatable = false, nullable = false)
+	private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = true)
-    private LocalDateTime updatedAt;
+	@UpdateTimestamp
+	@Column(name = "updated_at", nullable = true)
+	private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    private List<Faq> faqs;
+	@OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+	private List<Faq> faqs;
 
-    @Builder
-    private FaqCategoryCode(Integer displayOrder, String categoryName, Boolean published) {
-        this.displayOrder = displayOrder;
-        this.categoryName = categoryName;
-        this.published = published;
-    }
+	@Builder
+	private FaqCategoryCode(Integer displayOrder, String categoryName, Boolean published) {
+		this.displayOrder = displayOrder;
+		this.categoryName = categoryName;
+		this.published = published;
+	}
 }
 

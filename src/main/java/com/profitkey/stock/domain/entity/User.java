@@ -26,46 +26,46 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(length = 100)
-    private String email;
+	@Column(length = 100)
+	private String email;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "provider")
-    private AuthProvider provider;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "provider")
+	private AuthProvider provider;
 
-    @Column(name = "access_token", columnDefinition = "TEXT")
-    private String accessToken;
+	@Column(name = "access_token", columnDefinition = "TEXT")
+	private String accessToken;
 
-    @Column(length = 50)
-    private String nickname;
+	@Column(length = 50)
+	private String nickname;
 
-    @Column(name = "is_deleted")
-    private Boolean isDeleted;
+	@Column(name = "is_deleted")
+	private Boolean isDeleted;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false, nullable = false)
-    private LocalDateTime createdAt;
+	@CreationTimestamp
+	@Column(name = "created_at", updatable = false, nullable = false)
+	private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = true)
-    private LocalDateTime updatedAt;
+	@UpdateTimestamp
+	@Column(name = "updated_at", nullable = true)
+	private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user")
-    private List<Board> boards;
+	@OneToMany(mappedBy = "user")
+	private List<Board> boards;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<FavoriteStock> favoriteStocks;
-    
-    @Builder
-    private User(String email, AuthProvider provider, String accessToken, String nickname) {
-        this.email = email;
-        this.provider = provider;
-        this.accessToken = accessToken;
-        this.nickname = nickname;
-        this.isDeleted = false;
-    }
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<FavoriteStock> favoriteStocks;
+
+	@Builder
+	private User(String email, AuthProvider provider, String accessToken, String nickname) {
+		this.email = email;
+		this.provider = provider;
+		this.accessToken = accessToken;
+		this.nickname = nickname;
+		this.isDeleted = false;
+	}
 } 

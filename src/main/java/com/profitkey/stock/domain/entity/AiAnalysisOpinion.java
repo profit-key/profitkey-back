@@ -13,7 +13,9 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import org.hibernate.annotations.CreationTimestamp;
+
 import lombok.Builder;
 
 @Entity
@@ -24,17 +26,17 @@ public class AiAnalysisOpinion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(name = "ai_request", columnDefinition = "TEXT", nullable = false)
 	private String aiRequest;
-	
+
 	@Column(name = "ai_response", columnDefinition = "TEXT", nullable = false)
 	private String aiResponse;
-	
+
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false, nullable = false)
 	private LocalDateTime createdAt;
-	
+
 	@ManyToOne()
 	@JoinColumn(name = "stock_code", nullable = false)
 	private StockCode stockCode;

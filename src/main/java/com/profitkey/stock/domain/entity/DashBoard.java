@@ -20,24 +20,24 @@ import lombok.Builder;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DashBoard {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @CreationTimestamp
-    @Column(name = "today_date", nullable = false)
-    private LocalDate todayDate;
+	@CreationTimestamp
+	@Column(name = "today_date", nullable = false)
+	private LocalDate todayDate;
 
-    @Column(name = "today_visitor_cnt", nullable = false)
-    private Integer todayVisitorCnt = 0;
+	@Column(name = "today_visitor_cnt", nullable = false)
+	private Integer todayVisitorCnt = 0;
 
-    @Column(name = "new_signup_cnt", nullable = false)
-    private Integer newSignupCnt = 0;
+	@Column(name = "new_signup_cnt", nullable = false)
+	private Integer newSignupCnt = 0;
 
-    @Builder
-    private DashBoard(LocalDate todayDate, Integer todayVisitorCnt, Integer newSignupCnt) {
-        this.todayDate = todayDate;
-        this.todayVisitorCnt = todayVisitorCnt;
-        this.newSignupCnt = newSignupCnt;
-    }
+	@Builder
+	private DashBoard(LocalDate todayDate, Integer todayVisitorCnt, Integer newSignupCnt) {
+		this.todayDate = todayDate;
+		this.todayVisitorCnt = todayVisitorCnt;
+		this.newSignupCnt = newSignupCnt;
+	}
 }

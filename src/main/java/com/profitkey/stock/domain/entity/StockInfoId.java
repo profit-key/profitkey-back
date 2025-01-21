@@ -1,6 +1,8 @@
 package com.profitkey.stock.domain.entity;
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,6 +16,12 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class StockInfoId implements Serializable {
-    private StockCode stockCode;
-    private String baseDate;
+	@ManyToOne
+	@JoinColumn(name = "stock_code")
+	private StockCode stockCode;
+	private String baseDate;
+
+	public void setStockCode(StockCode stockCode) {
+		this.stockCode = stockCode;
+	}
 } 

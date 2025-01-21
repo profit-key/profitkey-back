@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class FavoriteStockId implements Serializable {
-    private Long user;
-    private Long stockCode;
+	private Long user;
+	private Long stockCode;
 } 

@@ -19,29 +19,29 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StockCode {
-    @Id
-    @Column(name = "stock_code", columnDefinition = "VARCHAR(12)")
-    private String stockCode;
+	@Id
+	@Column(name = "stock_code", columnDefinition = "VARCHAR(12)")
+	private String stockCode;
 
-    @Column(name = "stock_name", nullable = false)
-    private String stockName;
+	@Column(name = "stock_name", nullable = false)
+	private String stockName;
 
-    @Column(name = "market_category", nullable = false)
-    private String marketCategory;
+	@Column(name = "market_category", nullable = false)
+	private String marketCategory;
 
-    @OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
-    private List<StockInfo> stockInfos;
+	@OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
+	private List<StockInfo> stockInfos;
 
-    @OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
-    private List<FavoriteStock> favoriteStocks;
+	@OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
+	private List<FavoriteStock> favoriteStocks;
 
-    @OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
-    private List<AiAnalysisOpinion> aiAnalysisOpinions;
+	@OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
+	private List<AiAnalysisOpinion> aiAnalysisOpinions;
 
-    @Builder
-    private StockCode(String stockCode, String stockName, String marketCategory) {
-        this.stockCode = stockCode;
-        this.stockName = stockName;
-        this.marketCategory = marketCategory;
-    }
+	@Builder
+	private StockCode(String stockCode, String stockName, String marketCategory) {
+		this.stockCode = stockCode;
+		this.stockName = stockName;
+		this.marketCategory = marketCategory;
+	}
 } 

@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class FavoriteStock {
-    @Id
-    @ManyToOne()
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+	@Id
+	@ManyToOne()
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "stock_code", columnDefinition = "VARCHAR(12)")
-    private StockCode stockCode;
+	@Id
+	@ManyToOne
+	@JoinColumn(name = "stock_code", columnDefinition = "VARCHAR(12)")
+	private StockCode stockCode;
 } 

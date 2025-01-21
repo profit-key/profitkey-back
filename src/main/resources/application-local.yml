@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  profiles:
+    url: http://localhost:8080
+  
+  datasource:
+    url: ${STOCK_DATASOURCE_LOCAL_URL}
+    username: ${STOCK_DATASOURCE_LOCAL_USERNAME}
+    password: ${STOCK_DATASOURCE_LOCAL_PASSWORD}
+  
+  jpa:
+    hibernate:
+      ddl-auto: ${STOCK_JPA_OPTION_AUTO}
+    show-sql: ${STOCK_JPA_OPTION_ISSHOW} 

@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  profiles:
+    url: ${STOCK_PROFILES_DEV_URL}
+
+  datasource:
+    url: ${STOCK_DATASOURCE_DEV_URL}
+    username: ${STOCK_DATASOURCE_DEV_USERNAME}
+    password: ${STOCK_DATASOURCE_DEV_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: ${STOCK_JPA_OPTION_AUTO}
+    show-sql: ${STOCK_JPA_OPTION_ISSHOW} 

@@ -1,39 +1,41 @@
 package com.profitkey.stock.config;
 
 import static java.util.stream.Collectors.*;
+
 import com.profitkey.stock.annotation.ApiErrorCode;
 import com.profitkey.stock.annotation.ApiErrorExceptions;
 import com.profitkey.stock.annotation.DisableSwaggerSecurity;
 import com.profitkey.stock.annotation.ExplainError;
-import com.profitkey.stock.config.environment.EnvironmentChecker;
-import com.profitkey.stock.dto.ErrorReason;
-import com.profitkey.stock.dto.ErrorResponse;
-import com.profitkey.stock.dto.ExampleHolder;
-import com.profitkey.stock.exception.BaseErrorCode;
-import com.profitkey.stock.exception.ProfitCodeException;
+import com.profitkey.stock.config.environment.config.EnvironmentChecker;
+import com.profitkey.stock.dto.common.ErrorReason;
+import com.profitkey.stock.dto.common.ErrorResponse;
+import com.profitkey.stock.dto.common.ExampleHolder;
+import com.profitkey.stock.exception.errorcode.BaseErrorCode;
+import com.profitkey.stock.exception.errorcode.ProfitCodeException;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.examples.Example;
-import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
-import io.swagger.v3.oas.models.servers.Server;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.web.method.HandlerMethod;
 
 @Configuration

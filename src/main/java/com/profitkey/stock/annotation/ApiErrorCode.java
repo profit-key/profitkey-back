@@ -1,13 +1,14 @@
 package com.profitkey.stock.annotation;
 
-import com.profitkey.stock.exception.BaseErrorCode;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.profitkey.stock.exception.errorcode.BaseErrorCode;
+
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiErrorCode {
-    Class<? extends BaseErrorCode> value();
+	Class<? extends BaseErrorCode> value();
 }

@@ -3,8 +3,6 @@ package com.profitkey.stock.handler.faqcategory;
 import org.springframework.stereotype.Component;
 
 import com.profitkey.stock.dto.request.faq.FaqCategoryRequest;
-import com.profitkey.stock.exception.testexception.faq.InvalidTestException;
-import com.profitkey.stock.service.faq.DuplicateCategoryNameException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +16,7 @@ public class FaqCategoryValidation {
             return false;
 		}
 		// displayOrder 유효성 검사
-		if (request.getDisplayOrder() <= 0) {
+		if (request.getDisplayOrder() < 0) {
 			log.error("Invalid display order value: {}", request.getDisplayOrder());
 			return false;
 		}

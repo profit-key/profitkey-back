@@ -5,6 +5,7 @@ public class RequestMatcherPaths {
 		"/login",  // 로그인
 		"/images/**",  // 이미지 파일
 		"/js/**",  // JS 파일
+		"/swagger/**",// Swagger
 		"/swagger-ui.html",  // Swagger UI
 		"/swagger-ui/**",  // Swagger UI 관련
 		"/v3/api-docs/**",  // Swagger Docs

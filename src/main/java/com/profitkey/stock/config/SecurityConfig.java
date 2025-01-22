@@ -1,6 +1,6 @@
 package com.profitkey.stock.config;
 
-import com.profitkey.stock.dto.RequestMatcherPaths;
+import com.profitkey.stock.dto.common.RequestMatcherPaths;
 import com.profitkey.stock.jwt.CustomOAuth2UserService;
 import com.profitkey.stock.jwt.JwtAuthenticationFilter;
 import com.profitkey.stock.jwt.JwtProvider;

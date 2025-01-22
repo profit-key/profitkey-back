@@ -18,6 +18,7 @@ public class RequestMatcherPaths {
 
 	public static final String[] AUTHENTICATED_PATHS = {
 		"/api/board/**",
+		"/api/stock/**",
 		"/api/social/**"
 	};
 }

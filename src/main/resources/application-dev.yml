@@ -19,3 +19,4 @@ spring:
     swagger-ui:
       urls:
         - url: ${STOCK_SWAGGER_DEV_URL}
+          name: ${STOCK_SWAGGER_NAME}

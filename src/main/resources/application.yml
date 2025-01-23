@@ -40,9 +40,6 @@ springdoc:
     groups-order: ${STOCK_SWAGGER_ORDER}
     operations-sorter: ${STOCK_SWAGGER_ISSORTER}
     disable-swagger-default-url: ${STOCK_SWAGGER_DISABLE}
-    urls:
-      - url: ${STOCK_SWAGGER_LOCAL_URL}
-        name: ${STOCK_SWAGGER_NAME}
   api-docs:
     groups:
       enabled: ${STOCK_SWAGGER_ISGROUPS}

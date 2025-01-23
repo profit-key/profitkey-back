@@ -32,9 +32,10 @@ public class EnvironmentChecker {
 	public OpenAPI getSwaggerInfoByEnv() {
 		String env = environment.getProperty("spring.config.activate.on-profile");
 		String server_url = "";
+		log.info("env = {}", env);
 		switch (env) {
 			case "dev", "prod":
-				server_url = environment.getProperty("profitkey.server.url");
+				server_url = environment.getProperty("spring.profiles.url");
 				break;
 			default:
 				server_url = "http://localhost:8080";

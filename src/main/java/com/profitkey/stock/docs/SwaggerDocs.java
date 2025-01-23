@@ -17,13 +17,22 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_BOARD_DELETE = "게시판 글을 삭제한다!!";
 
 	/**
-	 * FaqCategory
+	 * ****************************************
+	 * FaqCategory Swagger Docs 모음
+	 * ****************************************
 	 */
+
+	/** FAQ카테고리 생성 docs */
 	public static final String SUMMARY_FAQ_CATEGORY_CREATE = "FAQ 카테고리 생성";
 	public static final String DESCRIPTION_FAQ_CATEGORY_CREATE =
-		"FAQ 카테고리를 생성합니다.<br><br>" +
-        "displayOrder는 0부터 순차적으로 카테고리 순서를 의미합니다.<br>" +
-        "published는 카테고리 사용 여부를 의미합니다.<br>" +
-        "categoryName은 필수값이며 published는 기본값이 true, displayOrder는 기본값이 후순위입니다.";
+		"FAQ 카테고리를 생성합니다.<br><br>" + "displayOrder는 0부터 순차적으로 카테고리 순서를 의미합니다.<br>" + "published는 카테고리 사용 여부를 의미합니다.<br>"
+			+ "categoryName은 필수값이며 published는 기본값이 true, displayOrder는 기본값이 후순위입니다.";
+	/** FAQ카테고리 리스트 조회 docs */
+	public static final String SUMMARY_FAQ_CATEGORY_LIST = "FAQ 카테고리 리스트 조회";
+	public static final String DESCRIPTION_FAQ_CATEGORY_LIST = "FAQ 카테고리 항목들을 모두 조회합니다.";
+	/** FAQ카테고리 수정 docs */
+	public static final String SUMMARY_FAQ_CATEGORY_UPDATE = "FAQ 카테고리 수정";
+	public static final String DESCRIPTION_FAQ_CATEGORY_UPDATE = 
+		"FAQ 카테고리를 수정합니다.<br><br>" + "displayOrder는 0부터 순차적으로 카테고리 순서를 의미합니다.<br>" + "published는 카테고리 사용 여부를 의미합니다.";
 
 }

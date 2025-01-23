@@ -59,12 +59,12 @@ public class GlobalExceptionHandler {
 			}
 
 			return ResponseEntity.status(HttpStatus.CONFLICT)
-				.body(new ErrorResponse(HttpStatus.CONFLICT.value(), "DUPLICATE_ENTRY",
+				.body(new ErrorResponse(HttpStatus.CONFLICT.value(), "409 CONFLICT",
 					String.format("이미 존재하는 데이터입니다. (중복값: %s)", duplicateValue), request.getRequestURI()));
 		}
 
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			.body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "DATA_INTEGRITY_VIOLATION", "데이터 무결성 위반이 발생했습니다.",
+			.body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "404 BAD_REQUEST", "데이터 무결성 위반이 발생했습니다.",
 				request.getRequestURI()));
 	}
 
@@ -102,7 +102,7 @@ public class GlobalExceptionHandler {
 		}
 
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			.body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "INVALID_REQUEST_BODY", message,
+			.body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "400 BAD_REQUEST", message,
 				request.getRequestURI()));
 	}
 

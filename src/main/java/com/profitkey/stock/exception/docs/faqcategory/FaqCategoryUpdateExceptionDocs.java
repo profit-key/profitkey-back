@@ -9,11 +9,13 @@ import com.profitkey.stock.exception.testexception.faqcategory.InvalidTestExcept
 import com.profitkey.stock.exception.testexception.faqcategory.NotFoundTestException;
 
 @ExceptionDocs
-public class FaqCategoryExceptionDocs implements SwaggerException {
-
+public class FaqCategoryUpdateExceptionDocs implements SwaggerException {
 	@ExplainError("고유값 중복")
 	public ProfitCodeException DUPLICATE_CATEGORY_NAME = DuplicateTestException.EXCEPTION;
 
 	@ExplainError("isUse 타입 오류")
 	public ProfitCodeException INVALID_IS_USE = InvalidTestException.EXCEPTION;
+
+	@ExplainError("CategoryId Notfound")
+	public ProfitCodeException NOTFOUND_CATRGORY_ID = NotFoundTestException.EXCEPTION;
 }

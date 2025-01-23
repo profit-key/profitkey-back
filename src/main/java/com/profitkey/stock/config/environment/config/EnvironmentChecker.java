@@ -39,6 +39,7 @@ public class EnvironmentChecker {
 				break;
 			default:
 				server_url = "http://localhost:8080";
+				break;
 		}
 		return new OpenAPI().info(new Info().title("Stock API Documentation")
 			.description("Stock service API documentation")

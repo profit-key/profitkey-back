@@ -13,6 +13,8 @@ import com.profitkey.stock.dto.common.ExampleHolder;
 import com.profitkey.stock.exception.errorcode.BaseErrorCode;
 import com.profitkey.stock.exception.errorcode.ProfitCodeException;
 
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;

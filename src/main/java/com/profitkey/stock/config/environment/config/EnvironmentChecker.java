@@ -34,10 +34,11 @@ public class EnvironmentChecker {
 		String server_url = "";
 		switch (env) {
 			case "dev", "prod":
-				server_url = environment.getProperty("profitkey.server.url");
+				server_url = environment.getProperty("spring.profiles.url");
 				break;
 			default:
 				server_url = "http://localhost:8080";
+				break;
 		}
 		return new OpenAPI().info(new Info().title("Stock API Documentation")
 			.description("Stock service API documentation")

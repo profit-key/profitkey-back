@@ -15,7 +15,8 @@ public class RequestMatcherPaths {
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
 		"/api/**",
-		"/api/faq-category/**"
+		"/api/faq-category/**",
+		"/login/oauth2/code/kakao"
 	};
 
 	public static final String[] AUTHENTICATED_PATHS = {

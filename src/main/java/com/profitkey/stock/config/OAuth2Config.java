@@ -35,7 +35,7 @@ public class OAuth2Config {
 		return ClientRegistration.withRegistrationId("kakao")
 			.clientId(System.getenv("STOCK_KAKAO_CLIENT_ID"))
 			.clientSecret(System.getenv("STOCK_KAKAO_CLIENT_SECRET"))
-			.redirectUri("STOCK_KAKAO_REDIRECT_URI")
+			.redirectUri("http://localhost:8080/login/oauth2/code/kakao")
 			.scope("profile_nickname", "account_email")
 			.authorizationUri("https://kauth.kakao.com/oauth/authorize")
 			.tokenUri("https://kauth.kakao.com/oauth/token")

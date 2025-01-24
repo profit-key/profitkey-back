@@ -1,10 +1,7 @@
 package com.profitkey.stock.config;
 
-import com.profitkey.stock.dto.common.RequestMatcherPaths;
-import com.profitkey.stock.jwt.CustomOAuth2UserService;
-import com.profitkey.stock.jwt.JwtAuthenticationFilter;
-import com.profitkey.stock.jwt.JwtProvider;
 import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,6 +10,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.profitkey.stock.dto.common.RequestMatcherPaths;
+import com.profitkey.stock.jwt.CustomOAuth2UserService;
+import com.profitkey.stock.jwt.JwtAuthenticationFilter;
+import com.profitkey.stock.jwt.JwtProvider;
 
 @Configuration
 @EnableWebSecurity
@@ -40,19 +42,19 @@ public class SecurityConfig {
 				.anyRequest()
 				.authenticated()  // 나머지는 인증된 사용자만
 			)
-			.formLogin(form -> form
-				.defaultSuccessUrl("/", true)
-				.permitAll()
-			)
-			.logout(logout -> logout.permitAll())
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint(userInfo -> userInfo
 					.userService(customOAuth2UserService))  // OAuth2 로그인 후 사용자 정보 처리
-				.permitAll()
+				.successHandler((request, response, authentication) -> {
+					// OAuth2 성공 후 JWT 발급
+					String jwtToken = jwtProvider.createToken(
+						(com.profitkey.stock.entity.User)authentication.getPrincipal());
+					response.addHeader("Authorization", "Bearer " + jwtToken); // JWT를 헤더에 추가
+				})
 			)
-
-			// JWT Authentication Filter 추가
-			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+			.logout(logout -> logout.permitAll())
+			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
+				UsernamePasswordAuthenticationFilter.class); // JWT Authentication Filter 추가
 
 		return http.build();
 	}
@@ -70,7 +72,5 @@ public class SecurityConfig {
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
+
 }
-
-
-

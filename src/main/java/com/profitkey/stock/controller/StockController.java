@@ -1,8 +1,10 @@
 package com.profitkey.stock.controller;
 
+import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.KisApiProperties;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.service.StockService;
+import io.swagger.v3.oas.annotations.Operation;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +24,10 @@ public class StockController {
 	private final StockService stockService;
 	private final KisApiProperties kisApiProperties;
 
-	@GetMapping
-	public String getStockData() {
-		return stockService.getStockInfo();
-	}
+	// @GetMapping
+	// public String getStockData() {
+	// 	return stockService.getStockInfo();
+	// }
 
 	/**
 	 * OAuth인증
@@ -34,6 +36,9 @@ public class StockController {
 	 * @param
 	 * @return access_token
 	 */
+	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_TOKEN,
+		description = SwaggerDocs.DESCRIPTION_STOCK_TOKEN)
+	// @ApiErrorExceptions(BoardExceptionDocs.class)
 	@GetMapping("/getToken")
 	public String getToken() throws IOException {
 		return stockService.getToken();
@@ -45,6 +50,9 @@ public class StockController {
 	 * @param request 조회할 주식 입력조건
 	 * @return 주식데이터
 	 */
+	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_INQUIRE_PRICE,
+		description = SwaggerDocs.DESCRIPTION_STOCK_INQUIRE_PRICE)
+	// @ApiErrorExceptions(BoardExceptionDocs.class)
 	@PostMapping("/getInquirePrice")
 	public ResponseEntity<Object> getInquirePrice(@RequestBody InquirePriceRequest request) {
 		return stockService.getInquirePrice(request);

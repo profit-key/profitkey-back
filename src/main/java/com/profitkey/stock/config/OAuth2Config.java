@@ -6,6 +6,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 
 @Configuration
 public class OAuth2Config {
@@ -35,6 +36,7 @@ public class OAuth2Config {
 		return ClientRegistration.withRegistrationId("kakao")
 			.clientId(System.getenv("STOCK_KAKAO_CLIENT_ID"))
 			.clientSecret(System.getenv("STOCK_KAKAO_CLIENT_SECRET"))
+			.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
 			.redirectUri("http://localhost:8080/login/oauth2/code/kakao")
 			.scope("profile_nickname", "account_email")
 			.authorizationUri("https://kauth.kakao.com/oauth/authorize")

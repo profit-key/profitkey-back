@@ -6,6 +6,7 @@ import com.profitkey.stock.service.StockService;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,7 +46,7 @@ public class StockController {
 	 * @return 주식데이터
 	 */
 	@PostMapping("/getInquirePrice")
-	public String getInquirePrice(@RequestBody InquirePriceRequest request) {
+	public ResponseEntity<Object> getInquirePrice(@RequestBody InquirePriceRequest request) {
 		return stockService.getInquirePrice(request);
 	}
 

@@ -1,5 +1,7 @@
 package com.profitkey.stock.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.profitkey.stock.config.ApiParser;
 import com.profitkey.stock.dto.KisApiProperties;
 import com.profitkey.stock.dto.openapi.OpenApiProperties;
@@ -10,6 +12,7 @@ import java.io.IOException;
 import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,12 +41,15 @@ public class StockService {
 			}
 			""".formatted(kisApiProperties.getApiKey(), kisApiProperties.getSecretKey());
 		;
-		
-		return HttpClientUtil.sendPostRequest(url, data);
+
+		String jsonResponse = HttpClientUtil.sendPostRequest(url, data);
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode rootNode = objectMapper.readTree(jsonResponse);
+		return rootNode.get("access_token").asText();
 	}
 
-	public String getInquirePrice(InquirePriceRequest request) {
-		URL url = null;
+	public ResponseEntity<Object> getInquirePrice(InquirePriceRequest request) {
+		Object result = null;
 		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getInquirePriceUrl();
 		String trId = request.getTr_id();               // 거래ID
 		String mrktDivCode = request.getMrktDivCode();  // FID 조건 시장 분류 코드
@@ -55,12 +61,15 @@ public class StockService {
 
 		log.info("full url : {}", fullUrl);
 		try {
-			url = new URL(fullUrl);
+			URL url = new URL(fullUrl);
+			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
+			ObjectMapper objectMapper = new ObjectMapper();
+			result = objectMapper.readValue(jsonString, Object.class);
 		} catch (IOException e) {
 			e.getMessage();
 		}
 
-		return HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
+		return ResponseEntity.ok(result);
 	}
 
 }

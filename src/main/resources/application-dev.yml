@@ -13,4 +13,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: ${STOCK_JPA_OPTION_AUTO}
-    show-sql: ${STOCK_JPA_OPTION_ISSHOW} 
+    show-sql: ${STOCK_JPA_OPTION_ISSHOW}
+
+  springdoc:
+    swagger-ui:
+      urls:
+        - url: ${STOCK_SWAGGER_DEV_URL}
+          name: ${STOCK_SWAGGER_NAME}

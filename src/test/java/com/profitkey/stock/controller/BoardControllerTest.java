@@ -1,6 +1,6 @@
 package com.profitkey.stock.controller;
 
-import com.profitkey.stock.domain.response.BoardListResponse;
+import com.profitkey.stock.dto.response.BoardListResponse;
 import com.profitkey.stock.service.BoardService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

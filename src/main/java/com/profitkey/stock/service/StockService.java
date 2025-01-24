@@ -2,7 +2,7 @@ package com.profitkey.stock.service;
 
 import com.profitkey.stock.config.ApiParser;
 import com.profitkey.stock.dto.KisApiProperties;
-import com.profitkey.stock.dto.OpenApiProperties;
+import com.profitkey.stock.dto.openapi.OpenApiProperties;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

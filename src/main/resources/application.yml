@@ -30,20 +30,6 @@ spring:
             client-secret: ${STOCK_NAVER_CLIENT_SECRET}
             redirect-uri: ${STOCK_NAVER_REDIRECT_URI}
 
-springdoc:
-  default-consumes-media-type: ${STOCK_CONSUMES_MEDIATYPE}
-  default-produces-media-type: ${STOCK_PRODUCES_MEDIATYPE}
-  paths-to-match: ${STOCK_PATH_MATCH}
-  swagger-ui:
-    path: ${STOCK_SWAGGER_PATH}
-    display-request-duration: ${STOCK_SWAGGER_DUTATION}
-    groups-order: ${STOCK_SWAGGER_ORDER}
-    operations-sorter: ${STOCK_SWAGGER_ISSORTER}
-    disable-swagger-default-url: ${STOCK_SWAGGER_DISABLE}
-  api-docs:
-    groups:
-      enabled: ${STOCK_SWAGGER_ISGROUPS}
-
 openapi:
   api-key: ${STOCK_OPENAPI_KEY}
   stock-price-info-url: ${STOCK_OPENAPI_STOCK_PRICE_URL}

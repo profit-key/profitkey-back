@@ -12,11 +12,9 @@ public class RequestMatcherPaths {
 		"/v3/api-docs.yaml",  // Swagger Docs
 		"/swagger-resources/**",  // Swagger 자원
 		"/webjars/**",  // 웹 자원
-		"/swagger-ui/**",
-		"/v3/api-docs/**",
 		"/api/**",
 		"/api/faq-category/**",
-		"/login/oauth2/code/kakao"
+		"/login/oauth2/code/kakao",
 	};
 
 	public static final String[] AUTHENTICATED_PATHS = {

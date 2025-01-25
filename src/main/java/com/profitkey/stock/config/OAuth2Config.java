@@ -34,16 +34,17 @@ public class OAuth2Config {
 
 	private ClientRegistration kakaoClientRegistration() {
 		return ClientRegistration.withRegistrationId("kakao")
-			.clientId(System.getenv("STOCK_KAKAO_CLIENT_ID"))
-			.clientSecret(System.getenv("STOCK_KAKAO_CLIENT_SECRET"))
+			.clientId("4b8c85fbc34e8a2b177562e4cb240fe2")
+			.clientSecret("ZZJnt1zCS7lexDOiRs5hMNpBUj1itRu3")
 			.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+			.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 			.redirectUri("http://localhost:8080/login/oauth2/code/kakao")
 			.scope("profile_nickname", "account_email")
 			.authorizationUri("https://kauth.kakao.com/oauth/authorize")
 			.tokenUri("https://kauth.kakao.com/oauth/token")
 			.userInfoUri("https://kapi.kakao.com/v2/user/me")
+			.userNameAttributeName("id")
 			.clientName("Kakao")
-			.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE) // 필수 추가
 			.build();
 	}
 

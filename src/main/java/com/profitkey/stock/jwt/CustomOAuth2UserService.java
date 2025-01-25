@@ -1,8 +1,10 @@
 package com.profitkey.stock.jwt;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -11,28 +13,63 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.profitkey.stock.entity.AuthProvider;
+import com.profitkey.stock.entity.User;
+import com.profitkey.stock.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
+	private final UserRepository userRepository;
 	private final RestTemplate restTemplate = new RestTemplate();
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 
-		// 사용자 정보를 처리합니다.
+		// 사용자 정보 처리
 		Map<String, Object> attributes = oAuth2User.getAttributes();
-		String registrationId = userRequest.getClientRegistration().getRegistrationId();
+		String providerString = userRequest.getClientRegistration().getRegistrationId();
 
-		if ("kakao".equals(registrationId)) {
+		// 디버깅용 로그 추가
+		log.info("Provider string: {}", providerString);
+		log.info("Attributes: {}", attributes);
+
+		if (providerString == null) {
+			throw new IllegalArgumentException("Provider string is null. Check the client registration.");
+		}
+
+		if ("kakao".equals(providerString)) {
 			Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 			String email = (String)kakaoAccount.get("email");
 			String nickname = (String)((Map<String, Object>)attributes.get("properties")).get("nickname");
 
-			return new DefaultOAuth2User(oAuth2User.getAuthorities(), Map.of("email", email, "nickname", nickname),
-				"email");
+			// 디버깅용 로그 추가
+			log.info("Kakao Account: email={}, nickname={}", email, nickname);
+
+			// User 엔티티로 변환
+			User user = userRepository.findByEmail(email)
+				.orElseGet(() -> User.builder()
+					.email(email)
+					.provider(AuthProvider.KAKAO) // provider는 적절한 값을 넣어야 함
+					.accessToken((String)attributes.get("access_token")) // 액세스 토큰은 다른 방식으로 받아야 할 수 있음
+					.nickname(nickname)
+					.build());
+
+			// OAuth2User 객체로 변환 (여기서는 email을 기본으로 사용)
+			return new DefaultOAuth2User(
+				List.of(new SimpleGrantedAuthority("ROLE_USER")),
+				Map.of("email", email, "nickname", nickname),
+				"email"
+			);
 		}
 
+		// 다른 OAuth2 제공자 처리 로직
 		return oAuth2User;
 	}
 
@@ -54,7 +91,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		String nickname = (String)((Map<String, Object>)response.get("properties")).get("nickname");
 
 		// OAuth2User 객체로 변환
-		return new DefaultOAuth2User(null, Map.of("email", email, "nickname", nickname), "email");
+		return new DefaultOAuth2User(List.of(new SimpleGrantedAuthority("ROLE_USER")),
+			Map.of("email", email, "nickname", nickname), "email");
 	}
 
 	// 액세스 토큰을 리프레시 토큰을 이용해 갱신하는 메서드

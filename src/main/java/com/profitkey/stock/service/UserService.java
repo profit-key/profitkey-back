@@ -79,18 +79,24 @@ public class UserService {
 	 * @return User 엔티티
 	 */
 	public User findOrCreateUser(String email, String accessToken, String nickname, AuthProvider provider) {
-		User existingUser = userRepository.findByEmail(email);
+		// findByEmail 호출 후 Optional<User> 반환
+		User existingUser = userRepository.findByEmail(email).orElse(null);
 
 		if (existingUser == null) {
+			// 새로 생성하는 경우
 			User newUser = User.builder()
 				.email(email)
 				.accessToken(accessToken)
 				.nickname(nickname)
 				.provider(provider)
 				.build();
-			return userRepository.save(newUser);
-		} else {
-			return existingUser;
+
+			// 새로 생성한 유저 저장 (optional이면 이 부분은 상황에 따라 추가)
+			userRepository.save(newUser);
+
+			return newUser;
 		}
+
+		return existingUser;
 	}
 }

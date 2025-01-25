@@ -6,27 +6,37 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.profitkey.stock.dto.common.RequestMatcherPaths;
+import com.profitkey.stock.handler.JwtAuthenticationSuccessHandler;
+import com.profitkey.stock.handler.OAuth2SuccessHandler;
 import com.profitkey.stock.jwt.CustomOAuth2UserService;
 import com.profitkey.stock.jwt.JwtAuthenticationFilter;
 import com.profitkey.stock.jwt.JwtProvider;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
 	private final JwtProvider jwtProvider;
 	private final CustomOAuth2UserService customOAuth2UserService;
+	private final JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler; // SuccessHandler 주입
+	private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
-	// JwtProvider와 CustomOAuth2UserService 주입
-	public SecurityConfig(JwtProvider jwtProvider, CustomOAuth2UserService customOAuth2UserService) {
-		this.jwtProvider = jwtProvider;
-		this.customOAuth2UserService = customOAuth2UserService;
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer() { // security를 적용하지 않을 리소스
+		return web -> web.ignoring()
+			// error endpoint를 열어줘야 함, favicon.ico 추가!
+			.requestMatchers("/error", "/favicon.ico");
 	}
 
 	@Bean
@@ -35,26 +45,20 @@ public class SecurityConfig {
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))  // CORS 설정
 			.csrf(csrf -> csrf.disable())  // CSRF 비활성화
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(RequestMatcherPaths.PERMIT_ALL_PATHS)
-				.permitAll()  // permitAllPaths는 누구나 접근 가능
-				.requestMatchers(RequestMatcherPaths.AUTHENTICATED_PATHS)
-				.authenticated()  // authenticatedPaths는 인증된 사용자만
-				.anyRequest()
-				.authenticated()  // 나머지는 인증된 사용자만
+				.requestMatchers(RequestMatcherPaths.PERMIT_ALL_PATHS).permitAll()  // 누구나 접근 가능
+				.requestMatchers(RequestMatcherPaths.AUTHENTICATED_PATHS).authenticated()  // 인증 필요
+				.anyRequest().authenticated()  // 나머지는 인증된 사용자만
 			)
-			.oauth2Login(oauth2 -> oauth2
-				.userInfoEndpoint(userInfo -> userInfo
-					.userService(customOAuth2UserService))  // OAuth2 로그인 후 사용자 정보 처리
-				.successHandler((request, response, authentication) -> {
-					// OAuth2 성공 후 JWT 발급
-					String jwtToken = jwtProvider.createToken(
-						(com.profitkey.stock.entity.User)authentication.getPrincipal());
-					response.addHeader("Authorization", "Bearer " + jwtToken); // JWT를 헤더에 추가
-				})
+			// oauth2 설정
+			.oauth2Login(oauth -> // OAuth2 로그인 기능에 대한 여러 설정의 진입점
+				// OAuth2 로그인 성공 이후 사용자 정보를 가져올 때의 설정을 담당
+				oauth.userInfoEndpoint(c -> c.userService(customOAuth2UserService))
+					// 로그인 성공 시 핸들러
+					.successHandler(oAuth2SuccessHandler)
 			)
-			.logout(logout -> logout.permitAll())
+			.logout(AbstractHttpConfigurer::disable) // 로그아웃 허용
 			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
-				UsernamePasswordAuthenticationFilter.class); // JWT Authentication Filter 추가
+				UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
 		return http.build();
 	}
@@ -62,7 +66,7 @@ public class SecurityConfig {
 	@Bean
 	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+		configuration.setAllowedOrigins(List.of("http://localhost:3000")); // CORS 허용 도메인
 		configuration.setAllowedHeaders(List.of("*"));
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		configuration.setAllowCredentials(true);
@@ -72,5 +76,4 @@ public class SecurityConfig {
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
-
 }

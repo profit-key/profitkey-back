@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.profitkey.stock.config.ApiParser;
 import com.profitkey.stock.dto.KisApiProperties;
 import com.profitkey.stock.dto.openapi.OpenApiProperties;
+import com.profitkey.stock.dto.request.stock.FluctuationRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
+import com.profitkey.stock.dto.request.stock.MarketCapRequest;
+import com.profitkey.stock.dto.request.stock.VolumeRankRequest;
 import com.profitkey.stock.util.HeaderUtil;
 import com.profitkey.stock.util.HttpClientUtil;
 import java.io.IOException;
@@ -27,7 +30,6 @@ public class StockService {
 		String enkey = openApiProperties.getApiKey();
 		String baseUrl = openApiProperties.getStockPriceInfoUrl();
 		String jsonStringfy = apiParser.fetchItemsAsJson(baseUrl, enkey);
-
 		return jsonStringfy;
 	}
 
@@ -55,7 +57,7 @@ public class StockService {
 		String mrktDivCode = request.getMrktDivCode();  // FID 조건 시장 분류 코드
 		String fidInput = request.getFidInput();        // FID 입력 종목코드
 		String paramData = String.format("?fid_cond_mrkt_div_code=%s&fid_input_iscd=%s", mrktDivCode, fidInput);
-		String fullUrl = urlData.trim() + paramData;
+		String fullUrl = urlData + paramData;
 
 		InquirePriceRequest requestParam = new InquirePriceRequest(trId, mrktDivCode, fidInput);
 
@@ -68,8 +70,157 @@ public class StockService {
 		} catch (IOException e) {
 			e.getMessage();
 		}
-
 		return ResponseEntity.ok(result);
 	}
 
+	public ResponseEntity<Object> getVolumeRank(VolumeRankRequest request) {
+		Object result = null;
+		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getInquirePriceUrl();
+
+		String trId = request.getTr_id();                         // 거래ID
+		String custtype = request.getCusttype();                  // 고객 타입
+		String mrktDivCode = request.getFidCondMrktDivCode();     // FID 조건 시장 분류 코드
+		String scrDivCode = request.getFidCondScrDivCode();       // FID 조건 화면 분류 코드
+		String inputJscd = request.getFidInputJscd();             // FID 입력 종목코드
+		String divClsCode = request.getFidDivClsCode();           // 분류 구분 코드
+		String blngClsCode = request.getFidBlngClsCode();         // 소속 구분 코드
+		String trgtClsCode = request.getFidTrgtClsCode();         // 대상 구분 코드
+		String trgtExclsClsCode = request.getFidTrgtExclsClsCode(); // 대상 제외 구분 코드
+		String inputPrice1 = request.getFidInputPrice1();         // 입력 가격1
+		String inputPrice2 = request.getFidInputPrice2();         // 입력 가격2
+		String volCnt = request.getFidVolCnt();                   // 거래량 수
+		String inputDate1 = request.getFidInputDate1();           // 입력 날짜1
+
+		String paramData = String.format(
+			"?fid_cond_mrkt_div_code=%s&fid_cond_scr_div_code=%s&fid_input_iscd=%s&fid_div_cls_code=%s" +
+				"&fid_blng_cls_code=%s&fid_trgt_cls_code=%s&fid_trgt_excls_cls_code=%s&fid_input_price_1=%s" +
+				"&fid_input_price_2=%s&fid_vol_cnt=%s&fid_input_date_1=%s",
+			mrktDivCode, scrDivCode, inputJscd, divClsCode, blngClsCode, trgtClsCode,
+			trgtExclsClsCode, inputPrice1, inputPrice2, volCnt, inputDate1
+		);
+
+		String fullUrl = urlData + paramData;
+
+		VolumeRankRequest requestParam = new VolumeRankRequest(
+			trId,                 // 거래ID
+			custtype,             // 고객 타입
+			mrktDivCode,          // FID 조건 시장 분류 코드
+			scrDivCode,           // FID 조건 화면 분류 코드
+			inputJscd,            // FID 입력 종목코드
+			divClsCode,           // 분류 구분 코드
+			blngClsCode,          // 소속 구분 코드
+			trgtClsCode,          // 대상 구분 코드
+			trgtExclsClsCode,     // 대상 제외 구분 코드
+			inputPrice1,          // 입력 가격1
+			inputPrice2,          // 입력 가격2
+			volCnt,               // 거래량 수
+			inputDate1            // 입력 날짜1
+		);
+
+		log.info("full url : {}", fullUrl);
+		try {
+			URL url = new URL(fullUrl);
+			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
+			ObjectMapper objectMapper = new ObjectMapper();
+			result = objectMapper.readValue(jsonString, Object.class);
+		} catch (IOException e) {
+			e.getMessage();
+		}
+		return ResponseEntity.ok(result);
+	}
+
+	public ResponseEntity<Object> getFluctuation(FluctuationRequest request) {
+		Object result = null;
+		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getInquirePriceUrl();
+
+		String trId = request.getTr_id();
+		String fidRsflRate2 = request.getFidRsflRate2();
+		String fidCondMrktDivCode = request.getFidCondMrktDivCode();
+		String fidCondScrDivCode = request.getFidCondScrDivCode();
+		String fidInputIscd = request.getFidInputIscd();
+		String fidRankSortClsCode = request.getFidRankSortClsCode();
+		String fidInputCnt1 = request.getFidInputCnt1();
+		String fidPrcClsCode = request.getFidPrcClsCode();
+		String fidInputPrice1 = request.getFidInputPrice1();
+		String fidInputPrice2 = request.getFidInputPrice2();
+		String fidVolCnt = request.getFidVolCnt();
+		String fidTrgtClsCode = request.getFidTrgtClsCode();
+		String fidTrgtExclsClsCode = request.getFidTrgtExclsClsCode();
+		String fidDivClsCode = request.getFidDivClsCode();
+		String fidRsflRate1 = request.getFidRsflRate1();
+
+		String paramData = String.format(
+			"?fid_rsfl_rate2=%s&fid_cond_mrkt_div_code=%s&fid_cond_scr_div_code=%s&fid_input_iscd=%s" +
+				"&fid_rank_sort_cls_code=%s&fid_input_cnt_1=%s&fid_prc_cls_code=%s&fid_input_price_1=%s" +
+				"&fid_input_price_2=%s&fid_vol_cnt=%s&fid_trgt_cls_code=%s&fid_trgt_excls_cls_code=%s" +
+				"&fid_div_cls_code=%s&fid_rsfl_rate1=%s",
+			request.getFidRsflRate2(), request.getFidCondMrktDivCode(), request.getFidCondScrDivCode(),
+			request.getFidInputIscd(), request.getFidRankSortClsCode(), request.getFidInputCnt1(),
+			request.getFidPrcClsCode(), request.getFidInputPrice1(), request.getFidInputPrice2(),
+			request.getFidVolCnt(), request.getFidTrgtClsCode(), request.getFidTrgtExclsClsCode(),
+			request.getFidDivClsCode(), request.getFidRsflRate1()
+		);
+
+		FluctuationRequest requestParam = new FluctuationRequest(
+			trId, fidRsflRate2, fidCondMrktDivCode, fidCondScrDivCode, fidInputIscd,
+			fidRankSortClsCode, fidInputCnt1, fidPrcClsCode, fidInputPrice1,
+			fidInputPrice2, fidVolCnt, fidTrgtClsCode, fidTrgtExclsClsCode,
+			fidDivClsCode, fidRsflRate1
+		);
+
+		String fullUrl = urlData + paramData;
+		log.info("full url : {}", fullUrl);
+		try {
+			URL url = new URL(fullUrl);
+			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
+			log.info("jsonString : {}", jsonString);
+			ObjectMapper objectMapper = new ObjectMapper();
+			result = objectMapper.readValue(jsonString, Object.class);
+		} catch (IOException e) {
+			e.getMessage();
+		}
+		return ResponseEntity.ok(result);
+	}
+
+	public ResponseEntity<Object> getMarketCap(MarketCapRequest request) {
+		Object result = null;
+		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getInquirePriceUrl();
+
+		String trId = request.getTr_id();
+		String fidInputPrice2 = request.getFidInputPrice2();
+		String fidCondMrktDivCode = request.getFidCondMrktDivCode();
+		String fidCondScrDivCode = request.getFidCondScrDivCode();
+		String fidDivClsCode = request.getFidDivClsCode();
+		String fidInputIscd = request.getFidInputIscd();
+		String fidTrgtClsCode = request.getFidTrgtClsCode();
+		String fidTrgtExclsClsCode = request.getFidTrgtExclsClsCode();
+		String fidInputPrice1 = request.getFidInputPrice1();
+		String fidVolCnt = request.getFidVolCnt();
+
+		// 파라미터 데이터 생성
+		String paramData = String.format(
+			"?fid_input_price_2=%s&fid_cond_mrkt_div_code=%s&fid_cond_scr_div_code=%s&fid_div_cls_code=%s" +
+				"&fid_input_iscd=%s&fid_trgt_cls_code=%s&fid_trgt_excls_cls_code=%s&fid_input_price_1=%s&fid_vol_cnt=%s",
+			fidInputPrice2, fidCondMrktDivCode, fidCondScrDivCode, fidDivClsCode, fidInputIscd,
+			fidTrgtClsCode, fidTrgtExclsClsCode, fidInputPrice1, fidVolCnt
+		);
+
+		MarketCapRequest requestParam = new MarketCapRequest(
+			trId, fidInputPrice2, fidCondMrktDivCode, fidCondScrDivCode, fidDivClsCode,
+			fidInputIscd, fidTrgtClsCode, fidTrgtExclsClsCode, fidInputPrice1, fidVolCnt
+		);
+
+		String fullUrl = urlData + paramData;
+		log.info("full url : {}", fullUrl);
+		try {
+			URL url = new URL(fullUrl);
+			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
+			log.info("jsonString : {}", jsonString);
+			ObjectMapper objectMapper = new ObjectMapper();
+			result = objectMapper.readValue(jsonString, Object.class);
+		} catch (IOException e) {
+			e.getMessage();
+		}
+		return ResponseEntity.ok(result);
+	}
 }

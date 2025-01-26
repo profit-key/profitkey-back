@@ -19,7 +19,7 @@ public class HeaderUtil {
 
 		headers.put("Content-Type", "application/json");
 		headers.put("authorization", "Bearer "
-			+ "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjAwYzE5ZmU0LWJkZGYtNGYxYy05ZDdkLWY4ZjFlYmU4ZGRmNCIsInByZHRfY2QiOiIiLCJpc3MiOiJ1bm9ndyIsImV4cCI6MTczNzc4NzcyOSwiaWF0IjoxNzM3NzAxMzI5LCJqdGkiOiJQU3hOZUJuY25EbE1GOGlnVDh3MzlaeVBkakFJb2k2ZGhDWjYifQ.buf6lmFQcW5jIy1EvzXiuvzTXzU8690Y02I5VkyGbQm1FciN6ufkFkj5fvSPhZ5F-DGZbDTbPQhVrf_HSbu1Vg");
+			+ "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImJmOWI1OTVhLWU1ZmQtNDU4MC04NzA4LWI3NDE0NjhmZWUyNyIsInByZHRfY2QiOiIiLCJpc3MiOiJ1bm9ndyIsImV4cCI6MTczNzkzOTMyNSwiaWF0IjoxNzM3ODUyOTI1LCJqdGkiOiJQU3hOZUJuY25EbE1GOGlnVDh3MzlaeVBkakFJb2k2ZGhDWjYifQ.lnIb1fdUbMQj_Fjx4-XalTptDQS1HqdLNOJ5eBNfPFa3D8tMG6m_WLmN1cPAjfq_WmB7IZLPTa5__MnxXHvdHA");
 		headers.put("appKey", kisApiProperties.getApiKey());
 		headers.put("appSecret", kisApiProperties.getSecretKey());
 		return headers;

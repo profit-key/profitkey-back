@@ -2,7 +2,10 @@ package com.profitkey.stock.controller;
 
 import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.KisApiProperties;
+import com.profitkey.stock.dto.request.stock.FluctuationRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
+import com.profitkey.stock.dto.request.stock.MarketCapRequest;
+import com.profitkey.stock.dto.request.stock.VolumeRankRequest;
 import com.profitkey.stock.service.StockService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.io.IOException;
@@ -39,7 +42,7 @@ public class StockController {
 	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_TOKEN,
 		description = SwaggerDocs.DESCRIPTION_STOCK_TOKEN)
 	// @ApiErrorExceptions(BoardExceptionDocs.class)
-	@GetMapping("/getToken")
+	@GetMapping("/get-token")
 	public String getToken() throws IOException {
 		return stockService.getToken();
 	}
@@ -53,9 +56,50 @@ public class StockController {
 	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_INQUIRE_PRICE,
 		description = SwaggerDocs.DESCRIPTION_STOCK_INQUIRE_PRICE)
 	// @ApiErrorExceptions(BoardExceptionDocs.class)
-	@PostMapping("/getInquirePrice")
+	@PostMapping("/inquire-price")
 	public ResponseEntity<Object> getInquirePrice(@RequestBody InquirePriceRequest request) {
 		return stockService.getInquirePrice(request);
 	}
 
+	/**
+	 * [국내주식]순위분석 API CALL
+	 * 거래량순위[v1_국내주식-047]
+	 * @param request 조회할 주식 입력조건
+	 * @return 주식데이터
+	 */
+	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_VOLUME_RANK,
+		description = SwaggerDocs.DESCRIPTION_STOCK_VOLUME_RANK)
+	// @ApiErrorExceptions(BoardExceptionDocs.class)
+	@PostMapping("/volume-rank")
+	public ResponseEntity<Object> getVolumeRank(@RequestBody VolumeRankRequest request) {
+		return stockService.getVolumeRank(request);
+	}
+
+	/**
+	 * [국내주식]순위분석 API CALL
+	 * 국내주식 등락률 순위[v1_국내주식-088]
+	 * @param request 조회할 주식 입력조건
+	 * @return 주식데이터
+	 */
+	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_FLUCTUATION,
+		description = SwaggerDocs.DESCRIPTION_STOCK_FLUCTUATION)
+	// @ApiErrorExceptions(BoardExceptionDocs.class)
+	@PostMapping("/fluctuation")
+	public ResponseEntity<Object> getFluctuation(@RequestBody FluctuationRequest request) {
+		return stockService.getFluctuation(request);
+	}
+
+	/**
+	 * [국내주식]순위분석 API CALL
+	 * 국내주식 시가총액 상위[v1_국내주식-091]
+	 * @param request 조회할 주식 입력조건
+	 * @return 주식데이터
+	 */
+	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_MARKET_CAP,
+		description = SwaggerDocs.DESCRIPTION_STOCK_MARKET_CAP)
+	// @ApiErrorExceptions(BoardExceptionDocs.class)
+	@PostMapping("/market-cap")
+	public ResponseEntity<Object> getMarketCap(@RequestBody MarketCapRequest request) {
+		return stockService.getMarketCap(request);
+	}
 }

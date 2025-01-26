@@ -15,4 +15,5 @@ public class KisApiProperties {
 	private String devApiUrl;
 	private String oauth2TokenUrl;
 	private String inquirePriceUrl;
+	private String volumeRankUrl;
 }

@@ -1,5 +1,7 @@
 package com.profitkey.stock.service;
 
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -8,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -78,12 +81,23 @@ public class UserService {
 	 * @param provider 소셜 로그인 제공자
 	 * @return User 엔티티
 	 */
+	@Transactional
 	public User findOrCreateUser(String email, String accessToken, String nickname, AuthProvider provider) {
-		// findByEmail 호출 후 Optional<User> 반환
-		User existingUser = userRepository.findByEmail(email).orElse(null);
+		Objects.requireNonNull(email, "Email cannot be null");
+		Objects.requireNonNull(accessToken, "Access Token cannot be null");
+		Objects.requireNonNull(nickname, "Nickname cannot be null");
 
-		if (existingUser == null) {
-			// 새로 생성하는 경우
+		try {
+			User existingUser = userRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+
+			// 기존 사용자 업데이트
+			existingUser.setAccessToken(accessToken);
+			existingUser.setNickname(nickname);
+			return userRepository.save(existingUser);
+
+		} catch (RuntimeException e) {
+			// 새로운 사용자 생성
 			User newUser = User.builder()
 				.email(email)
 				.accessToken(accessToken)
@@ -91,12 +105,8 @@ public class UserService {
 				.provider(provider)
 				.build();
 
-			// 새로 생성한 유저 저장 (optional이면 이 부분은 상황에 따라 추가)
-			userRepository.save(newUser);
-
-			return newUser;
+			return userRepository.save(newUser);
 		}
-
-		return existingUser;
 	}
 }
+

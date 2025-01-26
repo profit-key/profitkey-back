@@ -20,10 +20,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Users")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 	@Id
@@ -43,8 +45,8 @@ public class User {
 	@Column(length = 50)
 	private String nickname;
 
-	@Column(name = "is_deleted")
-	private Boolean isDeleted;
+	@Column(name = "is_deleted", nullable = false)
+	private Boolean isDeleted = false;
 
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false, nullable = false)

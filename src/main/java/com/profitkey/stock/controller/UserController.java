@@ -12,8 +12,12 @@ import com.profitkey.stock.jwt.CustomOAuth2UserService;
 import com.profitkey.stock.jwt.JwtProvider;
 import com.profitkey.stock.service.UserService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
 @RestController
 public class UserController {
+
 	@Autowired
 	private UserService userService;
 
@@ -24,7 +28,7 @@ public class UserController {
 	private JwtProvider jwtProvider;
 
 	@GetMapping("/login/oauth2/code/kakao")
-	public String kakaoLogin(@RequestParam("code") String code) {
+	public String kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) {
 		// 인가 코드 출력
 		System.out.println("Method kakaoLogin called");
 		System.out.println("Authorization Code: " + code);
@@ -70,6 +74,20 @@ public class UserController {
 			e.printStackTrace();
 			return "Error creating JWT token: " + e.getMessage();
 		}
+
+		// 5. JWT를 쿠키에 추가
+		Cookie jwtCookie = new Cookie("accessToken", jwtToken);
+		jwtCookie.setHttpOnly(true); // JavaScript 접근 금지
+		jwtCookie.setSecure(true); // HTTPS에서만 전송 (로컬 개발 시 필요하면 false로 설정)
+		jwtCookie.setPath("/"); // 모든 경로에서 유효
+		jwtCookie.setMaxAge(3600); // 쿠키 만료 시간: 1시간
+
+		response.addCookie(jwtCookie);
+
+		// SameSite 속성 추가 (헤더를 직접 추가)
+		response.addHeader("Set-Cookie",
+			String.format("accessToken=%s; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=3600",
+				jwtToken));
 
 		// 최종적으로 생성된 JWT 반환
 		return jwtToken;

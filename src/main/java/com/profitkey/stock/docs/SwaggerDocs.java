@@ -32,7 +32,32 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_FAQ_CATEGORY_LIST = "FAQ 카테고리 항목들을 모두 조회합니다.";
 	/** FAQ카테고리 수정 docs */
 	public static final String SUMMARY_FAQ_CATEGORY_UPDATE = "FAQ 카테고리 수정";
-	public static final String DESCRIPTION_FAQ_CATEGORY_UPDATE = 
+	public static final String DESCRIPTION_FAQ_CATEGORY_UPDATE =
 		"FAQ 카테고리를 수정합니다.<br><br>" + "displayOrder는 0부터 순차적으로 카테고리 순서를 의미합니다.<br>" + "published는 카테고리 사용 여부를 의미합니다.";
 
+	/**
+	 * ****************************************
+	 * Stock Swagger Docs 모음
+	 * ****************************************
+	 */
+	public static final String SUMMARY_STOCK_TOKEN = "한국투자증권 OAUTH2 토큰 GET";
+	public static final String DESCRIPTION_STOCK_TOKEN = """
+		한국투자증권 OEPN API에서 사용할 토큰을 가져옵니다.<br>
+		모의서버에서는 1분에 한번으로 제한됩니다.""";
+	public static final String SUMMARY_STOCK_INQUIRE_PRICE = "주식 현재 시세 GET";
+	public static final String DESCRIPTION_STOCK_INQUIRE_PRICE = """
+		종목 코드에 따라 국내 주식 시세를 불러옵니다.
+		""";
+	public static final String SUMMARY_STOCK_VOLUME_RANK = "국내주식 거래량순위 GET";
+	public static final String DESCRIPTION_STOCK_VOLUME_RANK = """
+		조건별 주식 거래량 순위를 불러옵니다.
+		""";
+	public static final String SUMMARY_STOCK_FLUCTUATION = "국내주식 등락률 순위 GET";
+	public static final String DESCRIPTION_STOCK_FLUCTUATION = """
+		조건별 주식 등락률 순위를 불러옵니다.
+		""";
+	public static final String SUMMARY_STOCK_MARKET_CAP = "국내주식 시가총액 상위 GET";
+	public static final String DESCRIPTION_STOCK_MARKET_CAP = """
+		조건별 시가총액이 높은 종목을 불러옵니다.
+		""";
 }

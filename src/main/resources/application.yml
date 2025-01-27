@@ -8,8 +8,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: ${STOCK_JPA_OPTION_AUTO}
-    show-sql: false 
-  
+    show-sql: false
+
   security:
     oauth2:
       client:
@@ -30,25 +30,19 @@ spring:
             client-secret: ${STOCK_NAVER_CLIENT_SECRET}
             redirect-uri: ${STOCK_NAVER_REDIRECT_URI}
 
-springdoc:
-  default-consumes-media-type: ${STOCK_CONSUMES_MEDIATYPE}
-  default-produces-media-type: ${STOCK_PRODUCES_MEDIATYPE}
-  paths-to-match: ${STOCK_PATH_MATCH}
-  swagger-ui:
-    path: ${STOCK_SWAGGER_PATH}
-    display-request-duration: ${STOCK_SWAGGER_DUTATION}
-    groups-order: ${STOCK_SWAGGER_ORDER}
-    operations-sorter: ${STOCK_SWAGGER_ISSORTER}
-    disable-swagger-default-url: ${STOCK_SWAGGER_DISABLE}
-  api-docs:
-    groups:
-      enabled: ${STOCK_SWAGGER_ISGROUPS}
-
 openapi:
   api-key: ${STOCK_OPENAPI_KEY}
   stock-price-info-url: ${STOCK_OPENAPI_STOCK_PRICE_URL}
-
+korea-investment-api:
+  api-key: ${STOCK_KIS_API_KEY}
+  secret-key: ${STOCK_KIS_SECRET_KEY}
+  dev-api-url: ${STOCK_KIS_DEV_API_URL}
+  oauth2-token-url: ${STOCK_KIS_OAUTH2_TOKEN_URL} # 토큰P
+  inquire-price-url: ${STOCK_KIS_INQUIRE_PRICE_URL} # 주식시세
+  volume-rank-url: /uapi/domestic-stock/v1/quotations/volume-rank
+  fluctuation-url: /uapi/domestic-stock/v1/ranking/fluctuation
+  market-cap-url: /uapi/domestic-stock/v1/ranking/market-cap
 jwt:
   secret: ${STOCK_JWT_SECRET}
   expiration: ${STOCK_JWT_EXPIRATION}
-  refreshExpiration: ${STOCK_JWT_REFRESH_EXPIRATION} 
+  refreshExpiration: ${STOCK_JWT_REFRESH_EXPIRATION}

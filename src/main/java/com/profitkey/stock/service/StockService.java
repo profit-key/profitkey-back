@@ -85,20 +85,28 @@ public class StockService {
 		String divClsCode = request.getFidDivClsCode();           // 분류 구분 코드
 		String blngClsCode = request.getFidBlngClsCode();         // 소속 구분 코드
 		String trgtClsCode = request.getFidTrgtClsCode();         // 대상 구분 코드
-		String trgtExclsClsCode = request.getFidTrgtExclsClsCode(); // 대상 제외 구분 코드
+		String trgtExlsClsCode = request.getFidTrgtExlsClsCode(); // 대상 제외 구분 코드
 		String inputPrice1 = request.getFidInputPrice1();         // 입력 가격1
 		String inputPrice2 = request.getFidInputPrice2();         // 입력 가격2
 		String volCnt = request.getFidVolCnt();                   // 거래량 수
 		String inputDate1 = request.getFidInputDate1();           // 입력 날짜1
 
-		String paramData = String.format(
-			"?fid_cond_mrkt_div_code=%s&fid_cond_scr_div_code=%s&fid_input_iscd=%s&fid_div_cls_code=%s" +
-				"&fid_blng_cls_code=%s&fid_trgt_cls_code=%s&fid_trgt_excls_cls_code=%s&fid_input_price_1=%s" +
-				"&fid_input_price_2=%s&fid_vol_cnt=%s&fid_input_date_1=%s",
-			mrktDivCode, scrDivCode, inputJscd, divClsCode, blngClsCode, trgtClsCode,
-			trgtExclsClsCode, inputPrice1, inputPrice2, volCnt, inputDate1
-		);
+		StringBuilder paramDataBuilder = new StringBuilder("?");
 
+		paramDataBuilder.append("fid_cond_mrkt_div_code=").append(mrktDivCode).append("&");
+		paramDataBuilder.append("fid_cond_scr_div_code=").append(scrDivCode).append("&");
+		paramDataBuilder.append("fid_input_iscd=").append(inputJscd).append("&");
+		paramDataBuilder.append("fid_div_cls_code=").append(divClsCode).append("&");
+		paramDataBuilder.append("fid_blng_cls_code=").append(blngClsCode).append("&");
+		paramDataBuilder.append("fid_trgt_cls_code=").append(trgtClsCode).append("&");
+		paramDataBuilder.append("fid_trgt_exls_cls_code=").append(trgtExlsClsCode).append("&");
+		paramDataBuilder.append("fid_input_price_1=").append(inputPrice1).append("&");
+		paramDataBuilder.append("fid_input_price_2=").append(inputPrice2).append("&");
+		paramDataBuilder.append("fid_vol_cnt=").append(volCnt).append("&");
+		paramDataBuilder.append("fid_input_date_1=").append(inputDate1).append("&");
+		paramDataBuilder.setLength(paramDataBuilder.length() - 1);
+
+		String paramData = paramDataBuilder.toString();
 		String fullUrl = urlData + paramData;
 
 		VolumeRankRequest requestParam = new VolumeRankRequest(
@@ -110,7 +118,7 @@ public class StockService {
 			divClsCode,           // 분류 구분 코드
 			blngClsCode,          // 소속 구분 코드
 			trgtClsCode,          // 대상 구분 코드
-			trgtExclsClsCode,     // 대상 제외 구분 코드
+			trgtExlsClsCode,     // 대상 제외 구분 코드
 			inputPrice1,          // 입력 가격1
 			inputPrice2,          // 입력 가격2
 			volCnt,               // 거래량 수
@@ -134,6 +142,7 @@ public class StockService {
 		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getInquirePriceUrl();
 
 		String trId = request.getTr_id();
+		String custtype = request.getCusttype();
 		String fidRsflRate2 = request.getFidRsflRate2();
 		String fidCondMrktDivCode = request.getFidCondMrktDivCode();
 		String fidCondScrDivCode = request.getFidCondScrDivCode();
@@ -145,26 +154,34 @@ public class StockService {
 		String fidInputPrice2 = request.getFidInputPrice2();
 		String fidVolCnt = request.getFidVolCnt();
 		String fidTrgtClsCode = request.getFidTrgtClsCode();
-		String fidTrgtExclsClsCode = request.getFidTrgtExclsClsCode();
+		String fidTrgtExlsClsCode = request.getFidTrgtExlsClsCode();
 		String fidDivClsCode = request.getFidDivClsCode();
 		String fidRsflRate1 = request.getFidRsflRate1();
 
-		String paramData = String.format(
-			"?fid_rsfl_rate2=%s&fid_cond_mrkt_div_code=%s&fid_cond_scr_div_code=%s&fid_input_iscd=%s" +
-				"&fid_rank_sort_cls_code=%s&fid_input_cnt_1=%s&fid_prc_cls_code=%s&fid_input_price_1=%s" +
-				"&fid_input_price_2=%s&fid_vol_cnt=%s&fid_trgt_cls_code=%s&fid_trgt_excls_cls_code=%s" +
-				"&fid_div_cls_code=%s&fid_rsfl_rate1=%s",
-			request.getFidRsflRate2(), request.getFidCondMrktDivCode(), request.getFidCondScrDivCode(),
-			request.getFidInputIscd(), request.getFidRankSortClsCode(), request.getFidInputCnt1(),
-			request.getFidPrcClsCode(), request.getFidInputPrice1(), request.getFidInputPrice2(),
-			request.getFidVolCnt(), request.getFidTrgtClsCode(), request.getFidTrgtExclsClsCode(),
-			request.getFidDivClsCode(), request.getFidRsflRate1()
-		);
+		StringBuilder paramDataBuilder = new StringBuilder("?");
+
+		paramDataBuilder.append("fid_rsfl_rate2=").append(request.getFidRsflRate2()).append("&");
+		paramDataBuilder.append("fid_cond_mrkt_div_code=").append(request.getFidCondMrktDivCode()).append("&");
+		paramDataBuilder.append("fid_cond_scr_div_code=").append(request.getFidCondScrDivCode()).append("&");
+		paramDataBuilder.append("fid_input_iscd=").append(request.getFidInputIscd()).append("&");
+		paramDataBuilder.append("fid_rank_sort_cls_code=").append(request.getFidRankSortClsCode()).append("&");
+		paramDataBuilder.append("fid_input_cnt_1=").append(request.getFidInputCnt1()).append("&");
+		paramDataBuilder.append("fid_prc_cls_code=").append(request.getFidPrcClsCode()).append("&");
+		paramDataBuilder.append("fid_input_price_1=").append(request.getFidInputPrice1()).append("&");
+		paramDataBuilder.append("fid_input_price_2=").append(request.getFidInputPrice2()).append("&");
+		paramDataBuilder.append("fid_vol_cnt=").append(request.getFidVolCnt()).append("&");
+		paramDataBuilder.append("fid_trgt_cls_code=").append(request.getFidTrgtClsCode()).append("&");
+		paramDataBuilder.append("fid_trgt_exls_cls_code=").append(request.getFidTrgtExlsClsCode()).append("&");
+		paramDataBuilder.append("fid_div_cls_code=").append(request.getFidDivClsCode()).append("&");
+		paramDataBuilder.append("fid_rsfl_rate1=").append(request.getFidRsflRate1()).append("&");
+		paramDataBuilder.setLength(paramDataBuilder.length() - 1);
+
+		String paramData = paramDataBuilder.toString();
 
 		FluctuationRequest requestParam = new FluctuationRequest(
-			trId, fidRsflRate2, fidCondMrktDivCode, fidCondScrDivCode, fidInputIscd,
+			trId, custtype, fidRsflRate2, fidCondMrktDivCode, fidCondScrDivCode, fidInputIscd,
 			fidRankSortClsCode, fidInputCnt1, fidPrcClsCode, fidInputPrice1,
-			fidInputPrice2, fidVolCnt, fidTrgtClsCode, fidTrgtExclsClsCode,
+			fidInputPrice2, fidVolCnt, fidTrgtClsCode, fidTrgtExlsClsCode,
 			fidDivClsCode, fidRsflRate1
 		);
 
@@ -173,7 +190,6 @@ public class StockService {
 		try {
 			URL url = new URL(fullUrl);
 			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
-			log.info("jsonString : {}", jsonString);
 			ObjectMapper objectMapper = new ObjectMapper();
 			result = objectMapper.readValue(jsonString, Object.class);
 		} catch (IOException e) {
@@ -184,30 +200,37 @@ public class StockService {
 
 	public ResponseEntity<Object> getMarketCap(MarketCapRequest request) {
 		Object result = null;
-		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getInquirePriceUrl();
+		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getMarketCapUrl();
 
 		String trId = request.getTr_id();
+		String custtype = request.getCusttype();
 		String fidInputPrice2 = request.getFidInputPrice2();
 		String fidCondMrktDivCode = request.getFidCondMrktDivCode();
 		String fidCondScrDivCode = request.getFidCondScrDivCode();
 		String fidDivClsCode = request.getFidDivClsCode();
 		String fidInputIscd = request.getFidInputIscd();
 		String fidTrgtClsCode = request.getFidTrgtClsCode();
-		String fidTrgtExclsClsCode = request.getFidTrgtExclsClsCode();
+		String fidTrgtExlsClsCode = request.getFidTrgtExlsClsCode();
 		String fidInputPrice1 = request.getFidInputPrice1();
 		String fidVolCnt = request.getFidVolCnt();
 
-		// 파라미터 데이터 생성
-		String paramData = String.format(
-			"?fid_input_price_2=%s&fid_cond_mrkt_div_code=%s&fid_cond_scr_div_code=%s&fid_div_cls_code=%s" +
-				"&fid_input_iscd=%s&fid_trgt_cls_code=%s&fid_trgt_excls_cls_code=%s&fid_input_price_1=%s&fid_vol_cnt=%s",
-			fidInputPrice2, fidCondMrktDivCode, fidCondScrDivCode, fidDivClsCode, fidInputIscd,
-			fidTrgtClsCode, fidTrgtExclsClsCode, fidInputPrice1, fidVolCnt
-		);
+		StringBuilder paramDataBuilder = new StringBuilder("?");
 
+		paramDataBuilder.append("fid_input_price_2=").append(request.getFidInputPrice2()).append("&");
+		paramDataBuilder.append("fid_cond_mrkt_div_code=").append(fidCondMrktDivCode).append("&");
+		paramDataBuilder.append("fid_cond_scr_div_code=").append(fidCondScrDivCode).append("&");
+		paramDataBuilder.append("fid_div_cls_code=").append(fidDivClsCode).append("&");
+		paramDataBuilder.append("fid_input_iscd=").append(fidInputIscd).append("&");
+		paramDataBuilder.append("fid_trgt_cls_code=").append(fidTrgtClsCode).append("&");
+		paramDataBuilder.append("fid_trgt_exls_cls_code=").append(fidTrgtExlsClsCode).append("&");
+		paramDataBuilder.append("fid_input_price_1=").append(request.getFidInputPrice1()).append("&");
+		paramDataBuilder.append("fid_vol_cnt=").append(request.getFidVolCnt()).append("&");
+		paramDataBuilder.setLength(paramDataBuilder.length() - 1);
+
+		String paramData = paramDataBuilder.toString();
 		MarketCapRequest requestParam = new MarketCapRequest(
-			trId, fidInputPrice2, fidCondMrktDivCode, fidCondScrDivCode, fidDivClsCode,
-			fidInputIscd, fidTrgtClsCode, fidTrgtExclsClsCode, fidInputPrice1, fidVolCnt
+			trId, custtype, fidInputPrice2, fidCondMrktDivCode, fidCondScrDivCode, fidDivClsCode,
+			fidInputIscd, fidTrgtClsCode, fidTrgtExlsClsCode, fidInputPrice1, fidVolCnt
 		);
 
 		String fullUrl = urlData + paramData;

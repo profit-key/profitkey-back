@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,7 @@ public class StockService {
 		return jsonStringfy;
 	}
 
+	@Cacheable(value = "tokenCache", key = "'stockToken'", unless = "#result == null")
 	public String getToken() throws IOException {
 		String url = kisApiProperties.getDevApiUrl() + kisApiProperties.getOauth2TokenUrl();
 		String data = """

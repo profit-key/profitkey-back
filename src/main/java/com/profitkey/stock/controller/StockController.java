@@ -41,7 +41,6 @@ public class StockController {
 	 */
 	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_TOKEN,
 		description = SwaggerDocs.DESCRIPTION_STOCK_TOKEN)
-	// @ApiErrorExceptions(BoardExceptionDocs.class)
 	@GetMapping("/get-token")
 	public String getToken() throws IOException {
 		return stockService.getToken();
@@ -55,7 +54,6 @@ public class StockController {
 	 */
 	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_INQUIRE_PRICE,
 		description = SwaggerDocs.DESCRIPTION_STOCK_INQUIRE_PRICE)
-	// @ApiErrorExceptions(BoardExceptionDocs.class)
 	@PostMapping("/inquire-price")
 	public ResponseEntity<Object> getInquirePrice(@RequestBody InquirePriceRequest request) {
 		return stockService.getInquirePrice(request);
@@ -69,7 +67,6 @@ public class StockController {
 	 */
 	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_VOLUME_RANK,
 		description = SwaggerDocs.DESCRIPTION_STOCK_VOLUME_RANK)
-	// @ApiErrorExceptions(BoardExceptionDocs.class)
 	@PostMapping("/volume-rank")
 	public ResponseEntity<Object> getVolumeRank(@RequestBody VolumeRankRequest request) {
 		return stockService.getVolumeRank(request);
@@ -83,7 +80,6 @@ public class StockController {
 	 */
 	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_FLUCTUATION,
 		description = SwaggerDocs.DESCRIPTION_STOCK_FLUCTUATION)
-	// @ApiErrorExceptions(BoardExceptionDocs.class)
 	@PostMapping("/fluctuation")
 	public ResponseEntity<Object> getFluctuation(@RequestBody FluctuationRequest request) {
 		return stockService.getFluctuation(request);
@@ -97,7 +93,6 @@ public class StockController {
 	 */
 	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_MARKET_CAP,
 		description = SwaggerDocs.DESCRIPTION_STOCK_MARKET_CAP)
-	// @ApiErrorExceptions(BoardExceptionDocs.class)
 	@PostMapping("/market-cap")
 	public ResponseEntity<Object> getMarketCap(@RequestBody MarketCapRequest request) {
 		return stockService.getMarketCap(request);

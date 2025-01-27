@@ -39,6 +39,9 @@ korea-investment-api:
   dev-api-url: ${STOCK_KIS_DEV_API_URL}
   oauth2-token-url: ${STOCK_KIS_OAUTH2_TOKEN_URL} # 토큰P
   inquire-price-url: ${STOCK_KIS_INQUIRE_PRICE_URL} # 주식시세
+  volume-rank-url: /uapi/domestic-stock/v1/quotations/volume-rank
+  fluctuation-url: /uapi/domestic-stock/v1/ranking/fluctuation
+  market-cap-url: /uapi/domestic-stock/v1/ranking/market-cap
 jwt:
   secret: ${STOCK_JWT_SECRET}
   expiration: ${STOCK_JWT_EXPIRATION}

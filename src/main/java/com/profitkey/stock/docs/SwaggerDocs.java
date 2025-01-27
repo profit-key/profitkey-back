@@ -48,5 +48,16 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_STOCK_INQUIRE_PRICE = """
 		종목 코드에 따라 국내 주식 시세를 불러옵니다.
 		""";
-
+	public static final String SUMMARY_STOCK_VOLUME_RANK = "국내주식 거래량순위 GET";
+	public static final String DESCRIPTION_STOCK_VOLUME_RANK = """
+		조건별 주식 거래량 순위를 불러옵니다.
+		""";
+	public static final String SUMMARY_STOCK_FLUCTUATION = "국내주식 등락률 순위 GET";
+	public static final String DESCRIPTION_STOCK_FLUCTUATION = """
+		조건별 주식 등락률 순위를 불러옵니다.
+		""";
+	public static final String SUMMARY_STOCK_MARKET_CAP = "국내주식 시가총액 상위 GET";
+	public static final String DESCRIPTION_STOCK_MARKET_CAP = """
+		조건별 시가총액이 높은 종목을 불러옵니다.
+		""";
 }

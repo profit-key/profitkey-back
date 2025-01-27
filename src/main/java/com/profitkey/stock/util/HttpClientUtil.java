@@ -1,6 +1,5 @@
 package com.profitkey.stock.util;
 
-import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,7 +11,7 @@ import java.util.Map;
 
 public class HttpClientUtil {
 
-	public static String sendGetRequest(URL url, Map<String, String> headers, InquirePriceRequest requestParam) {
+	public static String sendGetRequest(URL url, Map<String, String> headers, Object requestParam) {
 		HttpURLConnection conn = null;
 		BufferedReader br = null;
 
@@ -34,7 +33,7 @@ public class HttpClientUtil {
 			}
 
 			conn.connect();
-			
+
 			return readResponse(conn, conn.getResponseCode());
 		} catch (IOException e) {
 			throw new RuntimeException("HTTP 요청 중 오류 발생", e);

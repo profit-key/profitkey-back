@@ -34,11 +34,11 @@ korea-investment-api:
   api-key: ${STOCK_KIS_API_KEY}
   secret-key: ${STOCK_KIS_SECRET_KEY}
   dev-api-url: ${STOCK_KIS_DEV_API_URL}
-  oauth2-token-url: ${STOCK_KIS_OAUTH2_TOKEN_URL} # 토큰P
-  inquire-price-url: ${STOCK_KIS_INQUIRE_PRICE_URL} # 주식시세
-  volume-rank-url: /uapi/domestic-stock/v1/quotations/volume-rank
-  fluctuation-url: /uapi/domestic-stock/v1/ranking/fluctuation
-  market-cap-url: /uapi/domestic-stock/v1/ranking/market-cap
+  oauth2-token-url: ${STOCK_KIS_OAUTH2_TOKEN_URL} # 접근토큰발급(P)
+  inquire-price-url: ${STOCK_KIS_INQUIRE_PRICE_URL} # 주식현재가 시세
+  volume-rank-url: ${STOCK_KIS_VOLUME_RANK_URL} # 거래량순위
+  fluctuation-url: ${STOCK_KIS_FLUCTUATION_URL} # 국내주식 등락률 순위
+  market-cap-url: ${STOCK_KIS_MARKET_CAP_URL} #국내주식 시가총액 상위
 jwt:
   secret: ${STOCK_JWT_SECRET}
   expiration: ${STOCK_JWT_EXPIRATION}

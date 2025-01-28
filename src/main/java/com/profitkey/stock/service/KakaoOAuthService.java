@@ -14,6 +14,7 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class KakaoOAuthService {
+	// 카카오 인증용 로직 - 카카오 api에서 제공하는 액세스 토큰을 통해 사용자 정보 가져옴
 
 	@Value("${spring.security.oauth2.client.registration.kakao.client-id}")
 	private String clientId;

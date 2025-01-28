@@ -29,12 +29,6 @@ spring:
             client-id: ${STOCK_NAVER_CLIENT_ID}
             client-secret: ${STOCK_NAVER_CLIENT_SECRET}
             redirect-uri: ${STOCK_NAVER_REDIRECT_URI}
-        provider:
-          kakao:
-            authorization-uri: https://kauth.kakao.com/oauth/authorize
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: id
 
 openapi:
   api-key: ${STOCK_OPENAPI_KEY}

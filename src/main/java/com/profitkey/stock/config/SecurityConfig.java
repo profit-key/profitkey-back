@@ -1,10 +1,7 @@
 package com.profitkey.stock.config;
 
-import com.profitkey.stock.dto.common.RequestMatcherPaths;
-import com.profitkey.stock.jwt.CustomOAuth2UserService;
-import com.profitkey.stock.jwt.JwtAuthenticationFilter;
-import com.profitkey.stock.jwt.JwtProvider;
 import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,18 +11,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.profitkey.stock.dto.common.RequestMatcherPaths;
+import com.profitkey.stock.handler.JwtAuthenticationSuccessHandler;
+import com.profitkey.stock.handler.OAuth2SuccessHandler;
+import com.profitkey.stock.jwt.CustomOAuth2UserService;
+import com.profitkey.stock.jwt.JwtAuthenticationFilter;
+import com.profitkey.stock.jwt.JwtProvider;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
 	private final JwtProvider jwtProvider;
 	private final CustomOAuth2UserService customOAuth2UserService;
-
-	// JwtProvider와 CustomOAuth2UserService 주입
-	public SecurityConfig(JwtProvider jwtProvider, CustomOAuth2UserService customOAuth2UserService) {
-		this.jwtProvider = jwtProvider;
-		this.customOAuth2UserService = customOAuth2UserService;
-	}
+	private final JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
+	private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,19 +43,16 @@ public class SecurityConfig {
 				.anyRequest()
 				.authenticated()  // 나머지는 인증된 사용자만
 			)
-			.formLogin(form -> form
-				.defaultSuccessUrl("/", true)
-				.permitAll()
+			// oauth2 설정
+			.oauth2Login(oauth -> // OAuth2 로그인 기능에 대한 여러 설정의 진입점
+				// OAuth2 로그인 성공 이후 사용자 정보를 가져올 때의 설정을 담당
+				oauth.userInfoEndpoint(c -> c.userService(customOAuth2UserService))
+					// 로그인 성공 시 핸들러
+					.successHandler(oAuth2SuccessHandler)
 			)
-			.logout(logout -> logout.permitAll())
-			.oauth2Login(oauth2 -> oauth2
-				.userInfoEndpoint(userInfo -> userInfo
-					.userService(customOAuth2UserService))  // OAuth2 로그인 후 사용자 정보 처리
-				.permitAll()
-			)
-
-			// JWT Authentication Filter 추가
-			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+			.logout(logout -> logout.disable()) // 로그아웃 비활성화
+			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
+				UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
 		return http.build();
 	}

@@ -17,9 +17,6 @@ spring:
           google:
             client-id: ${STOCK_GOOGLE_CLIENT_ID}
             client-secret: ${STOCK_GOOGLE_CLIENT_SECRET}
-            scope:
-              - email
-              - profile
             redirect-uri: ${STOCK_GOOGLE_REDIRECT_URI}
           kakao:
             client-id: ${STOCK_KAKAO_CLIENT_ID}

@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class JwtProvider {
+	//JWT 토큰 생성/검증/파싱
 
 	@Value("${jwt.secret}")
 	private String secretKey;
@@ -48,6 +49,20 @@ public class JwtProvider {
 			.setExpiration(validity) // 만료 시간
 			.signWith(SignatureAlgorithm.HS256, secretKey) // Base64 디코딩 없이 평문 그대로 사용
 			.compact();
+	}
+
+	public String refreshToken(String oldToken, User user) {
+		log.info("Attempting to refresh token for user: {}", user.getEmail());
+
+		if (validateToken(oldToken)) {
+			log.info("Old token is valid. Generating new token...");
+			String newToken = createToken(user);
+			log.info("New Refresh Token: {}", newToken);
+			return newToken;
+		}
+
+		log.warn("Old token is invalid, cannot refresh.");
+		return null;
 	}
 
 	// 인증 정보 추출
@@ -85,12 +100,4 @@ public class JwtProvider {
 			.getSubject(); // subject로 이메일을 설정했으므로 이메일 반환
 	}
 
-	// 토큰 갱신
-	public String refreshToken(String oldToken, User user) {
-		if (validateToken(oldToken)) {
-			return createToken(user); // 새로운 토큰 반환
-		}
-		log.warn("Old token is invalid, cannot refresh.");
-		return null;
-	}
 }

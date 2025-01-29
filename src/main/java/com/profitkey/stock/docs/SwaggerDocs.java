@@ -37,6 +37,14 @@ public class SwaggerDocs {
 
 	/**
 	 * ****************************************
+	 * Community Swagger Docs 모음
+	 * ****************************************
+	 */
+	public static final String SUMMARY_COMMUNITY_CATEGORY_LIST = "COMMUNITY 댓글 목록 조회";
+	public static final String DESCRIPTION_COMMUNITY_CATEGORY_LIST = "";
+
+	/**
+	 * ****************************************
 	 * Stock Swagger Docs 모음
 	 * ****************************************
 	 */

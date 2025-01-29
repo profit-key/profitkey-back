@@ -10,8 +10,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import jakarta.annotation.PostConstruct;
-
 @Service
 public class KakaoOAuthService {
 	// 카카오 인증용 로직 - 카카오 api에서 제공하는 액세스 토큰을 통해 사용자 정보 가져옴
@@ -85,13 +83,5 @@ public class KakaoOAuthService {
 			System.err.println("Error occurred while refreshing access token: " + e.getMessage());
 			return null;
 		}
-	}
-
-	// 초기화 출력
-	@PostConstruct
-	public void init() {
-		System.out.println("Client ID: " + clientId);
-		System.out.println("Client Secret: " + clientSecret);
-		System.out.println("Redirect URI: " + redirectUri);
 	}
 }

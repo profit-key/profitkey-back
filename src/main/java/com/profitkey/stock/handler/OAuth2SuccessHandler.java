@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.profitkey.stock.entity.AuthProvider;
 import com.profitkey.stock.entity.User;
 import com.profitkey.stock.jwt.JwtProvider;
@@ -25,6 +26,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 	private final UserRepository userRepository;
 	private final JwtProvider jwtProvider;
+	private final ObjectMapper objectMapper;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -36,24 +38,38 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		// OAuth2User에서 이메일과 닉네임 등의 정보 추출
 		String email = (String)oAuth2User.getAttributes().get("email");
 		String nickname = (String)oAuth2User.getAttributes().get("nickname");
+		String provider = "kakao";
 
 		// 이메일을 기반으로 User 엔티티 조회 (없으면 새로 생성)
 		User user = userRepository.findByEmail(email)
 			.orElseGet(() -> {
-				// 유저가 없으면 새로 생성
-				return User.builder()
+				log.info("새로운 유저 탐지. 새로운 유저 생성{}" + email);
+				return userRepository.save(User.builder() // 아래 정보 DB에 저장!
 					.email(email)
 					.nickname(nickname)
 					.provider(AuthProvider.KAKAO) // 실제 제공자에 맞게 처리
-					.build();
+					.build());
 			});
 
 		// JWT 액세스 토큰 생성
 		String accessToken = jwtProvider.createToken(user);
 		log.info("Generated JWT Access Token for user: {}", user.getEmail());
 
-		// 클라이언트 측으로 직접 accessToken만 전달 (리디렉션 없이)
-		response.getWriter().write("Access Token: " + accessToken); // 예시로 직접 보내는 방식
+		// JWT 리프레시 토큰 생성
+		String refreshToken = jwtProvider.refreshToken(accessToken, user);
+		log.info("Generated JWT Refresh Token for user: {}", user.getEmail());
+
+		// 클라이언트로 리프레시 토큰도 함께 반환
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+
+		// 응답 데이터를 JSON으로 변환
+		var tokenResponse = new TokenResponse(accessToken);
+		response.getWriter().write(objectMapper.writeValueAsString(tokenResponse));
 	}
 
+	// 응답용 DTO
+	private record TokenResponse(String accessToken) {
+	}
 }
+

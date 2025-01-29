@@ -52,9 +52,15 @@ public class JwtProvider {
 	}
 
 	public String refreshToken(String oldToken, User user) {
+		log.info("Attempting to refresh token for user: {}", user.getEmail());
+
 		if (validateToken(oldToken)) {
-			return createToken(user); // 새로운 토큰 반환
+			log.info("Old token is valid. Generating new token...");
+			String newToken = createToken(user);
+			log.info("New Refresh Token: {}", newToken);
+			return newToken;
 		}
+
 		log.warn("Old token is invalid, cannot refresh.");
 		return null;
 	}
@@ -93,7 +99,5 @@ public class JwtProvider {
 			.getBody()
 			.getSubject(); // subject로 이메일을 설정했으므로 이메일 반환
 	}
-
-	// 토큰 갱신
 
 }

@@ -37,6 +37,20 @@ public class SwaggerDocs {
 
 	/**
 	 * ****************************************
+	 * Community Swagger Docs 모음
+	 * ****************************************
+	 */
+	public static final String SUMMARY_COMMUNITY_LIST = "커뮤니티 댓글 목록 조회";
+	public static final String DESCRIPTION_COMMUNITY_LIST = "종목에 해당하는 댓글 목록을 가져옵니다.";
+	public static final String SUMMARY_COMMUNITY_CREATE = "커뮤니티 댓글 생성";
+	public static final String DESCRIPTION_COMMUNITY_CREATE = "종목 커뮤니티에 작성자가 입력한 댓글을 등록합니다.";
+	public static final String SUMMARY_COMMUNITY_UPDATE = "커뮤니티 댓글 수정";
+	public static final String DESCRIPTION_COMMUNITY_UPDATE = "종목 커뮤니티에 작성자가 입력한 댓글을 수정합니다.";
+	public static final String SUMMARY_COMMUNITY_DELETE = "커뮤니티 댓글 삭제";
+	public static final String DESCRIPTION_COMMUNITY_DELETE = "식별자와 일치하는 댓글을 삭제합니다.";
+
+	/**
+	 * ****************************************
 	 * Stock Swagger Docs 모음
 	 * ****************************************
 	 */

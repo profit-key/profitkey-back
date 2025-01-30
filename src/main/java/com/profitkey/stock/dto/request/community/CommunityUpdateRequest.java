@@ -8,9 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CommunityRequest {
-	@Schema(description = "종목코드", example = "123456")
-	private String stockCode;
+public class CommunityUpdateRequest {
+	@Schema(description = "식별자", example = "202501011234560001")
+	private String id;
 	@Schema(description = "작성자 식별자", example = "0")
 	private Integer writerId;
 	@Schema(description = "부모글 번호 / root 일경우 0", example = "0")

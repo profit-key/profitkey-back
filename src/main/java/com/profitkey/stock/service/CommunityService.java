@@ -28,10 +28,9 @@ public class CommunityService {
 	}
 
 	@Transactional(readOnly = true)
-	public CommunityResponse getCommunityById(String id) {
-		return communityRepository.findById(Long.valueOf(id))
-			.map(CommunityResponse::fromEntity)
-			.orElseThrow(() -> new IllegalArgumentException("해당 글이 존재하지 않습니다. ID: " + id));
+	public Page<Community> getCommunityById(String id, int page) {
+		Pageable pageable = PageRequest.of(page, SIZE, Sort.by(Sort.Direction.DESC, "id"));
+		return communityRepository.findByStockCode2(id, pageable);
 	}
 
 	@Transactional
@@ -64,8 +63,11 @@ public class CommunityService {
 
 	@Transactional
 	public void deleteCommunity(String id) {
-		Community community = communityRepository.findById(Long.valueOf(id))
+		Long longId = Long.valueOf(id);
+		Community community = communityRepository.findById(longId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 글이 존재하지 않습니다. ID: " + id));
-		communityRepository.delete(community);
+
+		communityRepository.deleteByParentId(longId);
+		communityRepository.deleteById(longId);
 	}
 }

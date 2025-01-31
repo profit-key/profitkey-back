@@ -3,6 +3,9 @@ package com.profitkey.stock.jwt;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -57,7 +60,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 				.orElseGet(() -> User.builder()
 					.email(email)
 					.provider(AuthProvider.KAKAO) // provider는 적절한 값을 넣어야 함
-					.accessToken((String)attributes.get("access_token")) // 액세스 토큰은 다른 방식으로 받아야 할 수 있음
 					.nickname(nickname)
 					.build());
 
@@ -79,16 +81,26 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		String userInfoEndpointUri = "https://kapi.kakao.com/v2/user/me";
 
 		// HTTP 요청을 통해 사용자 정보를 가져옵니다.
-		Map<String, Object> response = restTemplate.getForObject(
-			userInfoEndpointUri,
-			Map.class,
-			Map.of("Authorization", "Bearer " + accessToken)
-		);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Bearer " + accessToken);  // 액세스 토큰을 Authorization 헤더에 추가
+
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		// 카카오 API에서 사용자 정보를 가져옵니다.
+		ResponseEntity<Map> response = restTemplate.exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
+		Map<String, Object> responseBody = response.getBody();
+
+		if (responseBody == null) {
+			throw new RuntimeException("Failed to retrieve user information from Kakao");
+		}
 
 		// 사용자 정보 파싱
-		Map<String, Object> kakaoAccount = (Map<String, Object>)response.get("kakao_account");
+		Map<String, Object> kakaoAccount = (Map<String, Object>)responseBody.get("kakao_account");
 		String email = (String)kakaoAccount.get("email");
-		String nickname = (String)((Map<String, Object>)response.get("properties")).get("nickname");
+		String nickname = (String)((Map<String, Object>)responseBody.get("properties")).get("nickname");
+
+		// 디버깅용 로그 추가
+		log.info("Kakao Account: email={}, nickname={}", email, nickname);
 
 		// OAuth2User 객체로 변환
 		return new DefaultOAuth2User(List.of(new SimpleGrantedAuthority("ROLE_USER")),
@@ -117,3 +129,5 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		return response.getBody();  // 실제로는 JSON에서 access_token을 추출하는 로직을 추가해야 함
 	}
 }
+
+

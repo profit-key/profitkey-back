@@ -1,10 +1,10 @@
 package com.profitkey.stock.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,18 +16,16 @@ import com.profitkey.stock.service.UserService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class UserController {
 
-	@Autowired
-	private UserService userService;
-
-	@Autowired
-	private CustomOAuth2UserService customOAuth2UserService;
-
-	@Autowired
-	private JwtProvider jwtProvider;
+	private final UserService userService;
+	private final CustomOAuth2UserService customOAuth2UserService;
+	private final JwtProvider jwtProvider;
 
 	@GetMapping("/login/oauth2/code/kakao")
 	public ResponseEntity<String> kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) {

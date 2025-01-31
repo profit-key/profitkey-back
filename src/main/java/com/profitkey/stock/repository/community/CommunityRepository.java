@@ -12,42 +12,30 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
 	@Query(value = "WITH RECURSIVE community_tree AS ( " +
-		"    SELECT c.id, c.writer_id, c.parent_id, c.content, c.created_at, c.updated_at, c.id AS root_id, 1 AS depth "
-		+
-		"      FROM community c " +
-		"     WHERE SUBSTRING(c.ID, 9, 6) = :stockCode " +
-		"       AND c.parent_id = 0 " +
-		"     UNION ALL " +
-		"    SELECT c.id, c.writer_id, c.parent_id, c.content, c.created_at, c.updated_at, ct.root_id, ct.depth + 1 " +
-		"      FROM community c " +
-		"      JOIN community_tree ct ON c.parent_id = ct.id " +
+		"    SELECT c.id, c.writer_id, c.parent_id, c.content, c.created_at, c.updated_at, " +
+		"           c.id AS root_id, 1 AS depth " +
+		"    FROM community c " +
+		"    WHERE (:stockCode IS NOT NULL AND SUBSTRING(c.id, 9, 6) = :stockCode) " +
+		"       OR (:id IS NOT NULL AND c.id = :id) " +
+		"    UNION ALL " +
+		"    SELECT c.id, c.writer_id, c.parent_id, c.content, c.created_at, c.updated_at, " +
+		"           ct.root_id, ct.depth + 1 " +
+		"    FROM community c " +
+		"    JOIN community_tree ct ON c.parent_id = ct.id " +
 		") " +
-		"SELECT * FROM community_tree " +
-		" ORDER BY root_id ASC, depth ASC, created_at ASC",
-		countQuery = "SELECT COUNT(*) " +
-			"  FROM community c " +
-			" WHERE SUBSTRING(c.ID, 9, 6) = :stockCode",
+		"SELECT t.*, COALESCE(l.like_count, 0) AS likeCount " +
+		"FROM community_tree t " +
+		"LEFT JOIN ( " +
+		"    SELECT comment_id, COUNT(*) AS like_count " +
+		"    FROM likes " +
+		"    GROUP BY comment_id " +
+		") l ON t.id = l.comment_id " +
+		"ORDER BY t.root_id ASC, t.depth ASC, t.created_at ASC",
+		countQuery = "SELECT COUNT(*) FROM community c " +
+			"WHERE (:stockCode IS NOT NULL AND SUBSTRING(c.id, 9, 6) = :stockCode) " +
+			"   OR (:id IS NOT NULL AND c.id = :id)",
 		nativeQuery = true)
-	Page<Community> findByStockCode(@Param("stockCode") String stockCode, Pageable pageable);
-
-	@Query(value = "WITH RECURSIVE community_tree AS ( " +
-		"    SELECT c.id, c.writer_id, c.parent_id, c.content, c.created_at, c.updated_at, c.id AS root_id, 1 AS depth "
-		+
-		"      FROM community c " +
-		"     WHERE c.id = :id " +
-		"       AND c.parent_id = 0 " +
-		"     UNION ALL " +
-		"    SELECT c.id, c.writer_id, c.parent_id, c.content, c.created_at, c.updated_at, ct.root_id, ct.depth + 1 " +
-		"      FROM community c " +
-		"      JOIN community_tree ct ON c.parent_id = ct.id " +
-		") " +
-		"SELECT * FROM community_tree " +
-		" ORDER BY root_id ASC, depth ASC, created_at ASC",
-		countQuery = "SELECT COUNT(*) " +
-			"  FROM community c " +
-			" WHERE id = :id",
-		nativeQuery = true)
-	Page<Community> findByStockCode2(@Param("id") String id, Pageable pageable);
+	Page<Community> findByStockCode(@Param("stockCode") String stockCode, @Param("id") String id, Pageable pageable);
 
 	@Query(value = """
 		    SELECT COUNT(*) + 1

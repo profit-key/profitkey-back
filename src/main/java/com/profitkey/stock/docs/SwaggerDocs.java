@@ -56,7 +56,12 @@ public class SwaggerDocs {
 		선택한 댓글과 하위 대댓글을 삭제합니다.<br/>
 		id 식별자 yyyyMMdd(8) + 종목코드(6) + 시퀀스(4)
 		""";
-
+	public static final String SUMMARY_COMMUNITY_LIKE = "좋아요 등록/삭제";
+	public static final String DESCRIPTION_COMMUNITY_LIKE = """
+		선택한 댓글의 좋아요 상태를 변경합니다.<br/>
+		isLike(true) : 좋아요<br/>
+		isLike(false) : 좋아요 취소
+		""";
 	/**
 	 * ****************************************
 	 * Stock Swagger Docs 모음

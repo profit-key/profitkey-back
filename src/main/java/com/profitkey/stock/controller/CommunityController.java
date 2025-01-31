@@ -3,6 +3,7 @@ package com.profitkey.stock.controller;
 import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
+import com.profitkey.stock.dto.request.community.LikeRequest;
 import com.profitkey.stock.dto.response.community.CommunityResponse;
 import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.service.CommunityService;
@@ -37,7 +38,8 @@ public class CommunityController {
 	 */
 	@GetMapping("/{stockCode}/{page}")
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LIST, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LIST)
-	public ResponseEntity<Page<Community>> getCommunityList(@PathVariable String stockCode, @PathVariable int page) {
+	public ResponseEntity<Page<Community>> getCommunityList(@PathVariable String stockCode,
+		@PathVariable int page) {
 		Page<Community> communityPage = communityService.getCommunityByStockCode(stockCode, page);
 		return ResponseEntity.ok(communityPage);
 	}
@@ -88,6 +90,18 @@ public class CommunityController {
 	public ResponseEntity<Void> deleteCommunity(@PathVariable String id) {
 		communityService.deleteCommunity(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/like")
+	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LIKE, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LIKE)
+	public ResponseEntity<Void> likeComment(@RequestBody LikeRequest request) {
+		if (request.isLiked()) {
+			communityService.likeComment(request);
+		} else {
+			communityService.unlikeComment(request);
+		}
+
+		return ResponseEntity.ok().build();
 	}
 
 }

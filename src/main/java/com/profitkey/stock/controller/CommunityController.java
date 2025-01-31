@@ -4,6 +4,7 @@ import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
 import com.profitkey.stock.dto.response.community.CommunityResponse;
+import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.service.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,11 +37,12 @@ public class CommunityController {
 	 */
 	@GetMapping("/{stockCode}/{page}")
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LIST, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LIST)
-	// public ResponseEntity<Page<CommunityResponse>> getCommunityList(@PathVariable String stockCode, @PathVariable String id) {
-	public ResponseEntity<Page<CommunityResponse>> getCommunityList(
+	// public ResponseEntity<Page<Community>> getCommunityList(@PathVariable String stockCode, @PathVariable int page) {
+	public ResponseEntity<Page<Community>> getCommunityList(
 		@Parameter(description = "종목코드 6자리", schema = @Schema(defaultValue = "123456")) String stockCode,
-		@Parameter(description = "페이지 번호", schema = @Schema(defaultValue = "1")) int page) {
-		return ResponseEntity.ok(communityService.getCommunityList(stockCode, page));
+		@Parameter(description = "페이지번호", schema = @Schema(defaultValue = "1")) int page) {
+		Page<Community> communityPage = communityService.getCommunityByStockCode(stockCode, page);
+		return ResponseEntity.ok(communityPage);
 	}
 
 	/**

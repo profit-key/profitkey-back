@@ -4,11 +4,14 @@ import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
 import com.profitkey.stock.dto.response.community.CommunityResponse;
+import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.service.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.List;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,11 +35,25 @@ public class CommunityController {
 	 * @param stockCode 종목코드
 	 * @return 조회한 데이터 목록(페이징)
 	 */
-	@GetMapping("/{stockCode}")
+	@GetMapping("/{stockCode}/{page}")
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LIST, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LIST)
-	public ResponseEntity<List<CommunityResponse>> getCommunityList(@PathVariable String stockCode) {
-		List<CommunityResponse> communityList = communityService.getCommunityList(stockCode);
-		return ResponseEntity.ok(communityList);
+	// public ResponseEntity<Page<Community>> getCommunityList(@PathVariable String stockCode, @PathVariable int page) {
+	public ResponseEntity<Page<Community>> getCommunityList(
+		@Parameter(description = "종목코드 6자리", schema = @Schema(defaultValue = "123456")) String stockCode,
+		@Parameter(description = "페이지번호", schema = @Schema(defaultValue = "1")) int page) {
+		Page<Community> communityPage = communityService.getCommunityByStockCode(stockCode, page);
+		return ResponseEntity.ok(communityPage);
+	}
+
+	/**
+	 * 커뮤니티 댓글 상세 조회 API
+	 * @param stockCode 종목코드
+	 * @return 조회한 댓글 + 대댓글 목록(페이징)
+	 */
+	@GetMapping("/{stockCode}/{id}/{page}")
+	public ResponseEntity<CommunityResponse> getCommunity(@PathVariable String stockCode, @PathVariable String id) {
+		CommunityResponse responseDto = communityService.getCommunityById(id);
+		return ResponseEntity.ok(responseDto);
 	}
 
 	/**
@@ -49,12 +66,6 @@ public class CommunityController {
 	public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityRequest request) {
 		return ResponseEntity.ok(communityService.createCommunity(request));
 	}
-
-	// @GetMapping("/{id}")
-	// public ResponseEntity<CommunityResponse> getCommunity(@PathVariable String id) {
-	// 	CommunityResponse responseDto = communityService.getCommunityById(id);
-	// 	return ResponseEntity.ok(responseDto);
-	// }
 
 	/**
 	 * 커뮤니티 댓글 수정 API

@@ -7,9 +7,11 @@ import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +19,19 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommunityService {
 	private final CommunityRepository communityRepository;
+	private final int SIZE = 10;
 
 	@Transactional(readOnly = true)
-	public List<CommunityResponse> getCommunityList(String stockCode) {
-		return communityRepository.findByStockCode(stockCode).stream()
+	public Page<Community> getCommunityByStockCode(String stockCode, int page) {
+		Pageable pageable = PageRequest.of(page, SIZE, Sort.by(Sort.Direction.DESC, "id"));
+		return communityRepository.findByStockCode(stockCode, pageable);
+	}
+
+	@Transactional(readOnly = true)
+	public CommunityResponse getCommunityById(String id) {
+		return communityRepository.findById(Long.valueOf(id))
 			.map(CommunityResponse::fromEntity)
-			.collect(Collectors.toList());
+			.orElseThrow(() -> new IllegalArgumentException("해당 글이 존재하지 않습니다. ID: " + id));
 	}
 
 	@Transactional

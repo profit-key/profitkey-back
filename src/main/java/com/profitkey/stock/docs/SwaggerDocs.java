@@ -42,13 +42,26 @@ public class SwaggerDocs {
 	 */
 	public static final String SUMMARY_COMMUNITY_LIST = "커뮤니티 댓글 목록 조회";
 	public static final String DESCRIPTION_COMMUNITY_LIST = "종목에 해당하는 댓글 목록을 가져옵니다.";
+	public static final String SUMMARY_COMMUNITY_DETAIL = "커뮤니티 댓글 상세 조회";
+	public static final String DESCRIPTION_COMMUNITY_DETAIL = """
+		선택한 댓글과 하위 대댓글 목록을 조회합니다.<br/>
+		id 식별자 yyyyMMdd(8) + 종목코드(6) + 시퀀스(4)
+		""";
 	public static final String SUMMARY_COMMUNITY_CREATE = "커뮤니티 댓글 생성";
-	public static final String DESCRIPTION_COMMUNITY_CREATE = "종목 커뮤니티에 작성자가 입력한 댓글을 등록합니다.";
+	public static final String DESCRIPTION_COMMUNITY_CREATE = "작성자가 입력한 댓글을 등록합니다.";
 	public static final String SUMMARY_COMMUNITY_UPDATE = "커뮤니티 댓글 수정";
-	public static final String DESCRIPTION_COMMUNITY_UPDATE = "종목 커뮤니티에 작성자가 입력한 댓글을 수정합니다.";
+	public static final String DESCRIPTION_COMMUNITY_UPDATE = "작성자가 입력한 댓글을 수정합니다.";
 	public static final String SUMMARY_COMMUNITY_DELETE = "커뮤니티 댓글 삭제";
-	public static final String DESCRIPTION_COMMUNITY_DELETE = "식별자와 일치하는 댓글을 삭제합니다.";
-
+	public static final String DESCRIPTION_COMMUNITY_DELETE = """
+		선택한 댓글과 하위 대댓글을 삭제합니다.<br/>
+		id 식별자 yyyyMMdd(8) + 종목코드(6) + 시퀀스(4)
+		""";
+	public static final String SUMMARY_COMMUNITY_LIKE = "좋아요 등록/삭제";
+	public static final String DESCRIPTION_COMMUNITY_LIKE = """
+		선택한 댓글의 좋아요 상태를 변경합니다.<br/>
+		isLike(true) : 좋아요<br/>
+		isLike(false) : 좋아요 취소
+		""";
 	/**
 	 * ****************************************
 	 * Stock Swagger Docs 모음
@@ -56,7 +69,7 @@ public class SwaggerDocs {
 	 */
 	public static final String SUMMARY_STOCK_TOKEN = "한국투자증권 OAUTH2 토큰 GET";
 	public static final String DESCRIPTION_STOCK_TOKEN = """
-		한국투자증권 OEPN API에서 사용할 토큰을 가져옵니다.<br>
+		한국투자증권 OEPN API에서 사용할 토큰을 가져옵니다.<br/>
 		모의서버에서는 1분에 한번으로 제한됩니다.""";
 	public static final String SUMMARY_STOCK_INQUIRE_PRICE = "주식 현재 시세 GET";
 	public static final String DESCRIPTION_STOCK_INQUIRE_PRICE = """

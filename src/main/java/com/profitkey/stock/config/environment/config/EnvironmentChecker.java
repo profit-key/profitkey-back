@@ -1,15 +1,13 @@
 package com.profitkey.stock.config.environment.config;
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-import org.springframework.core.env.Environment;
-
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
 import jakarta.annotation.PostConstruct;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
@@ -37,7 +35,7 @@ public class EnvironmentChecker {
 				server_url = environment.getProperty("spring.profiles.url");
 				break;
 			default:
-				server_url = "http://localhost:8080";
+				server_url = "http://localhost";
 				break;
 		}
 		return new OpenAPI().info(new Info().title("Stock API Documentation")

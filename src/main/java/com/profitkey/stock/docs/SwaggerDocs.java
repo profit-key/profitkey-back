@@ -75,6 +75,10 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_STOCK_INQUIRE_PRICE = """
 		종목 코드에 따라 국내 주식 시세를 불러옵니다.
 		""";
+	public static final String SUMMARY_STOCK_INQUIRE_DAILY = "주식 현재 시세 기간별 GET";
+	public static final String DESCRIPTION_STOCK_INQUIRE_DAILY = """
+		종목 코드에 따라 기간별 국내 주식 시세를 불러옵니다.
+		""";
 	public static final String SUMMARY_STOCK_VOLUME_RANK = "국내주식 거래량순위 GET";
 	public static final String DESCRIPTION_STOCK_VOLUME_RANK = """
 		조건별 주식 거래량 순위를 불러옵니다.

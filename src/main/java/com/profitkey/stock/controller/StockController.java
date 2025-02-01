@@ -1,8 +1,8 @@
 package com.profitkey.stock.controller;
 
 import com.profitkey.stock.docs.SwaggerDocs;
-import com.profitkey.stock.dto.KisApiProperties;
 import com.profitkey.stock.dto.request.stock.FluctuationRequest;
+import com.profitkey.stock.dto.request.stock.InquireDailyRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.MarketCapRequest;
 import com.profitkey.stock.dto.request.stock.VolumeRankRequest;
@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class StockController {
 
 	private final StockService stockService;
-	private final KisApiProperties kisApiProperties;
 
 	// @GetMapping
 	// public String getStockData() {
@@ -57,6 +56,20 @@ public class StockController {
 	@PostMapping("/inquire-price")
 	public ResponseEntity<Object> getInquirePrice(@RequestBody InquirePriceRequest request) {
 		return stockService.getInquirePrice(request);
+	}
+
+	/**
+	 * [국내주식]기본시세 API CALL
+	 * 국내주식기간별시세(일/주/월/년)[v1_국내주식-016]
+	 * @param request 조회할 주식 입력조건
+	 * @return 기간별 주식 데이터 다건
+	 */
+	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_INQUIRE_DAILY,
+		description = SwaggerDocs.DESCRIPTION_STOCK_INQUIRE_DAILY)
+	@PostMapping("/inquire-daily-itemchartprice")
+	public ResponseEntity<Object> getInquireDailyItemchartprice(@RequestBody InquireDailyRequest request) {
+		log.info("request {}", request);
+		return stockService.getInquireDailyItemchartprice(request);
 	}
 
 	/**
@@ -97,4 +110,5 @@ public class StockController {
 	public ResponseEntity<Object> getMarketCap(@RequestBody MarketCapRequest request) {
 		return stockService.getMarketCap(request);
 	}
+
 }

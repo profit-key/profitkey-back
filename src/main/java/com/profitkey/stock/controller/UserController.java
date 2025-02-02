@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.entity.AuthProvider;
 import com.profitkey.stock.entity.User;
 import com.profitkey.stock.jwt.CustomOAuth2UserService;
 import com.profitkey.stock.jwt.JwtProvider;
 import com.profitkey.stock.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +30,11 @@ public class UserController {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final JwtProvider jwtProvider;
 
+	@Operation(summary = SwaggerDocs.SUMMARY_KAKAO_LOGIN, description = SwaggerDocs.DESCRIPTION_KAKAO_LOGIN)
 	@GetMapping("/login/oauth2/code/kakao")
-	public ResponseEntity<String> kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) {
+	public ResponseEntity<String> kakaoLogin(
+		@Parameter(description = "카카오 인가 코드", example = "kakao_authorization_code_here")
+		@RequestParam("code") String code, HttpServletResponse response) {
 		try {
 			// 1. 카카오 API로부터 액세스 토큰을 얻기
 			String accessToken = userService.getAccessTokenFromKakao(code);
@@ -59,11 +65,45 @@ public class UserController {
 					jwtToken));
 
 			// 최종적으로 생성된 JWT 반환 (헤더와 쿠키 모두 설정됨)
-			return ResponseEntity.ok("Login successful, JWT token has been set in cookies.");
+			return ResponseEntity.ok("Login Success, jwt: " + jwtToken);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body("Error occurred during Kakao login: " + e.getMessage());
+		}
+	}
+
+	@Operation(summary = SwaggerDocs.SUMMARY_TOKEN_LOGIN, description = SwaggerDocs.DESCRIPTION_TOKEN_LOGIN)
+	@GetMapping("/get-token")
+	public ResponseEntity<String> login(
+		@Parameter(description = "사용자 이메일", example = "user@example.com")
+		@RequestParam("email") String email,
+
+		@Parameter(description = "소셜 로그인 제공자", example = "KAKAO")
+		@RequestParam("provider") String provider) {
+		try {
+			// provider 값 검증
+			AuthProvider authProvider;
+			try {
+				authProvider = AuthProvider.valueOf(provider.toUpperCase());
+			} catch (IllegalArgumentException e) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Invalid provider. Allowed values: KAKAO, NAVER, GOOGLE");
+			}
+
+			// 사용자 조회 또는 생성 (accessToken 없이 처리)
+			User user = userService.findOrCreateUser(email, "", "", authProvider);
+
+			// JWT 생성
+			String jwtToken = jwtProvider.createToken(user);
+
+			// JWT 반환
+			return ResponseEntity.ok(jwtToken);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("Error occurred during login: " + e.getMessage());
 		}
 	}
 }

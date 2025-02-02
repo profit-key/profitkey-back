@@ -1,7 +1,6 @@
 package com.profitkey.stock.config;
 
 import static java.util.stream.Collectors.*;
-
 import com.profitkey.stock.annotation.ApiErrorCode;
 import com.profitkey.stock.annotation.ApiErrorExceptions;
 import com.profitkey.stock.annotation.DisableSwaggerSecurity;
@@ -12,9 +11,6 @@ import com.profitkey.stock.dto.common.ErrorResponse;
 import com.profitkey.stock.dto.common.ExampleHolder;
 import com.profitkey.stock.exception.errorcode.BaseErrorCode;
 import com.profitkey.stock.exception.errorcode.ProfitCodeException;
-
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -23,16 +19,14 @@ import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.ApplicationContext;
@@ -65,12 +59,12 @@ public class SwaggerConfig {
 			ApiErrorCode apiErrorCodeExample = handlerMethod.getMethodAnnotation(ApiErrorCode.class);
 
 			List<String> tags = getTags(handlerMethod);
-			//            if (methodAnnotation != null) {
-			//                operation.setSecurity(Collections.emptyList());
-			//            }
-			//            if (!tags.isEmpty()) {
-			//                operation.setTags(Collections.singletonList(tags.get(0)));
-			//            }
+			if (methodAnnotation != null) {
+				operation.setSecurity(Collections.emptyList());
+			}
+			if (!tags.isEmpty()) {
+				operation.setTags(Collections.singletonList(tags.get(0)));
+			}
 			if (apiErrorExceptionsExample != null) {
 				generateExceptionResponseExample(operation, apiErrorExceptionsExample.value());
 			}

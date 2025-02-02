@@ -10,23 +10,6 @@ spring:
       ddl-auto: ${STOCK_JPA_OPTION_AUTO}
     show-sql: false
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${STOCK_GOOGLE_CLIENT_ID}
-            client-secret: ${STOCK_GOOGLE_CLIENT_SECRET}
-            redirect-uri: ${STOCK_GOOGLE_REDIRECT_URI}
-          kakao:
-            client-id: ${STOCK_KAKAO_CLIENT_ID}
-            client-secret: ${STOCK_KAKAO_CLIENT_SECRET}
-            redirect-uri: ${STOCK_KAKAO_REDIRECT_URI}
-          naver:
-            client-id: ${STOCK_NAVER_CLIENT_ID}
-            client-secret: ${STOCK_NAVER_CLIENT_SECRET}
-            redirect-uri: ${STOCK_NAVER_REDIRECT_URI}
-
 openapi:
   api-key: ${STOCK_OPENAPI_KEY}
   stock-price-info-url: ${STOCK_OPENAPI_STOCK_PRICE_URL}

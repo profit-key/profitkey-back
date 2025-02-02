@@ -15,6 +15,22 @@ spring:
       ddl-auto: ${STOCK_JPA_OPTION_AUTO}
     show-sql: ${STOCK_JPA_OPTION_ISSHOW}
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${STOCK_GOOGLE_DEV_CLIENT_ID}
+            client-secret: ${STOCK_GOOGLE_DEV_CLIENT_SECRET}
+            redirect-uri: ${STOCK_GOOGLE_DEV_REDIRECT_URI}
+          kakao:
+            client-id: ${STOCK_KAKAO_DEV_CLIENT_ID}
+            client-secret: ${STOCK_KAKAO_DEV_CLIENT_SECRET}
+            redirect-uri: ${STOCK_KAKAO_DEV_REDIRECT_URI}
+          naver:
+            client-id: ${STOCK_NAVER_DEV_CLIENT_ID}
+            client-secret: ${STOCK_NAVER_DEV_CLIENT_SECRET}
+            redirect-uri: ${STOCK_NAVER_DEV_REDIRECT_URI}
 springdoc:
   default-consumes-media-type: ${STOCK_CONSUMES_MEDIATYPE}
   default-produces-media-type: ${STOCK_PRODUCES_MEDIATYPE}

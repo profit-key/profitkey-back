@@ -37,7 +37,7 @@ public class StockService {
 
 	@Cacheable(value = "tokenCache", key = "'stockToken'", unless = "#result == null")
 	public String getToken() throws IOException {
-		String url = kisApiProperties.getDevApiUrl() + kisApiProperties.getOauth2TokenUrl();
+		String url = kisApiProperties.getOauth2TokenUrl();
 		String data = """
 			{
 			    "grant_type": "client_credentials",
@@ -55,7 +55,7 @@ public class StockService {
 
 	public ResponseEntity<Object> getInquirePrice(InquirePriceRequest request) {
 		Object result = null;
-		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getInquirePriceUrl();
+		String urlData = kisApiProperties.getInquirePriceUrl();
 		String trId = request.getTr_id();               // 거래ID
 		String mrktDivCode = request.getMrktDivCode();  // FID 조건 시장 분류 코드
 		String fidInput = request.getFidInput();        // FID 입력 종목코드
@@ -78,7 +78,7 @@ public class StockService {
 
 	public ResponseEntity<Object> getInquireDailyItemchartprice(InquireDailyRequest request) {
 		Object result = null;
-		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getInquireDailyUrl();
+		String urlData = kisApiProperties.getInquireDailyUrl();
 		String trId = request.getTr_id();
 		String fidCondMrktDivCode = request.getFidCondMrktDivCode();
 		String fidInputIscd = request.getFidInputIscd();
@@ -117,7 +117,7 @@ public class StockService {
 
 	public ResponseEntity<Object> getVolumeRank(VolumeRankRequest request) {
 		Object result = null;
-		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getInquirePriceUrl();
+		String urlData = kisApiProperties.getInquirePriceUrl();
 
 		String trId = request.getTr_id();                         // 거래ID
 		String custtype = request.getCusttype();                  // 고객 타입
@@ -170,7 +170,7 @@ public class StockService {
 
 	public ResponseEntity<Object> getFluctuation(FluctuationRequest request) {
 		Object result = null;
-		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getInquirePriceUrl();
+		String urlData = kisApiProperties.getInquirePriceUrl();
 
 		String trId = request.getTr_id();
 		String custtype = request.getCusttype();
@@ -231,7 +231,7 @@ public class StockService {
 
 	public ResponseEntity<Object> getMarketCap(MarketCapRequest request) {
 		Object result = null;
-		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getMarketCapUrl();
+		String urlData = kisApiProperties.getMarketCapUrl();
 
 		String trId = request.getTr_id();
 		String custtype = request.getCusttype();

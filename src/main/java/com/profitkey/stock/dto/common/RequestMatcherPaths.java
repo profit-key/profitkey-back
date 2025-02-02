@@ -2,6 +2,7 @@ package com.profitkey.stock.dto.common;
 
 public class RequestMatcherPaths {
 	public static final String[] PERMIT_ALL_PATHS = {
+		"/",
 		"/login",  // 로그인
 		"/images/**",  // 이미지 파일
 		"/js/**",  // JS 파일
@@ -14,7 +15,8 @@ public class RequestMatcherPaths {
 		"/webjars/**",  // 웹 자원
 		"/api/**",
 		"/api/faq-category/**",
-		"/login/oauth2/code/kakao",
+		"/api/login/oauth2/code/kakao",
+		"/api-docs/**",
 	};
 
 	public static final String[] AUTHENTICATED_PATHS = {

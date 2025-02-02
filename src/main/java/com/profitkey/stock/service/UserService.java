@@ -2,7 +2,6 @@ package com.profitkey.stock.service;
 
 import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,17 +21,14 @@ import com.profitkey.stock.entity.AuthProvider;
 import com.profitkey.stock.entity.User;
 import com.profitkey.stock.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
 	private final UserRepository userRepository;
 	private final RestTemplate restTemplate;
-
-	@Autowired
-	public UserService(UserRepository userRepository, RestTemplate restTemplate) {
-		this.userRepository = userRepository;
-		this.restTemplate = restTemplate;
-	}
 
 	/**
 	 * 카카오 API로부터 Access Token을 가져오는 메서드

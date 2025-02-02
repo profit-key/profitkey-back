@@ -15,6 +15,7 @@ public class KisApiProperties {
 	private String devApiUrl;
 	private String oauth2TokenUrl;
 	private String inquirePriceUrl;
+	private String inquireDailyUrl;
 	private String volumeRankUrl;
 	private String marketCapUrl;
 }

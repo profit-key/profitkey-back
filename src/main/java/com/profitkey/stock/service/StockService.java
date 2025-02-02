@@ -6,6 +6,7 @@ import com.profitkey.stock.config.ApiParser;
 import com.profitkey.stock.dto.KisApiProperties;
 import com.profitkey.stock.dto.openapi.OpenApiProperties;
 import com.profitkey.stock.dto.request.stock.FluctuationRequest;
+import com.profitkey.stock.dto.request.stock.InquireDailyRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.MarketCapRequest;
 import com.profitkey.stock.dto.request.stock.VolumeRankRequest;
@@ -27,12 +28,12 @@ public class StockService {
 	private final KisApiProperties kisApiProperties;
 	private final ApiParser apiParser;
 
-	public String getStockInfo() {
-		String enkey = openApiProperties.getApiKey();
-		String baseUrl = openApiProperties.getStockPriceInfoUrl();
-		String jsonStringfy = apiParser.fetchItemsAsJson(baseUrl, enkey);
-		return jsonStringfy;
-	}
+	// public String getStockInfo() {
+	// 	String enkey = openApiProperties.getApiKey();
+	// 	String baseUrl = openApiProperties.getStockPriceInfoUrl();
+	// 	String jsonStringfy = apiParser.fetchItemsAsJson(baseUrl, enkey);
+	// 	return jsonStringfy;
+	// }
 
 	@Cacheable(value = "tokenCache", key = "'stockToken'", unless = "#result == null")
 	public String getToken() throws IOException {
@@ -62,6 +63,45 @@ public class StockService {
 		String fullUrl = urlData + paramData;
 
 		InquirePriceRequest requestParam = new InquirePriceRequest(trId, mrktDivCode, fidInput);
+
+		log.info("full url : {}", fullUrl);
+		try {
+			URL url = new URL(fullUrl);
+			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
+			ObjectMapper objectMapper = new ObjectMapper();
+			result = objectMapper.readValue(jsonString, Object.class);
+		} catch (IOException e) {
+			e.getMessage();
+		}
+		return ResponseEntity.ok(result);
+	}
+
+	public ResponseEntity<Object> getInquireDailyItemchartprice(InquireDailyRequest request) {
+		Object result = null;
+		String urlData = kisApiProperties.getDevApiUrl() + kisApiProperties.getInquireDailyUrl();
+		String trId = request.getTr_id();
+		String fidCondMrktDivCode = request.getFidCondMrktDivCode();
+		String fidInputIscd = request.getFidInputIscd();
+		String fidInputDate1 = request.getFidInputDate1();
+		String fidInputDate2 = request.getFidInputDate2();
+		String fidPeriodDivCode = request.getFidPeriodDivCode();
+		String fidOrgAdjPrc = request.getFidOrgAdjPrc();
+
+		StringBuilder paramDataBuilder = new StringBuilder("?");
+
+		paramDataBuilder.append("fid_cond_mrkt_div_code=").append(fidCondMrktDivCode).append("&");
+		paramDataBuilder.append("fid_input_iscd=").append(fidInputIscd).append("&");
+		paramDataBuilder.append("fid_input_date_1=").append(fidInputDate1).append("&");
+		paramDataBuilder.append("fid_input_date_2=").append(fidInputDate2).append("&");
+		paramDataBuilder.append("fid_period_div_code=").append(fidPeriodDivCode).append("&");
+		paramDataBuilder.append("fid_org_adj_prc=").append(fidOrgAdjPrc);
+		String paramData = paramDataBuilder.toString();
+
+		String fullUrl = urlData + paramData;
+
+		InquireDailyRequest requestParam = new InquireDailyRequest(
+			trId, fidCondMrktDivCode, fidInputIscd, fidInputDate1, fidInputDate2, fidPeriodDivCode, fidOrgAdjPrc
+		);
 
 		log.info("full url : {}", fullUrl);
 		try {
@@ -112,19 +152,8 @@ public class StockService {
 		String fullUrl = urlData + paramData;
 
 		VolumeRankRequest requestParam = new VolumeRankRequest(
-			trId,                 // 거래ID
-			custtype,             // 고객 타입
-			mrktDivCode,          // FID 조건 시장 분류 코드
-			scrDivCode,           // FID 조건 화면 분류 코드
-			inputJscd,            // FID 입력 종목코드
-			divClsCode,           // 분류 구분 코드
-			blngClsCode,          // 소속 구분 코드
-			trgtClsCode,          // 대상 구분 코드
-			trgtExlsClsCode,     // 대상 제외 구분 코드
-			inputPrice1,          // 입력 가격1
-			inputPrice2,          // 입력 가격2
-			volCnt,               // 거래량 수
-			inputDate1            // 입력 날짜1
+			trId, custtype, mrktDivCode, scrDivCode, inputJscd, divClsCode, blngClsCode,
+			trgtClsCode, trgtExlsClsCode, inputPrice1, inputPrice2, volCnt, inputDate1
 		);
 
 		log.info("full url : {}", fullUrl);

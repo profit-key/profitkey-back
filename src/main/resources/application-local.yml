@@ -3,7 +3,7 @@ spring:
     activate:
       on-profile: local
   profiles:
-    url: http://localhost:8080
+    url: http://localhost/
   
   datasource:
     url: ${STOCK_DATASOURCE_LOCAL_URL}
@@ -31,3 +31,5 @@ springdoc:
   api-docs:
     groups:
       enabled: ${STOCK_SWAGGER_ISGROUPS}
+server:
+  port: 80

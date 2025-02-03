@@ -91,4 +91,16 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_STOCK_MARKET_CAP = """
 		조건별 시가총액이 높은 종목을 불러옵니다.
 		""";
+	public static final String SUMMARY_KAKAO_LOGIN = "카카오 소셜 로그인 GET";
+	public static final String DESCRIPTION_KAKAO_LOGIN = """
+		카카오 소셜 로그인 API입니다.
+		인가 코드를 사용하여 카카오에서 제공하는 사용자 정보를 바탕으로 JWT 토큰을 발급합니다.
+		""";
+
+	public static final String SUMMARY_TOKEN_LOGIN = "이메일과 공급자 정보로 JWT 토큰 발급 GET";
+	public static final String DESCRIPTION_TOKEN_LOGIN = """
+		이메일과 공급자 정보를 사용하여 JWT 토큰을 발급하는 API입니다.
+		사용자 정보가 존재하지 않으면 새로운 사용자가 생성되고, 그에 맞는 JWT 토큰이 발급됩니다.
+		""";
+
 }

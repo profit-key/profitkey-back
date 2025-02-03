@@ -1,7 +1,11 @@
 package com.profitkey.stock.config.environment.config;
 
+import com.profitkey.stock.consts.ProfitStatic;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
@@ -39,10 +43,18 @@ public class EnvironmentChecker {
 				server_url = "http://localhost";
 				break;
 		}
-		return new OpenAPI().info(new Info().title("Stock API Documentation")
-			.description("Stock service API documentation")
-			.version("v1.0.0")).servers(List.of(new Server().url(server_url)  // HTTPS URL 설정
-		));
+		return new OpenAPI()
+			.components(new Components()
+				.addSecuritySchemes(ProfitStatic.AUTH_HEADER, new SecurityScheme()
+					.name(ProfitStatic.AUTH_HEADER)
+					.type(SecurityScheme.Type.HTTP)
+					.scheme("bearer")
+					.bearerFormat("JWT")))
+			.addSecurityItem(new SecurityRequirement().addList(ProfitStatic.AUTH_HEADER))
+			.info(new Info().title("Stock API Documentation")
+				.description("Stock service API documentation")
+				.version("v1.0.0")).servers(List.of(new Server().url(server_url)  // HTTPS URL 설정
+			));
 	}
 
 }

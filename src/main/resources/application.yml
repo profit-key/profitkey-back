@@ -27,3 +27,21 @@ jwt:
   secret: ${STOCK_JWT_SECRET}
   expiration: ${STOCK_JWT_EXPIRATION}
   refreshExpiration: ${STOCK_JWT_REFRESH_EXPIRATION}
+
+servlet:
+  multipart:
+    max-file-size: 10MB        # 단일 파일의 최대 크기
+    max-request-size: 10MB     # 요청당 최대 파일 크기
+    enabled: true              # 멀티파트 업로드 처리 활성화
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${STOCK_AWS_ACCESS_KEY}
+      secret-key: ${STOCK_AWS_SECRET_KEY}
+    s3:
+      bucket: ${STOCK_AWS_S3_BUCKET}
+    region:
+      static: ${STOCK_AWS_S3_REGION}
+    stack:
+      auto: false

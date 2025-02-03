@@ -49,6 +49,7 @@ public class UploadFile {
 		this.fileName = fileName;
 		this.fileKey = fileKey;
 		this.faq = faq;
+		this.board = board;
 	}
 }
 

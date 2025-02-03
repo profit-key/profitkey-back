@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.profitkey.stock.entity.Faq;
 
-public interface FapRepository extends JpaRepository<Faq, Long> {
+public interface FaqRepository extends JpaRepository<Faq, Long> {
 }

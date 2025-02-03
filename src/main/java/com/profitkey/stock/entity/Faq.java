@@ -38,7 +38,7 @@ public class Faq {
 	private String content;
 
 	@Column(nullable = false)
-	private Boolean published = true;
+	private Boolean published;
 
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false, nullable = false)
@@ -53,12 +53,13 @@ public class Faq {
 	private FaqCategoryCode faqCategory;
 
 	@OneToMany(mappedBy = "faq", cascade = CascadeType.ALL)
-	private List<UploadFile> uploadFiles;
+	private List<UploadFile> uploadFiles = new ArrayList<>();
 
 	@Builder
-	public Faq(String title, String content, Boolean published) {
+	public Faq(String title, String content, Boolean published, FaqCategoryCode faqCategory) {
 		this.title = title;
 		this.content = content;
-		this.published = published;
+		this.published = published == null ? true : published;
+		this.faqCategory = faqCategory;
 	}
 }

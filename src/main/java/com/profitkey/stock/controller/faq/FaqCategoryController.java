@@ -1,6 +1,4 @@
-package com.profitkey.stock.controller;
-
-import java.util.ArrayList;
+package com.profitkey.stock.controller.faq;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,7 +52,7 @@ public class FaqCategoryController {
 	}
 
 	/**
-	 * 카테고리  항목 수정 API
+	 * 카테고리 항목 수정 API
 	 */
 	@PutMapping("")
 	@Operation(summary = SwaggerDocs.SUMMARY_FAQ_CATEGORY_UPDATE, description = SwaggerDocs.DESCRIPTION_FAQ_CATEGORY_UPDATE)

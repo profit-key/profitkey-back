@@ -53,7 +53,7 @@ public class FaqCategoryCode {
 	private FaqCategoryCode(Integer displayOrder, String categoryName, Boolean published) {
 		this.displayOrder = displayOrder;
 		this.categoryName = categoryName;
-		this.published = (published != null) ? published : true;
+		this.published = published == null ? true : published;
 	}
 }
 

@@ -33,13 +33,13 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final RestTemplate restTemplate;
 
-	@Value("${kakao.client.id}")
+	@Value("${spring.security.oauth2.client.registration.kakao.client-id}")
 	private String kakaoClientId;
 
-	@Value("${kakao.client.secret}")
+	@Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
 	private String kakaoClientSecret;
 
-	@Value("${kakao.redirect.uri}")
+	@Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
 	private String kakaoRedirectUri;
 
 	/**
@@ -61,6 +61,7 @@ public class UserService {
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+		log.info("kakaoRedirectUri" + kakaoRedirectUri);
 
 		try {
 			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);

@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,7 +32,7 @@ public class UserController {
 	private final JwtProvider jwtProvider;
 
 	@Operation(summary = SwaggerDocs.SUMMARY_KAKAO_LOGIN, description = SwaggerDocs.DESCRIPTION_KAKAO_LOGIN)
-	@GetMapping("/login/oauth2/code/kakao")
+	@PostMapping("/login/oauth2/code/kakao")
 	public ResponseEntity<String> kakaoLogin(
 		@Parameter(description = "카카오 인가 코드", example = "kakao_authorization_code_here")
 		@RequestParam("code") String code, HttpServletResponse response) {

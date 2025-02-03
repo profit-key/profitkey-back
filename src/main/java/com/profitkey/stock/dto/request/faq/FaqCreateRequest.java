@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Schema(description = "FAQ 생성 요청")
 public class FaqCreateRequest {
 	@Schema(format = "binary", description = "업로드할 파일", nullable = true)
-	private MultipartFile file;
+	private MultipartFile[] files;
 
 	@NotBlank(message = "카테고리는 필수 입력값입니다")
 	@Schema(type = "string", description = "FAQ카테고리 이름", example = "카테고리를 입력해주세요.")

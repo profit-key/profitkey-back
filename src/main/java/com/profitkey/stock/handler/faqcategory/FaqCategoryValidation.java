@@ -15,16 +15,6 @@ public class FaqCategoryValidation {
 			log.error("Category name is null or empty");
             return false;
 		}
-		// displayOrder 유효성 검사
-		if (displayOrder == null || displayOrder < 0) {
-			log.error("Invalid display order value: {}", displayOrder);
-			return false;
-		}
-		// isUse 유효성 검사
-		if (isUse == null) {
-			log.error("Invalid isUse value: null");
-			return false;
-		}
 		return true;
 	}
 }

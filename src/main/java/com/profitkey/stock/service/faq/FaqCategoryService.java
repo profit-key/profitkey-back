@@ -35,8 +35,9 @@ public class FaqCategoryService {
 		Integer maxDisplayOrder = faqCategoryRepository.findMaxDisplayOrder();
 
 		// 최대값이 없으면(첫 데이터면) 1, 있으면 최대값 + 1
-		Integer newDisplayOrder = (maxDisplayOrder == null) ? 1 : maxDisplayOrder + 1;
+		Integer newDisplayOrder = (maxDisplayOrder == null) ? 0 : maxDisplayOrder + 1;
 
+		System.out.println(newDisplayOrder);
 		FaqCategoryCode faqCategoryCode = FaqCategoryCode.builder()
 			.categoryName(request.getCategoryName())
 			.displayOrder(

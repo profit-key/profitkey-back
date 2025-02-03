@@ -33,7 +33,7 @@ public class UploadFile {
 	@Column(name = "created_at", updatable = false, nullable = false)
 	private LocalDateTime createdAt;
 
-	@Column(name = "file_key", nullable = false)
+	@Column(name = "file_key", nullable = false, unique = true)
 	private String fileKey;
 
 	@ManyToOne()
@@ -49,6 +49,14 @@ public class UploadFile {
 		this.fileName = fileName;
 		this.fileKey = fileKey;
 		this.faq = faq;
+		this.board = board;
+	}
+
+	public void setFaq(Faq faq) {
+		this.faq = faq;
+	}
+
+	public void setBoard(Board board) {
 		this.board = board;
 	}
 }

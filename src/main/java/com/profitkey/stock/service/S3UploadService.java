@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -26,7 +28,26 @@ public class S3UploadService {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
-	public UploadFile uploadFile(MultipartFile file) throws IOException {
+	public List<UploadFile> uploadFiles(MultipartFile[] files) throws IOException {
+		List<UploadFile> uploadedFiles = new ArrayList<>();
+
+		try {
+			for (MultipartFile file : files) {
+				if (!file.isEmpty()) {
+					uploadedFiles.add(uploadFile(file));
+				}
+			}
+			return uploadedFiles;
+		} catch (Exception e) {
+			// 업로드 실패 시 이미 업로드된 파일들 삭제
+			for (UploadFile file : uploadedFiles) {
+				deleteFile(file.getFileKey());
+			}
+			throw e;
+		}
+	}
+
+	private UploadFile uploadFile(MultipartFile file) throws IOException {
 		String originalFilename = file.getOriginalFilename();
 		String fileExtension = getFileExtension(originalFilename);
 		String uniqueFileName = generateUniqueFileName(fileExtension);
@@ -39,13 +60,10 @@ public class S3UploadService {
 
 		String fileUrl = amazonS3Client.getUrl(bucket, uniqueFileName).toString();
 
-		// DB에 파일 정보 저장
-		UploadFile uploadFile = dbSaveFile(originalFilename, uniqueFileName);
-
-		return uploadFile;
+		return dbSaveFile(originalFilename, uniqueFileName);
 	}
 
-	private UploadFile dbSaveFile(String fileName, String fileKey) {
+	public UploadFile dbSaveFile(String fileName, String fileKey) {
 		try {
 			UploadFile uploadFile = UploadFile.builder().fileName(fileName).fileKey(fileKey).build();
 
@@ -67,5 +85,18 @@ public class S3UploadService {
 			return "";
 		int lastDotIndex = fileName.lastIndexOf(".");
 		return (lastDotIndex == -1) ? "" : fileName.substring(lastDotIndex);
+	}
+
+	public void deleteFile(String fileKey) {
+		try {
+			amazonS3Client.deleteObject(bucket, fileKey);
+			log.info("File deleted from S3 - fileKey: {}", fileKey);
+		} catch (Exception e) {
+			log.error("Failed to delete file from S3 - fileKey: {}", fileKey, e);
+		}
+	}
+
+	public String getFileUrl(String fileKey) {
+		return amazonS3Client.getUrl(bucket, fileKey).toString();
 	}
 } 

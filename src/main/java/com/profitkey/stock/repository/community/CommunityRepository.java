@@ -1,6 +1,6 @@
 package com.profitkey.stock.repository.community;
 
-import com.profitkey.stock.entity.Community;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.profitkey.stock.entity.Community;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
@@ -39,5 +41,8 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 	@Transactional
 	@Query("DELETE FROM Community c WHERE c.parentId = :id")
 	void deleteByParentId(@Param("id") Long id);
+
+	//내가 쓴 글 조회
+	List<Community> findByWriterId(Long writerId);
 
 }

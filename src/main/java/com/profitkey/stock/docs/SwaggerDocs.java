@@ -28,6 +28,8 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_FAQ_LIST = """
 		FAQ 목록을 조회합니다. <br>
 		공개여부가 true인 리스트만 반환합니다. <br>
+		page는 1페이지부터 조회할 페이지 번호입니다. <br>
+		size는 한 페이지에 보여줄 아이템 수입니다. <br>
 		최신순으로 반환합니다.
 		""";
 	public static final String SUMMARY_FAQ_INFO = "FAQ 상세 항목 조회";

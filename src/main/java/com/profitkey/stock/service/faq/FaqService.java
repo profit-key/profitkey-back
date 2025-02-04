@@ -58,7 +58,7 @@ public class FaqService {
 		Pageable pageable = PageRequest.of(page-1, size, Sort.by("createdAt").descending());
 		
 		// FAQ 목록 조회
-		Page<Faq> faqPage = faqRepository.findAllOrderByCreatedAtDesc(pageable);
+		Page<Faq> faqPage = faqRepository.findByPublishedTrueOrderByCreatedAtDesc(pageable);
 		
 		// FAQ 목록을 FaqListItemResponse로 변환
 		FaqListItemResponse[] faqResponses = faqPage.getContent().stream()

@@ -26,7 +26,7 @@ spring:
           kakao:
             client-id: ${STOCK_KAKAO_LOCAL_CLIENT_ID}
             client-secret: ${STOCK_KAKAO_LOCAL_CLIENT_SECRET}
-            redirect-uri: ${STOCK_KAKAO_LOCAL_REDIRECT_URI}
+            redirect-uri: ${STOCK_KAKAO_DEV_REDIRECT_URI}
           naver:
             client-id: ${STOCK_NAVER_LOCAL_CLIENT_ID}
             client-secret: ${STOCK_NAVER_LOCAL_CLIENT_SECRET}

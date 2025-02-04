@@ -21,7 +21,7 @@ public class FaqResponse {
     private LocalDateTime createdAt;
 
     @Builder
-    public FaqResponse(Long id, String title, String question, String answer, String content, Boolean published, LocalDateTime createdAt, FileInfo[] fileInfos) {
+    public FaqResponse(Long id, String title, String question, String answer, Boolean published, LocalDateTime createdAt, FileInfo[] fileInfos) {
         this.id = id;
         this.title = title;
         this.question = question;

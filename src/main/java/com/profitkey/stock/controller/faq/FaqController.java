@@ -60,4 +60,17 @@ public class FaqController {
 		return ResponseEntity.ok(faqList);
 	}
 
+	/**
+	 * FAQ 상세 조회
+	 */
+	@GetMapping("/{id}")
+	@Operation(summary = SwaggerDocs.SUMMARY_FAQ_INFO, description = SwaggerDocs.DESCRIPTION_FAQ_INFO)
+	public ResponseEntity<FaqResponse> getFaqById(
+		@Parameter(description = "FAQ ID", required = true) 
+		@PathVariable Long id
+	) {
+		FaqResponse response = faqService.getFaqById(id);
+		return ResponseEntity.ok(response);
+	}
+
 }

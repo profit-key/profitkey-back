@@ -30,7 +30,10 @@ public class SwaggerDocs {
 		공개여부가 true인 리스트만 반환합니다. <br>
 		최신순으로 반환합니다.
 		""";
-
+	public static final String SUMMARY_FAQ_INFO = "FAQ 상세 항목 조회";
+	public static final String DESCRIPTION_FAQ_INFO = """
+		FAQ 상세 항목을 조회합니다. 잘못된 id 조회시 404 에러를 반환합니다.
+		""";
 
 	/**
 	 * ****************************************

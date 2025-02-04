@@ -2,6 +2,7 @@ package com.profitkey.stock.service.faq;
 
 import com.profitkey.stock.dto.common.FileInfo;
 import com.profitkey.stock.dto.response.faq.FaqCreateResponse;
+import com.profitkey.stock.dto.response.faq.FaqListResponse;
 import com.profitkey.stock.entity.Faq;
 import com.profitkey.stock.entity.FaqCategoryCode;
 import com.profitkey.stock.entity.UploadFile;
@@ -23,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -82,5 +84,59 @@ public class FaqService {
 			log.error("Failed to create FAQ", e);
 			throw new RuntimeException("FAQ 생성에 실패했습니다", e);
 		}
+	}
+
+	@Transactional
+	public List<FaqListResponse> getFaqListByCategory(String categoryName) {
+		// 카테고리 존재 여부 확인
+		FaqCategoryCode category = faqCategoryRepository.findByCategoryName(categoryName)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+				"카테고리를 찾을 수 없습니다: " + categoryName));
+
+		// FAQ 목록 조회
+		List<Faq> faqList = faqRepository.findByFaqCategoryOrderByCreatedAtDesc(category);
+		// 응답 변환
+		return faqList.stream()
+			.<FaqListResponse>map(faq -> {
+				FileInfo[] fileInfos = faq.getUploadFiles().stream()
+					.map(file -> new FileInfo(file.getFileName(), file.getFileKey(),
+						s3UploadService.getFileUrl(file.getFileKey())))
+					.toArray(FileInfo[]::new);
+
+				return FaqListResponse.builder()
+					.id(faq.getId())
+					.title(faq.getTitle())
+					.content(faq.getContent())
+					.published(faq.getPublished())
+					.categoryName(faq.getFaqCategory().getCategoryName())
+					.createdAt(faq.getCreatedAt())
+					.fileInfos(fileInfos)
+					.build();
+			})
+			.collect(Collectors.toList());
+	}
+
+	@Transactional
+	public FaqListResponse getFaqById(Long id) {
+		Faq faq = faqRepository.findById(id)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
+				"FAQ를 찾을 수 없습니다. ID: " + id));
+
+		FileInfo[] fileInfos = faq.getUploadFiles().stream()
+			.map(file -> new FileInfo(
+				file.getFileName(),
+				file.getFileKey(),
+				s3UploadService.getFileUrl(file.getFileKey())))
+			.toArray(FileInfo[]::new);
+
+		return FaqListResponse.builder()
+			.id(faq.getId())
+			.title(faq.getTitle())
+			.content(faq.getContent())
+			.published(faq.getPublished())
+			.categoryName(faq.getFaqCategory().getCategoryName())
+			.createdAt(faq.getCreatedAt())
+			.fileInfos(fileInfos)
+			.build();
 	}
 }

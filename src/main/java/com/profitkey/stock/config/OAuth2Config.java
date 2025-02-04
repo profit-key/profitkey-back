@@ -43,7 +43,7 @@ public class OAuth2Config {
 			.clientId(googleClientId)
 			.clientSecret(googleClientSecret)
 			.redirectUri(googleRedirectUri)
-			.scope("openid", "email")
+			.scope("openid", "email", "profile_image")
 			.authorizationUri("https://accounts.google.com/o/oauth2/auth")
 			.tokenUri("https://oauth2.googleapis.com/token")
 			.userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")

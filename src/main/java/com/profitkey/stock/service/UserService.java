@@ -2,6 +2,7 @@ package com.profitkey.stock.service;
 
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,34 +23,45 @@ import com.profitkey.stock.entity.User;
 import com.profitkey.stock.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
 	private final UserRepository userRepository;
 	private final RestTemplate restTemplate;
+
+	@Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+	private String kakaoClientId;
+
+	@Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
+	private String kakaoClientSecret;
+
+	@Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+	private String kakaoRedirectUri;
 
 	/**
 	 * 카카오 API로부터 Access Token을 가져오는 메서드
 	 * @param code Authorization Code
 	 * @return Access Token
 	 */
-	// 액세스 토큰 요청 메서드
 	public String getAccessTokenFromKakao(String code) throws JsonProcessingException {
 		String url = "https://kauth.kakao.com/oauth/token";
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("grant_type", "authorization_code");
-		params.add("client_id", System.getenv("STOCK_KAKAO_CLIENT_ID"));  // 카카오 앱 REST API 키
-		params.add("client_secret", System.getenv("STOCK_KAKAO_CLIENT_SECRET"));  // 클라이언트 시크릿 (있다면)
-		params.add("redirect_uri", System.getenv("STOCK_KAKAO_REDIRECT_URI"));  // 리다이렉트 URI
+		params.add("client_id", kakaoClientId);  // 카카오 앱 REST API 키
+		params.add("client_secret", kakaoClientSecret);  // 클라이언트 시크릿 (있다면)
+		params.add("redirect_uri", kakaoRedirectUri);  // 리다이렉트 URI
 		params.add("code", code);  // 인가 코드
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+		log.info("kakaoRedirectUri" + kakaoRedirectUri);
 
 		try {
 			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
@@ -75,6 +87,7 @@ public class UserService {
 	 * @param accessToken 카카오 액세스 토큰
 	 * @param nickname 사용자 닉네임
 	 * @param provider 소셜 로그인 제공자
+	 *
 	 * @return User 엔티티
 	 */
 	@Transactional
@@ -101,8 +114,13 @@ public class UserService {
 				.provider(provider)
 				.build();
 
+			log.info("KAKAO_CLIENT_ID: {}", kakaoClientId);
+			log.info("KAKAO_CLIENT_SECRET: {}", kakaoClientSecret);
+			log.info("KAKAO_REDIRECT_URI: {}", kakaoRedirectUri);
+
 			return userRepository.save(newUser);
 		}
+
 	}
 }
 

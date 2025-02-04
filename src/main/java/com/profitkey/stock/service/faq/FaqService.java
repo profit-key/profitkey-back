@@ -37,8 +37,6 @@ public class FaqService {
 	private final S3UploadService s3UploadService;
 	private final FaqRepository faqRepository;
 	private final UploadFileRepository uploadFileRepository;
-	private final int SIZE = 10;
-
 	@Transactional
 	public FaqCreateResponse createFaq(Boolean published, String title, String question, String answer) {
 		try {
@@ -55,9 +53,9 @@ public class FaqService {
 	}
 
 	@Transactional
-	public FaqListResponse getFaqListByCategory(int page) {
+	public FaqListResponse getFaqListByCategory(int page, int size) {
 		// 페이지 설정 (페이지당 10개 항목)
-		Pageable pageable = PageRequest.of(page-1, SIZE, Sort.by("createdAt").descending());
+		Pageable pageable = PageRequest.of(page-1, size, Sort.by("createdAt").descending());
 		
 		// FAQ 목록 조회
 		Page<Faq> faqPage = faqRepository.findAllOrderByCreatedAtDesc(pageable);

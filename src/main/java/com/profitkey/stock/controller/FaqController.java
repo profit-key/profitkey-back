@@ -1,17 +1,21 @@
 package com.profitkey.stock.controller;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.response.faq.FaqCreateResponse;
 import com.profitkey.stock.dto.response.faq.FaqResponse;
 import com.profitkey.stock.service.faq.FaqService;
+import com.profitkey.stock.dto.request.PagenationRequest;
 import com.profitkey.stock.dto.request.faq.FaqCreateRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,14 +46,15 @@ public class FaqController {
 
 	/**
 	 * FAQ 목록 조회 API
-	 * @param page 페이지 번호
 	 * @return 조회한 FAQ 목록(페이징)
 	 */
-	@GetMapping("/list/{page}")
+	@GetMapping("/list")
 	@Operation(summary = SwaggerDocs.SUMMARY_FAQ_LIST, description = SwaggerDocs.DESCRIPTION_FAQ_LIST)
-	public ResponseEntity<FaqListResponse> getFaqList(@PathVariable int page) {
-		FaqListResponse faqList = faqService.getFaqListByCategory(page);
-		return ResponseEntity.ok(faqList);
+	public ResponseEntity<FaqListResponse> getFaqList(
+		@ParameterObject @ModelAttribute PagenationRequest request
+	) {
+		FaqListResponse response = faqService.getFaqListByCategory(request.getPage(), request.getSize());
+		return ResponseEntity.ok(response);
 	}
 
 	/**

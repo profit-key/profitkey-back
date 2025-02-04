@@ -16,6 +16,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +37,7 @@ public class FaqService {
 	private final S3UploadService s3UploadService;
 	private final FaqRepository faqRepository;
 	private final UploadFileRepository uploadFileRepository;
+	private final int SIZE = 10;
 
 	@Transactional
 	public FaqCreateResponse createFaq(Boolean published, String title, String question, String answer) {
@@ -50,12 +55,15 @@ public class FaqService {
 	}
 
 	@Transactional
-	public FaqListResponse getFaqListByCategory() {
+	public FaqListResponse getFaqListByCategory(int page) {
+		// 페이지 설정 (페이지당 10개 항목)
+		Pageable pageable = PageRequest.of(page-1, SIZE, Sort.by("createdAt").descending());
+		
 		// FAQ 목록 조회
-		List<Faq> faqList = faqRepository.findAllOrderByCreatedAtDesc();
+		Page<Faq> faqPage = faqRepository.findAllOrderByCreatedAtDesc(pageable);
 		
 		// FAQ 목록을 FaqListItemResponse로 변환
-		FaqListItemResponse[] faqResponses = faqList.stream()
+		FaqListItemResponse[] faqResponses = faqPage.getContent().stream()
 			.map(faq -> FaqListItemResponse.builder()
 				.id(faq.getId())
 				.title(faq.getTitle())
@@ -66,6 +74,9 @@ public class FaqService {
 		// FaqListResponse 생성 및 반환
 		return FaqListResponse.builder()
 			.faqList(faqResponses)
+			.totalPages(faqPage.getTotalPages())
+			.totalElements(faqPage.getTotalElements())
+			.currentPage(page)
 			.build();
 	}
 

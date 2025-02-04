@@ -1,19 +1,12 @@
-package com.profitkey.stock.controller.faq;
+package com.profitkey.stock.controller;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.response.faq.FaqCreateResponse;
@@ -23,13 +16,9 @@ import com.profitkey.stock.dto.request.faq.FaqCreateRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.profitkey.stock.dto.response.faq.FaqListResponse;
 
 @RestController
@@ -41,6 +30,7 @@ public class FaqController {
 
 	/**
 	 * FAQ 생성 API
+	 * @return 생성한 FAQ 정보
 	 */
 	@PostMapping(value = "")
 	@Operation(summary = SwaggerDocs.SUMMARY_FAQ_CREATE, description = SwaggerDocs.DESCRIPTION_FAQ_CREATE)
@@ -51,12 +41,14 @@ public class FaqController {
 	}
 
 	/**
-	 * FAQ 목록 조회
+	 * FAQ 목록 조회 API
+	 * @param page 페이지 번호
+	 * @return 조회한 FAQ 목록(페이징)
 	 */
-	@GetMapping("/list")
+	@GetMapping("/list/{page}")
 	@Operation(summary = SwaggerDocs.SUMMARY_FAQ_LIST, description = SwaggerDocs.DESCRIPTION_FAQ_LIST)
-	public ResponseEntity<FaqListResponse> getFaqList() {
-		FaqListResponse faqList = faqService.getFaqListByCategory();
+	public ResponseEntity<FaqListResponse> getFaqList(@PathVariable int page) {
+		FaqListResponse faqList = faqService.getFaqListByCategory(page);
 		return ResponseEntity.ok(faqList);
 	}
 

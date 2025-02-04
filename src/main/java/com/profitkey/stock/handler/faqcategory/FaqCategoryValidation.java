@@ -2,8 +2,6 @@ package com.profitkey.stock.handler.faqcategory;
 
 import org.springframework.stereotype.Component;
 
-import com.profitkey.stock.dto.request.faq.FaqCategoryCreateRequest;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

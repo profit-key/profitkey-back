@@ -7,27 +7,26 @@ import com.profitkey.stock.dto.common.FileInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@Builder
+@Setter
 @Schema(description = "FAQ 상세 조회 응답")
 public class FaqResponse {
     private Long id;
     private String title;
-    private String content;
+    private String question;
+    private String answer;
     private Boolean published;
-    private String categoryName;
     private LocalDateTime createdAt;
-    private FileInfo[] fileInfos;
 
     @Builder
-    public FaqResponse(Long id, String title, String content, Boolean published, String categoryName, LocalDateTime createdAt, FileInfo[] fileInfos) {
+    public FaqResponse(Long id, String title, String question, String answer, String content, Boolean published, LocalDateTime createdAt, FileInfo[] fileInfos) {
         this.id = id;
         this.title = title;
-        this.content = content;
+        this.question = question;
+        this.answer = answer;
         this.published = published;
-        this.categoryName = categoryName;
         this.createdAt = createdAt;
-        this.fileInfos = fileInfos;
     }
 }

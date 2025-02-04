@@ -1,6 +1,7 @@
 package com.profitkey.stock.dto.response.faq;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.profitkey.stock.dto.common.FileInfo;
 
@@ -13,19 +14,20 @@ import lombok.Setter;
 @Setter
 @Schema(description = "FAQ 생성 응답")
 public class FaqCreateResponse {
+	private Long id;
 	private String faqCategoryName;
 	private String title;
-	private String content;
+	private String question;
+	private String answer;
 	private Boolean published;
-	private FileInfo[] fileInfos;
 
 	@Builder
-	public FaqCreateResponse(String faqCategoryName, String title, String content, Boolean published,
-		FileInfo[] fileInfos) {
+	public FaqCreateResponse(Long id, String faqCategoryName, String title, String question, String answer, Boolean published) {
+		this.id = id;
 		this.faqCategoryName = faqCategoryName;
 		this.title = title;
-		this.content = content;
+		this.question = question;
+		this.answer = answer;
 		this.published = published;
-		this.fileInfos = fileInfos;
 	}
 }

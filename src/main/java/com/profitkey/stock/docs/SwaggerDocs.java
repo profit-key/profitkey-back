@@ -22,18 +22,15 @@ public class SwaggerDocs {
 	 * ****************************************
 	 */
 
-	/** FAQ카테고리 생성 docs */
-	public static final String SUMMARY_FAQ_CATEGORY_CREATE = "FAQ 카테고리 생성";
-	public static final String DESCRIPTION_FAQ_CATEGORY_CREATE =
-		"FAQ 카테고리를 생성합니다.<br><br>" + "displayOrder는 0부터 순차적으로 카테고리 순서를 의미합니다.<br>" + "published는 카테고리 사용 여부를 의미합니다.<br>"
-			+ "categoryName은 필수값이며 published는 기본값이 true, displayOrder는 기본값이 후순위입니다.";
-	/** FAQ카테고리 리스트 조회 docs */
-	public static final String SUMMARY_FAQ_CATEGORY_LIST = "FAQ 카테고리 리스트 조회";
-	public static final String DESCRIPTION_FAQ_CATEGORY_LIST = "FAQ 카테고리 항목들을 모두 조회합니다.";
-	/** FAQ카테고리 수정 docs */
-	public static final String SUMMARY_FAQ_CATEGORY_UPDATE = "FAQ 카테고리 수정";
-	public static final String DESCRIPTION_FAQ_CATEGORY_UPDATE =
-		"FAQ 카테고리를 수정합니다.<br><br>" + "displayOrder는 0부터 순차적으로 카테고리 순서를 의미합니다.<br>" + "published는 카테고리 사용 여부를 의미합니다.";
+	public static final String SUMMARY_FAQ_CREATE = "FAQ 생성";
+	public static final String DESCRIPTION_FAQ_CREATE = "FAQ 항목을 생성합니다.";
+	public static final String SUMMARY_FAQ_LIST = "FAQ 목록 조회";
+	public static final String DESCRIPTION_FAQ_LIST = """
+		FAQ 목록을 조회합니다. <br>
+		공개여부가 true인 리스트만 반환합니다. <br>
+		최신순으로 반환합니다.
+		""";
+
 
 	/**
 	 * ****************************************

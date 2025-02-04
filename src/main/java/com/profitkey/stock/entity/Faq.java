@@ -35,7 +35,10 @@ public class Faq {
 	private String title;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
-	private String content;
+	private String question;
+
+	@Column(nullable = false, columnDefinition = "TEXT")
+	private String answer;
 
 	@Column(nullable = false)
 	private Boolean published;
@@ -48,18 +51,14 @@ public class Faq {
 	@Column(name = "updated_at", nullable = true)
 	private LocalDateTime updatedAt;
 
-	@ManyToOne()
-	@JoinColumn(name = "faq_ctg_id", nullable = false)
-	private FaqCategoryCode faqCategory;
-
 	@OneToMany(mappedBy = "faq", cascade = CascadeType.ALL)
 	private List<UploadFile> uploadFiles = new ArrayList<>();
 
 	@Builder
-	public Faq(String title, String content, Boolean published, FaqCategoryCode faqCategory) {
+	public Faq(String title, String question, String answer, Boolean published) {
 		this.title = title;
-		this.content = content;
+		this.question = question;
+		this.answer = answer;
 		this.published = published == null ? true : published;
-		this.faqCategory = faqCategory;
 	}
 }

@@ -11,31 +11,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
-	@Query(value = "WITH RECURSIVE community_tree AS ( " +
-		"    SELECT c.id, c.writer_id, c.parent_id, c.content, c.created_at, c.updated_at, " +
-		"           c.id AS root_id, 1 AS depth " +
-		"    FROM community c " +
-		"    WHERE (:stockCode IS NOT NULL AND SUBSTRING(c.id, 9, 6) = :stockCode) " +
-		"       OR (:id IS NOT NULL AND c.id = :id) " +
-		"    UNION ALL " +
-		"    SELECT c.id, c.writer_id, c.parent_id, c.content, c.created_at, c.updated_at, " +
-		"           ct.root_id, ct.depth + 1 " +
-		"    FROM community c " +
-		"    JOIN community_tree ct ON c.parent_id = ct.id " +
-		") " +
-		"SELECT t.*, COALESCE(l.like_count, 0) AS likeCount " +
-		"FROM community_tree t " +
-		"LEFT JOIN ( " +
-		"    SELECT comment_id, COUNT(*) AS like_count " +
-		"    FROM likes " +
-		"    GROUP BY comment_id " +
-		") l ON t.id = l.comment_id " +
-		"ORDER BY t.root_id ASC, t.depth ASC, t.created_at ASC",
-		countQuery = "SELECT COUNT(*) FROM community c " +
-			"WHERE (:stockCode IS NOT NULL AND SUBSTRING(c.id, 9, 6) = :stockCode) " +
-			"   OR (:id IS NOT NULL AND c.id = :id)",
-		nativeQuery = true)
-	Page<Community> findByStockCode(@Param("stockCode") String stockCode, @Param("id") String id, Pageable pageable);
+	@Query("SELECT c, " +
+		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id), " +
+		" (SELECT COUNT(*) FROM Community cc WHERE cc.parentId = c.id) " +
+		" FROM Community c " +
+		" WHERE SUBSTRING(c.id, 9, 6) = :stockCode " +
+		" AND c.parentId = '0'")
+	Page<Object[]> findByStockCodeWithCounts(@Param("stockCode") String stockCode, Pageable pageable);
+
+	@Query("SELECT c, " +
+		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id) " +
+		" FROM Community c " +
+		" WHERE c.parentId = :id " +
+		" ORDER BY c.createdAt ASC")
+	Page<Object[]> findByParentId(@Param("id") String id, Pageable pageable);
 
 	@Query(value = """
 		    SELECT COUNT(*) + 1

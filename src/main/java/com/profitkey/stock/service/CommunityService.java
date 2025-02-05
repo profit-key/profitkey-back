@@ -27,15 +27,30 @@ public class CommunityService {
 	private final int SIZE = 10;
 
 	@Transactional(readOnly = true)
-	public Page<Community> getCommunityByStockCode(String stockCode, int page) {
-		Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.unsorted());
-		return communityRepository.findByStockCode(stockCode, null, pageable);
+	public Page<CommunityResponse> getCommunityByStockCode(String stockCode, int page) {
+		Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "id"));
+
+		Page<Object[]> results = communityRepository.findByStockCodeWithCounts(stockCode, pageable);
+
+		return results.map(row -> CommunityResponse.fromEntity(
+			(Community)row[0],
+			((Number)row[1]).longValue(),
+			((Number)row[2]).longValue()
+		));
 	}
 
 	@Transactional(readOnly = true)
-	public Page<Community> getCommunityById(String id, int page) {
-		Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.unsorted());
-		return communityRepository.findByStockCode(null, id, pageable);
+	public Page<CommunityResponse> getCommunityById(String id, int page) {
+		Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "id"));
+
+		Page<Object[]> results = communityRepository.findByParentId(id, pageable);
+
+		return results.map(row -> {
+			Community community = (Community)row[0];
+			long likeCount = ((Number)row[1]).longValue();
+
+			return CommunityResponse.fromEntity(community, likeCount, 0);
+		});
 	}
 
 	@Transactional
@@ -52,7 +67,7 @@ public class CommunityService {
 			.content(request.getContent())
 			.build();
 		communityRepository.save(community);
-		return CommunityResponse.fromEntity(community);
+		return CommunityResponse.fromEntity(community, 0, 0);
 	}
 
 	@Transactional
@@ -62,7 +77,7 @@ public class CommunityService {
 
 		community.setContent(request.getContent());
 		communityRepository.save(community);
-		return CommunityResponse.fromEntity(community);
+		return CommunityResponse.fromEntity(community, 0, 0);
 	}
 
 	@Transactional

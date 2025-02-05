@@ -14,8 +14,10 @@ public class CommunityResponse {
 	private final String content;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime updatedAt;
+	private long likeCount;
+	private long replieCount;
 
-	public static CommunityResponse fromEntity(Community community) {
+	public static CommunityResponse fromEntity(Community community, long likeCount, long replieCount) {
 		return CommunityResponse.builder()
 			.id(community.getId())
 			.writerId(community.getWriterId())
@@ -23,6 +25,9 @@ public class CommunityResponse {
 			.content(community.getContent())
 			.createdAt(community.getCreatedAt())
 			.updatedAt(community.getUpdatedAt())
+			.likeCount(likeCount)
+			.replieCount(replieCount)
 			.build();
 	}
+
 }

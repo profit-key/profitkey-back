@@ -32,29 +32,28 @@ public class User {
 
 	@Column(length = 100)
 	private String email;
-
-	@Column(name = "profile_image_url", length = 500)
+	@Column(name = "PROFILE_IMAGE_URL", length = 500)
 	private String profileImageUrl;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "provider")
+	@Column(name = "PROVIDER")
 	private AuthProvider provider;
 
-	@Column(name = "access_token", columnDefinition = "TEXT")
+	@Column(name = "ACCESS_TOKEN", columnDefinition = "TEXT")
 	private String accessToken;
 
 	@Column(length = 50)
 	private String nickname;
 
-	@Column(name = "is_deleted", nullable = false)
+	@Column(name = "IS_DELETED", nullable = false)
 	private Boolean isDeleted = false;
 
 	@CreationTimestamp
-	@Column(name = "created_at", updatable = false, nullable = false)
+	@Column(name = "CREATED_AT", updatable = false, nullable = false)
 	private LocalDateTime createdAt;
 
 	@UpdateTimestamp
-	@Column(name = "updated_at", nullable = true)
+	@Column(name = "UPDATED_AT", nullable = true)
 	private LocalDateTime updatedAt;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

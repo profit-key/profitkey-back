@@ -1,19 +1,17 @@
 package com.profitkey.stock.entity;
 
-import java.time.LocalDate;
-
-import org.hibernate.annotations.CreationTimestamp;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "DashBoards")
@@ -25,13 +23,13 @@ public class DashBoard {
 	private Long id;
 
 	@CreationTimestamp
-	@Column(name = "today_date", nullable = false)
+	@Column(name = "TODAY_DATE", nullable = false)
 	private LocalDate todayDate;
 
-	@Column(name = "today_visitor_cnt", nullable = false)
+	@Column(name = "TODAY_VISITOR_CNT", nullable = false)
 	private Integer todayVisitorCnt = 0;
 
-	@Column(name = "new_signup_cnt", nullable = false)
+	@Column(name = "NEW_SIGNUP_CNT", nullable = false)
 	private Integer newSignupCnt = 0;
 
 	@Builder

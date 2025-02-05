@@ -15,7 +15,6 @@ import lombok.Setter;
 @Schema(description = "FAQ 생성 응답")
 public class FaqCreateResponse {
 	private Long id;
-	private String faqCategoryName;
 	private String title;
 	private String question;
 	private String answer;
@@ -24,7 +23,6 @@ public class FaqCreateResponse {
 	@Builder
 	public FaqCreateResponse(Long id, String faqCategoryName, String title, String question, String answer, Boolean published) {
 		this.id = id;
-		this.faqCategoryName = faqCategoryName;
 		this.title = title;
 		this.question = question;
 		this.answer = answer;

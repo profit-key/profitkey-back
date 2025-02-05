@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.response.faq.FaqCreateResponse;
 import com.profitkey.stock.dto.response.faq.FaqResponse;
-import com.profitkey.stock.service.faq.FaqService;
+import com.profitkey.stock.service.FaqService;
 import com.profitkey.stock.dto.request.PagenationRequest;
 import com.profitkey.stock.dto.request.faq.FaqCreateRequest;
 
@@ -36,7 +35,7 @@ public class FaqController {
 	 * FAQ 생성 API
 	 * @return 생성한 FAQ 정보
 	 */
-	@PostMapping(value = "")
+	@PostMapping("")
 	@Operation(summary = SwaggerDocs.SUMMARY_FAQ_CREATE, description = SwaggerDocs.DESCRIPTION_FAQ_CREATE)
 	public ResponseEntity<FaqCreateResponse> createFaq(@RequestBody FaqCreateRequest request) {
 		FaqCreateResponse result = faqService.createFaq(request.getPublished(), request.getTitle(),
@@ -59,6 +58,7 @@ public class FaqController {
 
 	/**
 	 * FAQ 상세 조회
+	 * @return 조회한 FAQ 상세 내역
 	 */
 	@GetMapping("/{id}")
 	@Operation(summary = SwaggerDocs.SUMMARY_FAQ_INFO, description = SwaggerDocs.DESCRIPTION_FAQ_INFO)

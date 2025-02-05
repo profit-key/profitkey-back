@@ -51,9 +51,6 @@ public class Faq {
 	@Column(name = "updated_at", nullable = true)
 	private LocalDateTime updatedAt;
 
-	@OneToMany(mappedBy = "faq", cascade = CascadeType.ALL)
-	private List<UploadFile> uploadFiles = new ArrayList<>();
-
 	@Builder
 	public Faq(String title, String question, String answer, Boolean published) {
 		this.title = title;

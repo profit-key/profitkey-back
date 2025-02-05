@@ -3,44 +3,49 @@ package com.profitkey.stock.entity;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AccessLevel;
 
 @Entity
-@Table(name = "UploadFiles")
+@Table(name = "Announcements")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UploadFile {
+public class Announcement {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "file_name", nullable = false)
-	private String fileName;
+	@Column(nullable = false, length = 255)
+	private String title;
+
+	@Column(nullable = false, columnDefinition = "TEXT")
+	private String content;
+
+	@Column(nullable = false)
+	private Boolean published;
 
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false, nullable = false)
 	private LocalDateTime createdAt;
 
-	@Column(name = "file_key", nullable = false, unique = true)
-	private String fileKey;
+	@UpdateTimestamp
+	@Column(name = "updated_at", nullable = true)
+	private LocalDateTime updatedAt;
 
 	@Builder
-	private UploadFile(String fileName, String fileKey, Faq faq) {
-		this.fileName = fileName;
-		this.fileKey = fileKey;
+	public Announcement(String title, String content, Boolean published) {
+		this.title = title;
+		this.content = content;
+		this.published = published == null ? true : published;
 	}
-
 }
-

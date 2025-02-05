@@ -21,7 +21,6 @@ public class SwaggerDocs {
 	 * FaqCategory Swagger Docs 모음
 	 * ****************************************
 	 */
-
 	public static final String SUMMARY_FAQ_CREATE = "FAQ 생성";
 	public static final String DESCRIPTION_FAQ_CREATE = "FAQ 항목을 생성합니다.";
 	public static final String SUMMARY_FAQ_LIST = "FAQ 목록 조회";
@@ -36,6 +35,27 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_FAQ_INFO = """
 		FAQ 상세 항목을 조회합니다. 잘못된 id 조회시 404 에러를 반환합니다.
 		""";
+
+	/**
+	 * ****************************************
+	 * AnnounceMent(공지사항) Swagger Docs 모음
+	 * ****************************************
+	 */
+	public static final String SUMMARY_ANNOUNCE_CREATE = "공지사항 생성";
+	public static final String DESCRIPTION_ANNOUNCE_CREATE = "공지사항을 생성합니다.";
+	public static final String SUMMARY_ANNOUNCE_LIST = "공지사항 목록 조회";
+	public static final String DESCRIPTION_ANNOUNCE_LIST = """
+		공지사항 목록을 조회합니다. <br>
+		공개여부가 true인 리스트만 반환합니다. <br>
+		page는 1페이지부터 조회할 페이지 번호입니다. <br>
+		size는 한 페이지에 보여줄 아이템 수입니다. <br>
+		최신순으로 반환합니다.
+		""";
+	public static final String SUMMARY_ANNOUNCE_INFO = "공지사항 상세 항목 조회";
+	public static final String DESCRIPTION_ANNOUNCE_INFO = """
+		공지사항 상세 항목을 조회합니다. 잘못된 id 조회시 404 에러를 반환합니다.
+		""";
+
 
 	/**
 	 * ****************************************

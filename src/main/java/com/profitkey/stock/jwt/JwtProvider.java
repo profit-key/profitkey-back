@@ -1,20 +1,19 @@
 package com.profitkey.stock.jwt;
 
-import java.util.Date;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
-
+import com.profitkey.stock.entity.AuthProvider;
 import com.profitkey.stock.entity.User;
-
+import com.profitkey.stock.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
@@ -26,6 +25,7 @@ public class JwtProvider {
 	private String secretKey;
 
 	private final long validityInMilliseconds = 3600000; // 1시간
+	private final UserService userService;
 
 	// 로그 출력 추가
 	@PostConstruct
@@ -68,7 +68,8 @@ public class JwtProvider {
 	// 인증 정보 추출
 	public Authentication getAuthentication(String token) {
 		String email = getEmailFromToken(token); // 토큰에서 이메일 추출
-		return new UsernamePasswordAuthenticationToken(email, "", null); // 인증 객체 생성
+		User user = userService.findOrCreateUser(email, token, "", AuthProvider.KAKAO);
+		return new UsernamePasswordAuthenticationToken(user, "", null); // 인증 객체 생성
 	}
 
 	// Authorization 헤더에서 토큰 추출

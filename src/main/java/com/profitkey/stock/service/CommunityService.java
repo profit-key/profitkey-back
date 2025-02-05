@@ -6,12 +6,15 @@ import com.profitkey.stock.dto.request.community.LikeRequest;
 import com.profitkey.stock.dto.response.community.CommunityResponse;
 import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.entity.Likes;
+import com.profitkey.stock.entity.User;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.community.LikesRepository;
+import com.profitkey.stock.util.SecurityUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommunityService {
 	private final CommunityRepository communityRepository;
 	private final LikesRepository likesRepository;
@@ -91,6 +95,11 @@ public class CommunityService {
 	}
 
 	public void likeComment(LikeRequest request) {
+		User user = SecurityUtil.getUser();
+		log.info(" id : {} ", user.getId());
+		log.info(" email : {} ", user.getEmail());
+		log.info(" provider : {} ", user.getProvider());
+		log.info(" nickname : {} ", user.getNickname());
 		Likes likes = Likes.builder()
 			.commentId(request.getCommentId())
 			.writerId(request.getUserId())

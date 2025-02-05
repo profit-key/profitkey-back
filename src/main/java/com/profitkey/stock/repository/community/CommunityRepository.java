@@ -15,24 +15,23 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 	@Query("SELECT c, " +
 		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id), " +
 		" (SELECT COUNT(*) FROM Community cc WHERE cc.parentId = c.id) " +
-		" FROM Community c " +
+		"  FROM Community c " +
 		" WHERE SUBSTRING(c.id, 9, 6) = :stockCode " +
-		" AND c.parentId = '0'")
+		"   AND c.parentId = '0'")
 	Page<Object[]> findByStockCodeWithCounts(@Param("stockCode") String stockCode, Pageable pageable);
 
 	@Query("SELECT c, " +
 		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id) " +
-		" FROM Community c " +
+		"  FROM Community c " +
 		" WHERE c.parentId = :id " +
 		" ORDER BY c.createdAt ASC")
 	Page<Object[]> findByParentId(@Param("id") String id, Pageable pageable);
 
-	@Query(value = """
-		    SELECT COUNT(*) + 1
-		      FROM community
-		     WHERE SUBSTRING(ID, 1, 8) = :today
-		       AND SUBSTRING(ID, 9, 6) = :stockCode
-		""", nativeQuery = true)
+	@Query(value = " SELECT COUNT(*) + 1 " +
+		"  FROM Community c " +
+		" WHERE SUBSTRING(c.id, 1, 8) = :today " +
+		"   AND SUBSTRING(c.id, 9, 6) = :stockCode "
+		, nativeQuery = true)
 	int getNextSequence(@Param("today") String today, @Param("stockCode") String stockCode);
 
 	@Modifying

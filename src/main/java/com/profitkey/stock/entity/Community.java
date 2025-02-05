@@ -23,23 +23,23 @@ import org.springframework.data.annotation.CreatedDate;
 @Builder
 public class Community {
 	@Id
-	@Column(name = "id")
+	@Column(name = "ID")
 	private String id;
 
-	@Column(name = "writer_id")
+	@Column(name = "WRITER_ID")
 	private Integer writerId;
 
-	@Column(name = "parent_id")
+	@Column(name = "PARENT_ID")
 	private String parentId;
 
-	@Column(name = "content")
+	@Column(name = "CONTENT")
 	private String content;
 
 	@CreatedDate
-	@Column(name = "created_at")
+	@Column(name = "CREATED_AT")
 	private LocalDateTime createdAt;
 
 	@UpdateTimestamp
-	@Column(name = "updated_at")
+	@Column(name = "UPDATED_AT")
 	private LocalDateTime updatedAt;
 }

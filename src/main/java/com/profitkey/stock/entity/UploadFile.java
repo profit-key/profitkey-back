@@ -1,21 +1,17 @@
 package com.profitkey.stock.entity;
 
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.CreationTimestamp;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AccessLevel;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "UploadFiles")
@@ -26,14 +22,14 @@ public class UploadFile {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "file_name", nullable = false)
+	@Column(name = "FILE_NAME", nullable = false)
 	private String fileName;
 
 	@CreationTimestamp
-	@Column(name = "created_at", updatable = false, nullable = false)
+	@Column(name = "CREATED_AT", updatable = false, nullable = false)
 	private LocalDateTime createdAt;
 
-	@Column(name = "file_key", nullable = false, unique = true)
+	@Column(name = "FILE_KEY", nullable = false, unique = true)
 	private String fileKey;
 
 	@Builder

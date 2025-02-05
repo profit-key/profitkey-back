@@ -23,21 +23,21 @@ public class CategoryCode {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "display_order")
+	@Column(name = "DISPLAY_ORDER")
 	private Integer displayOrder;
 
-	@Column(name = "ctg_name", nullable = false, length = 50, unique = true)
+	@Column(name = "CTG_NAME", nullable = false, length = 50, unique = true)
 	private String categoryName;
 
 	@Column(nullable = false)
 	private Boolean published = true;
 
 	@CreationTimestamp
-	@Column(name = "created_at", updatable = false, nullable = false)
+	@Column(name = "CREATED_AT", updatable = false, nullable = false)
 	private LocalDateTime createdAt;
 
 	@UpdateTimestamp
-	@Column(name = "updated_at", nullable = true)
+	@Column(name = "UPDATED_AT", nullable = true)
 	private LocalDateTime updatedAt;
 
 	@Builder

@@ -1,11 +1,12 @@
 package com.profitkey.stock.controller;
 
+import com.profitkey.stock.annotation.UserInfo;
 import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
 import com.profitkey.stock.dto.request.community.LikeRequest;
 import com.profitkey.stock.dto.response.community.CommunityResponse;
-import com.profitkey.stock.entity.Community;
+import com.profitkey.stock.entity.User;
 import com.profitkey.stock.service.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +39,9 @@ public class CommunityController {
 	 */
 	@GetMapping("/{stockCode}/{page}")
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LIST, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LIST)
-	public ResponseEntity<Page<Community>> getCommunityList(@PathVariable String stockCode,
+	public ResponseEntity<Page<CommunityResponse>> getCommunityList(@PathVariable String stockCode,
 		@PathVariable int page) {
-		Page<Community> communityPage = communityService.getCommunityByStockCode(stockCode, page);
+		Page<CommunityResponse> communityPage = communityService.getCommunityByStockCode(stockCode, page);
 		return ResponseEntity.ok(communityPage);
 	}
 
@@ -52,8 +53,8 @@ public class CommunityController {
 	 */
 	@GetMapping("/detail/{page}")
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_DETAIL, description = SwaggerDocs.DESCRIPTION_COMMUNITY_DETAIL)
-	public ResponseEntity<Page<Community>> getCommunity(@RequestParam String id, @PathVariable int page) {
-		Page<Community> communityPage = communityService.getCommunityById(id, page);
+	public ResponseEntity<Page<CommunityResponse>> getCommunity(@RequestParam String id, @PathVariable int page) {
+		Page<CommunityResponse> communityPage = communityService.getCommunityById(id, page);
 		return ResponseEntity.ok(communityPage);
 	}
 
@@ -102,6 +103,11 @@ public class CommunityController {
 		}
 
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/user")
+	public User getUserInfo(@UserInfo User user) {
+		return user;
 	}
 
 }

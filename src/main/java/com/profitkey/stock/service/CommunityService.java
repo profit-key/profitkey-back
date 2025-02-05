@@ -6,12 +6,15 @@ import com.profitkey.stock.dto.request.community.LikeRequest;
 import com.profitkey.stock.dto.response.community.CommunityResponse;
 import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.entity.Likes;
+import com.profitkey.stock.entity.User;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.community.LikesRepository;
+import com.profitkey.stock.util.SecurityUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,21 +24,37 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommunityService {
 	private final CommunityRepository communityRepository;
 	private final LikesRepository likesRepository;
 	private final int SIZE = 10;
 
 	@Transactional(readOnly = true)
-	public Page<Community> getCommunityByStockCode(String stockCode, int page) {
-		Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.unsorted());
-		return communityRepository.findByStockCode(stockCode, null, pageable);
+	public Page<CommunityResponse> getCommunityByStockCode(String stockCode, int page) {
+		Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "id"));
+
+		Page<Object[]> results = communityRepository.findByStockCodeWithCounts(stockCode, pageable);
+
+		return results.map(row -> CommunityResponse.fromEntity(
+			(Community)row[0],
+			((Number)row[1]).longValue(),
+			((Number)row[2]).longValue()
+		));
 	}
 
 	@Transactional(readOnly = true)
-	public Page<Community> getCommunityById(String id, int page) {
-		Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.unsorted());
-		return communityRepository.findByStockCode(null, id, pageable);
+	public Page<CommunityResponse> getCommunityById(String id, int page) {
+		Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "id"));
+
+		Page<Object[]> results = communityRepository.findByParentId(id, pageable);
+
+		return results.map(row -> {
+			Community community = (Community)row[0];
+			long likeCount = ((Number)row[1]).longValue();
+
+			return CommunityResponse.fromEntity(community, likeCount, 0);
+		});
 	}
 
 	@Transactional
@@ -52,7 +71,7 @@ public class CommunityService {
 			.content(request.getContent())
 			.build();
 		communityRepository.save(community);
-		return CommunityResponse.fromEntity(community);
+		return CommunityResponse.fromEntity(community, 0, 0);
 	}
 
 	@Transactional
@@ -62,7 +81,7 @@ public class CommunityService {
 
 		community.setContent(request.getContent());
 		communityRepository.save(community);
-		return CommunityResponse.fromEntity(community);
+		return CommunityResponse.fromEntity(community, 0, 0);
 	}
 
 	@Transactional
@@ -76,6 +95,11 @@ public class CommunityService {
 	}
 
 	public void likeComment(LikeRequest request) {
+		User user = SecurityUtil.getUser();
+		log.info(" id : {} ", user.getId());
+		log.info(" email : {} ", user.getEmail());
+		log.info(" provider : {} ", user.getProvider());
+		log.info(" nickname : {} ", user.getNickname());
 		Likes likes = Likes.builder()
 			.commentId(request.getCommentId())
 			.writerId(request.getUserId())

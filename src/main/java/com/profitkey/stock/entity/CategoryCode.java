@@ -1,23 +1,18 @@
 package com.profitkey.stock.entity;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -44,9 +39,6 @@ public class CategoryCode {
 	@UpdateTimestamp
 	@Column(name = "updated_at", nullable = true)
 	private LocalDateTime updatedAt;
-
-	@OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-	private List<Board> boards;
 
 	@Builder
 	private CategoryCode(Integer displayOrder, String categoryName, Boolean published) {

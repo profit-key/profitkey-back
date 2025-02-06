@@ -69,6 +69,7 @@ public class StockController {
 	@PostMapping("/inquire-daily-itemchartprice")
 	public ResponseEntity<Object> getInquireDailyItemchartprice(@RequestBody InquireDailyRequest request) {
 		log.info("request {}", request);
+		log.info("hello");
 		return stockService.getInquireDailyItemchartprice(request);
 	}
 

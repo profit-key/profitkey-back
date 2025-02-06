@@ -77,6 +77,7 @@ public class StockService {
 	}
 
 	public ResponseEntity<Object> getInquireDailyItemchartprice(InquireDailyRequest request) {
+		log.info("hello2");
 		Object result = null;
 		String urlData = kisApiProperties.getInquireDailyUrl();
 		String trId = request.getTr_id();

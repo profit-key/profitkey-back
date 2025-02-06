@@ -32,8 +32,6 @@ public class User {
 
 	@Column(length = 100)
 	private String email;
-	@Column(name = "PROFILE_IMAGE_URL", length = 500)
-	private String profileImageUrl;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PROVIDER")
@@ -42,7 +40,7 @@ public class User {
 	@Column(name = "ACCESS_TOKEN", columnDefinition = "TEXT")
 	private String accessToken;
 
-	@Column(length = 50)
+	@Column(name = "NICKNAME", length = 50)
 	private String nickname;
 
 	@Column(name = "IS_DELETED", nullable = false)
@@ -60,12 +58,11 @@ public class User {
 	private List<FavoriteStock> favoriteStocks;
 
 	@Builder
-	private User(String email, AuthProvider provider, String accessToken, String nickname, String profileImageUrl) {
+	private User(String email, AuthProvider provider, String accessToken, String nickname) {
 		this.email = email;
 		this.provider = provider;
 		this.accessToken = accessToken;
 		this.nickname = nickname;
 		this.isDeleted = false;
-		this.profileImageUrl = profileImageUrl;
 	}
 } 

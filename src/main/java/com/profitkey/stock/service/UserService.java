@@ -1,126 +1,120 @@
 package com.profitkey.stock.service;
 
-import java.util.Objects;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.profitkey.stock.entity.AuthProvider;
+import com.profitkey.stock.entity.User;
+import com.profitkey.stock.repository.user.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.profitkey.stock.entity.AuthProvider;
-import com.profitkey.stock.entity.User;
-import com.profitkey.stock.repository.UserRepository;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
 
-	private final UserRepository userRepository;
-	private final RestTemplate restTemplate;
+    private final UserRepository userRepository;
+    private final RestTemplate restTemplate;
 
-	@Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-	private String kakaoClientId;
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    private String kakaoClientId;
 
-	@Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
-	private String kakaoClientSecret;
+    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
+    private String kakaoClientSecret;
 
-	@Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
-	private String kakaoRedirectUri;
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    private String kakaoRedirectUri;
 
-	/**
-	 * 카카오 API로부터 Access Token을 가져오는 메서드
-	 * @param code Authorization Code
-	 * @return Access Token
-	 */
-	public String getAccessTokenFromKakao(String code) throws JsonProcessingException {
-		String url = "https://kauth.kakao.com/oauth/token";
+    /**
+     * 카카오 API로부터 Access Token을 가져오는 메서드
+     *
+     * @param code Authorization Code
+     * @return Access Token
+     */
+    public String getAccessTokenFromKakao(String code) throws JsonProcessingException {
+        String url = "https://kauth.kakao.com/oauth/token";
 
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("grant_type", "authorization_code");
-		params.add("client_id", kakaoClientId);  // 카카오 앱 REST API 키
-		params.add("client_secret", kakaoClientSecret);  // 클라이언트 시크릿 (있다면)
-		params.add("redirect_uri", kakaoRedirectUri);  // 리다이렉트 URI
-		params.add("code", code);  // 인가 코드
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", kakaoClientId);  // 카카오 앱 REST API 키
+        params.add("client_secret", kakaoClientSecret);  // 클라이언트 시크릿 (있다면)
+        params.add("redirect_uri", kakaoRedirectUri);  // 리다이렉트 URI
+        params.add("code", code);  // 인가 코드
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-		log.info("kakaoRedirectUri" + kakaoRedirectUri);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+        log.info("kakaoRedirectUri" + kakaoRedirectUri);
 
-		try {
-			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
 
-			if (response.getStatusCode() != HttpStatus.OK) {
-				throw new RuntimeException(
-					"Error getting access token from Kakao. Status code: " + response.getStatusCode());
-			}
+            if (response.getStatusCode() != HttpStatus.OK) {
+                throw new RuntimeException(
+                        "Error getting access token from Kakao. Status code: " + response.getStatusCode());
+            }
 
-			// 응답에서 액세스 토큰 추출
-			String responseBody = response.getBody();
-			ObjectMapper objectMapper = new ObjectMapper();
-			JsonNode jsonResponse = objectMapper.readTree(responseBody);
-			return jsonResponse.get("access_token").asText();
-		} catch (Exception e) {
-			throw new RuntimeException("Error retrieving access token: " + e.getMessage(), e);
-		}
-	}
+            // 응답에서 액세스 토큰 추출
+            String responseBody = response.getBody();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonResponse = objectMapper.readTree(responseBody);
+            return jsonResponse.get("access_token").asText();
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving access token: " + e.getMessage(), e);
+        }
+    }
 
-	/**
-	 * 이메일을 기준으로 유저가 있는지 확인하고, 없으면 생성
-	 * @param email 사용자 이메일
-	 * @param accessToken 카카오 액세스 토큰
-	 * @param nickname 사용자 닉네임
-	 * @param provider 소셜 로그인 제공자
-	 *
-	 * @return User 엔티티
-	 */
-	@Transactional
-	public User findOrCreateUser(String email, String accessToken, String nickname, AuthProvider provider) {
-		Objects.requireNonNull(email, "Email cannot be null");
-		Objects.requireNonNull(accessToken, "Access Token cannot be null");
-		Objects.requireNonNull(nickname, "Nickname cannot be null");
+    /**
+     * 이메일을 기준으로 유저가 있는지 확인하고, 없으면 생성
+     *
+     * @param email       사용자 이메일
+     * @param accessToken 카카오 액세스 토큰
+     * @param nickname    사용자 닉네임
+     * @param provider    소셜 로그인 제공자
+     * @return User 엔티티
+     */
+    @Transactional
+    public User findOrCreateUser(String email, String accessToken, String nickname, AuthProvider provider) {
+        Objects.requireNonNull(email, "Email cannot be null");
+        Objects.requireNonNull(accessToken, "Access Token cannot be null");
+        Objects.requireNonNull(nickname, "Nickname cannot be null");
 
-		try {
-			User existingUser = userRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        try {
+            User existingUser = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
 
-			// 기존 사용자 업데이트
-			existingUser.setAccessToken(accessToken);
-			existingUser.setNickname(nickname);
-			return userRepository.save(existingUser);
+            // 기존 사용자 업데이트
+            existingUser.setAccessToken(accessToken);
+            existingUser.setNickname(nickname);
+            return userRepository.save(existingUser);
 
-		} catch (RuntimeException e) {
-			// 새로운 사용자 생성
-			User newUser = User.builder()
-				.email(email)
-				.accessToken(accessToken)
-				.nickname(nickname)
-				.provider(provider)
-				.build();
+        } catch (RuntimeException e) {
+            // 새로운 사용자 생성
+            User newUser = User.builder()
+                    .email(email)
+                    .accessToken(accessToken)
+                    .nickname(nickname)
+                    .provider(provider)
+                    .build();
 
-			log.info("KAKAO_CLIENT_ID: {}", kakaoClientId);
-			log.info("KAKAO_CLIENT_SECRET: {}", kakaoClientSecret);
-			log.info("KAKAO_REDIRECT_URI: {}", kakaoRedirectUri);
+            log.info("KAKAO_CLIENT_ID: {}", kakaoClientId);
+            log.info("KAKAO_CLIENT_SECRET: {}", kakaoClientSecret);
+            log.info("KAKAO_REDIRECT_URI: {}", kakaoRedirectUri);
 
-			return userRepository.save(newUser);
-		}
+            return userRepository.save(newUser);
+        }
 
-	}
+    }
 }
 

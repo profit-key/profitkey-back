@@ -52,7 +52,7 @@ public class AnnouncementController {
 	public ResponseEntity<AnnouncementListResponse> getAnnounceList(
 		@ParameterObject @ModelAttribute PagenationRequest request) {
 		AnnouncementListResponse response = announcementService.getAnnouncementList(request.getPage(),
-			request.getPage());
+			request.getSize());
 		return ResponseEntity.ok(response);
 	}
 

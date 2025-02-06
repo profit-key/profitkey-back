@@ -3,12 +3,14 @@ package com.profitkey.stock.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtUtil {
 
     @Value("${jwt.secret}")
@@ -17,7 +19,6 @@ public class JwtUtil {
     private final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60; // 1시간
     private final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7일
 
-    // JWT 생성
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
@@ -56,5 +57,6 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
 }
 

@@ -1,15 +1,14 @@
 package com.profitkey.stock.controller;
 
 import com.profitkey.stock.entity.RefreshTokenEntity;
-import com.profitkey.stock.jwt.JwtProvider;
+import com.profitkey.stock.entity.User;
 import com.profitkey.stock.repository.user.RefreshTokenRepository;
-import com.profitkey.stock.service.CustomOAuth2UserService;
-import com.profitkey.stock.service.UserService;
+import com.profitkey.stock.service.AuthService;
 import com.profitkey.stock.util.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -19,17 +18,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
-    private final UserService userService;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final JwtProvider jwtProvider;
+    private final AuthService authService;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    @GetMapping("/home")
-    public String home(@AuthenticationPrincipal OAuth2User oauth2User) {
-        String nickname = oauth2User.getAttribute("nickname");
-        log.info("nickname : {}", nickname);
-        return nickname;
+    @GetMapping("/login/kakao")
+    public ResponseEntity<?> kakaoLogin(@RequestParam("code") String accessCode, HttpServletResponse httpServletResponse) {
+        User user = authService.oAuthLogin(accessCode, httpServletResponse);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/refresh")

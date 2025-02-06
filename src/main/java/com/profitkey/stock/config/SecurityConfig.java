@@ -2,7 +2,6 @@ package com.profitkey.stock.config;
 
 import com.profitkey.stock.dto.common.RequestMatcherPaths;
 import com.profitkey.stock.jwt.JwtAuthenticationFilter;
-import com.profitkey.stock.jwt.JwtProvider;
 import com.profitkey.stock.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtProvider jwtProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
 
@@ -39,13 +37,7 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated()  // 나머지는 인증된 사용자만
                 )
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login") // 로그인 페이지 설정
-                        .defaultSuccessUrl("/api/oauth2/home") // 로그인 성공 후 이동할 페이지
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService) // 사용자 정보 가져오는 서비스
-                        )
-                )
+                .oauth2Login(oauth2 -> oauth2.disable())
                 .logout(logout -> logout.disable()) // 로그아웃 비활성화
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

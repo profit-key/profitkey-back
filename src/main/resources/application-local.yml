@@ -19,18 +19,22 @@ spring:
     oauth2:
       client:
         registration:
-          google:
-            client-id: ${STOCK_GOOGLE_LOCAL_CLIENT_ID}
-            client-secret: ${STOCK_GOOGLE_LOCAL_CLIENT_SECRET}
-            redirect-uri: ${STOCK_GOOGLE_LOCAL_REDIRECT_URI}
           kakao:
             client-id: ${STOCK_KAKAO_LOCAL_CLIENT_ID}
             client-secret: ${STOCK_KAKAO_LOCAL_CLIENT_SECRET}
-            redirect-uri: ${STOCK_KAKAO_DEV_REDIRECT_URI}
-          naver:
-            client-id: ${STOCK_NAVER_LOCAL_CLIENT_ID}
-            client-secret: ${STOCK_NAVER_LOCAL_CLIENT_SECRET}
-            redirect-uri: ${STOCK_NAVER_LOCAL_REDIRECT_URI}
+            redirect-uri: ${STOCK_KAKAO_LOCAL_REDIRECT_URI}
+            authorization-grant-type: authorization_code
+            client-name: kakao
+            scope:
+              - profile_nickname
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
 springdoc:
   default-consumes-media-type: ${STOCK_CONSUMES_MEDIATYPE}
   default-produces-media-type: ${STOCK_PRODUCES_MEDIATYPE}

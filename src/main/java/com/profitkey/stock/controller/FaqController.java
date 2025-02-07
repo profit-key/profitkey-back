@@ -14,7 +14,7 @@ import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.response.faq.FaqCreateResponse;
 import com.profitkey.stock.dto.response.faq.FaqResponse;
 import com.profitkey.stock.service.FaqService;
-import com.profitkey.stock.dto.request.PagenationRequest;
+import com.profitkey.stock.dto.request.PaginationRequest;
 import com.profitkey.stock.dto.request.faq.FaqCreateRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,7 +50,7 @@ public class FaqController {
 	@GetMapping("/list")
 	@Operation(summary = SwaggerDocs.SUMMARY_FAQ_LIST, description = SwaggerDocs.DESCRIPTION_FAQ_LIST)
 	public ResponseEntity<FaqListResponse> getFaqList(
-		@ParameterObject @ModelAttribute PagenationRequest request
+		@ParameterObject @ModelAttribute PaginationRequest request
 	) {
 		FaqListResponse response = faqService.getFaqListByCategory(request.getPage(), request.getSize());
 		return ResponseEntity.ok(response);

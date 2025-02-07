@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.profitkey.stock.docs.SwaggerDocs;
-import com.profitkey.stock.dto.common.Pagenation;
-import com.profitkey.stock.dto.request.PagenationRequest;
+import com.profitkey.stock.dto.request.PaginationRequest;
 import com.profitkey.stock.dto.request.announcement.AnnouncementCreateRequest;
 import com.profitkey.stock.dto.response.announcement.AnnouncementCreateResponse;
 import com.profitkey.stock.dto.response.announcement.AnnouncementListResponse;
@@ -50,7 +49,7 @@ public class AnnouncementController {
 	@GetMapping("/list")
 	@Operation(summary = SwaggerDocs.SUMMARY_ANNOUNCE_LIST, description = SwaggerDocs.DESCRIPTION_ANNOUNCE_LIST)
 	public ResponseEntity<AnnouncementListResponse> getAnnounceList(
-		@ParameterObject @ModelAttribute PagenationRequest request) {
+		@ParameterObject @ModelAttribute PaginationRequest request) {
 		AnnouncementListResponse response = announcementService.getAnnouncementList(request.getPage(),
 			request.getSize());
 		return ResponseEntity.ok(response);

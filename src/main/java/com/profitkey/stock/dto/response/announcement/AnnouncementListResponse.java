@@ -1,7 +1,6 @@
 package com.profitkey.stock.dto.response.announcement;
 
-import com.profitkey.stock.dto.common.Pagenation;
-import com.profitkey.stock.entity.Announcement;
+import com.profitkey.stock.dto.common.Pagination;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -13,12 +12,12 @@ import lombok.Setter;
 @Schema(description = "공지사항 목록 조회 응답")
 public class AnnouncementListResponse {
 	private AnnouncementListItem[] announcements;
-	private Pagenation pagenation;
+	private Pagination pagination;
 
 	@Builder
-	public AnnouncementListResponse(AnnouncementListItem[] announcements, Pagenation pagenation) {
+	public AnnouncementListResponse(AnnouncementListItem[] announcements, Pagination pagination) {
 		this.announcements = announcements;
-		this.pagenation = pagenation;
+		this.pagination = pagination;
 	}
 
 }

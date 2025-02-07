@@ -73,7 +73,7 @@ public class FaqService {
 		// FaqListResponse 생성 및 반환
 		return FaqListResponse.builder()
 			.faqList(faqResponses)
-			.pagenation(
+			.pagination(
 				pagenationHandler.setPagenation(faqPage.getTotalPages(), faqPage.getTotalElements(), page))
 			.build();
 	}

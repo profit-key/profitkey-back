@@ -63,7 +63,7 @@ public class AnnouncementService {
 
 		return AnnouncementListResponse.builder()
 			.announcements(announcementListItems)
-			.pagenation(
+			.pagination(
 				pagenationHandler.setPagenation(announcements.getTotalPages(), announcements.getTotalElements(), page))
 			.build();
 	}

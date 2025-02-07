@@ -1,6 +1,6 @@
 package com.profitkey.stock.dto.response.faq;
 
-import com.profitkey.stock.dto.common.Pagenation;
+import com.profitkey.stock.dto.common.Pagination;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -12,11 +12,11 @@ import lombok.Setter;
 @Schema(description = "FAQ 목록 조회 응답")
 public class FaqListResponse {
 	private FaqListItemResponse[] faqList;
-	private Pagenation pagenation;
+	private Pagination pagination;
 
 	@Builder
-	public FaqListResponse(FaqListItemResponse[] faqList, Pagenation pagenation) {
+	public FaqListResponse(FaqListItemResponse[] faqList, Pagination pagination) {
 		this.faqList = faqList;
-		this.pagenation = pagenation;
+		this.pagination = pagination;
 	}
 }

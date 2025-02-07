@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Schema(description = "페이지네이션 요청")
-public class PagenationRequest {
+public class PaginationRequest {
     
     @Schema(description = "페이지 번호", example = "1", required = true)
     private int page = 1;
@@ -15,7 +15,7 @@ public class PagenationRequest {
     @Schema(description = "페이지 크기", example = "10", required = true)
     private int size = 10;
 
-    public PagenationRequest(int page, int size) {
+    public PaginationRequest(int page, int size) {
         this.page = page;
         this.size = size;
     }

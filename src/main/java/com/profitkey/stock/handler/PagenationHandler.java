@@ -2,7 +2,7 @@ package com.profitkey.stock.handler;
 
 import org.springframework.stereotype.Component;
 
-import com.profitkey.stock.dto.common.Pagenation;
+import com.profitkey.stock.dto.common.Pagination;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PagenationHandler {
 
-	public Pagenation setPagenation(int totalPages, long totalElements, int currentPage) {
-		Pagenation pagenation = Pagenation.builder()
+	public Pagination setPagenation(int totalPages, long totalElements, int currentPage) {
+		Pagination pagination = Pagination.builder()
 			.totalElements(totalElements)
 			.totalPages(totalPages)
 			.currentPage(currentPage)
 			.build();
-		return pagenation;
+		return pagination;
 	}
 }

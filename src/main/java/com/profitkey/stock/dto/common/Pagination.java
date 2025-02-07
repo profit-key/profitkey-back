@@ -8,13 +8,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Schema(description = "페이지네이션 스키마")
-public class Pagenation {
+public class Pagination {
 	private int totalPages;
 	private long totalElements;
 	private int currentPage;
 
 	@Builder
-	public Pagenation(int totalPages, long totalElements, int currentPage) {
+	public Pagination(int totalPages, long totalElements, int currentPage) {
 		this.totalPages = totalPages;
 		this.totalElements = totalElements;
 		this.currentPage = currentPage;

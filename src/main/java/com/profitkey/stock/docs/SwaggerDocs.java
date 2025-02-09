@@ -56,7 +56,6 @@ public class SwaggerDocs {
 		공지사항 상세 항목을 조회합니다. 잘못된 id 조회시 404 에러를 반환합니다.
 		""";
 
-
 	/**
 	 * ****************************************
 	 * Community Swagger Docs 모음
@@ -113,16 +112,33 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_STOCK_MARKET_CAP = """
 		조건별 시가총액이 높은 종목을 불러옵니다.
 		""";
-	public static final String SUMMARY_KAKAO_LOGIN = "카카오 소셜 로그인 GET";
+
+	/**
+	 * ****************************************
+	 * Login/Token Docs 모음
+	 * ****************************************
+	 */
+	public static final String SUMMARY_KAKAO_LOGIN = "카카오 소셜 로그인";
 	public static final String DESCRIPTION_KAKAO_LOGIN = """
 		카카오 소셜 로그인 API입니다.
 		인가 코드를 사용하여 카카오에서 제공하는 사용자 정보를 바탕으로 JWT 토큰을 발급합니다.
+		사용자 정보가 존재하지 않으면 새로운 사용자가 생성되고, 그에 맞는 JWT 토큰이 발급됩니다.
 		""";
 
-	public static final String SUMMARY_TOKEN_LOGIN = "이메일과 공급자 정보로 JWT 토큰 발급 GET";
-	public static final String DESCRIPTION_TOKEN_LOGIN = """
-		이메일과 공급자 정보를 사용하여 JWT 토큰을 발급하는 API입니다.
-		사용자 정보가 존재하지 않으면 새로운 사용자가 생성되고, 그에 맞는 JWT 토큰이 발급됩니다.
+	public static final String SUMMARY_TOKEN_ISSUANCE = "JWT 토큰 발급";
+	public static final String DESCRIPTION_TOKEN_ISSUANCE = """
+		이메일로 JWT 토큰을 발급하는 API입니다.
+		발급된 JWT 토큰에는 아이디, 이메일, 닉네임, 공급자 정보를 포함하고 있습니다.
+		""";
+	public static final String SUMMARY_TOKEN_REFRESH = "JWT 토큰 갱신";
+	public static final String DESCRIPTION_TOKEN_REFRESH = """
+		이메일로 JWT 토큰을 갱신하는 API입니다.
+		기존 토큰과 비교하여 갱신여부를 판단합니다.
+		""";
+	public static final String SUMMARY_TOKEN_DISPOSE = "JWT 토큰 폐기";
+	public static final String DESCRIPTION_TOKEN_DISPOSE = """
+		이메일로 JWT 토큰을 폐기하는 API입니다.
+		토큰을 빈값으로 갱신합니다.
 		""";
 
 }

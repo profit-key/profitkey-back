@@ -11,8 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefreshTokenEntity {
-    @Id
-    private String email;
-    private String refreshToken;
-
+	@Id
+	private String email;
+	private String refreshToken;
 }

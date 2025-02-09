@@ -1,41 +1,58 @@
 package com.profitkey.stock.controller;
 
-import com.profitkey.stock.entity.RefreshTokenEntity;
+import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.entity.User;
-import com.profitkey.stock.repository.user.RefreshTokenRepository;
 import com.profitkey.stock.service.AuthService;
-import com.profitkey.stock.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/oauth2")
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
-    private final AuthService authService;
-    private final JwtUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
+	private final AuthService authService;
 
-    @GetMapping("/login/kakao")
-    public ResponseEntity<?> kakaoLogin(@RequestParam("code") String accessCode, HttpServletResponse httpServletResponse) {
-        User user = authService.oAuthLogin(accessCode, httpServletResponse);
-        return ResponseEntity.ok(user);
-    }
+	@Operation(summary = SwaggerDocs.SUMMARY_KAKAO_LOGIN,
+		description = SwaggerDocs.DESCRIPTION_KAKAO_LOGIN)
+	@GetMapping("/login/kakao")
+	public ResponseEntity<?> kakaoLogin(@RequestParam("code") String accessCode,
+		HttpServletResponse httpServletResponse) {
+		User user = authService.oAuthLogin(accessCode, httpServletResponse);
+		return ResponseEntity.ok(user);
+	}
 
-    @PostMapping("/refresh")
-    public String refreshToken(@RequestParam String email, @RequestParam String refreshToken) {
-        Optional<RefreshTokenEntity> savedToken = refreshTokenRepository.findByEmail(email);
+	@Operation(summary = SwaggerDocs.SUMMARY_TOKEN_ISSUANCE,
+		description = SwaggerDocs.DESCRIPTION_TOKEN_ISSUANCE)
+	@PostMapping("/issuance")
+	public ResponseEntity<?> issuance(@RequestParam("email") String email) {
+		String accessToken = authService.issueToken(email);
+		return ResponseEntity.ok(accessToken);
+	}
 
-        if (savedToken.isPresent() && savedToken.get().getRefreshToken().equals(refreshToken)) {
-            return jwtUtil.generateToken(email);
-        }
+	@Operation(summary = SwaggerDocs.SUMMARY_TOKEN_REFRESH,
+		description = SwaggerDocs.DESCRIPTION_TOKEN_REFRESH)
+	@PostMapping("/refresh")
+	public ResponseEntity<?> refresh(@RequestHeader("Authorization") String token) {
+		String newAccessToken = authService.refreshToken(token);
+		return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+	}
 
-        throw new RuntimeException("Invalid refresh token");
-    }
+	@Operation(summary = SwaggerDocs.SUMMARY_TOKEN_DISPOSE,
+		description = SwaggerDocs.DESCRIPTION_TOKEN_DISPOSE)
+	@PostMapping("/dispose")
+	public ResponseEntity<?> dispose(@RequestHeader("Authorization") String token) {
+		authService.disposeToken(token);
+		return ResponseEntity.ok("정상처리되었습니다.");
+	}
 }

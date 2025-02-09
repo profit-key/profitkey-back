@@ -1,7 +1,9 @@
 package com.profitkey.stock.service;
 
 import com.profitkey.stock.entity.RefreshTokenEntity;
+import com.profitkey.stock.entity.User;
 import com.profitkey.stock.repository.user.RefreshTokenRepository;
+import com.profitkey.stock.repository.user.UserRepository;
 import com.profitkey.stock.util.JwtUtil;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 	private final JwtUtil jwtUtil;
 	private final RefreshTokenRepository refreshTokenRepository;
+	private final UserRepository userRepository;
 
 	@Override
 	@Transactional
@@ -28,7 +31,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		Map<String, Object> attributes = oauth2User.getAttributes();
 		String email = ((Map<String, Object>)attributes.get("kakao_account")).get("email").toString();
 
-		String accessToken = jwtUtil.generateToken(email);
+		User user = userRepository.findByEmail(email)
+			.orElseThrow(() -> new RuntimeException("User not found"));
+
+		String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getProvider());
 		String refreshToken = jwtUtil.generateRefreshToken(email);
 
 		refreshTokenRepository.save(new RefreshTokenEntity(email, refreshToken));

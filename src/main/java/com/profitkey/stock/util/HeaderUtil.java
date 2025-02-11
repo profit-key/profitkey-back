@@ -1,7 +1,7 @@
 package com.profitkey.stock.util;
 
 import com.profitkey.stock.dto.KisApiProperties;
-import com.profitkey.stock.service.StockService;
+import com.profitkey.stock.service.stock.StockService;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;

@@ -6,7 +6,7 @@ import com.profitkey.stock.dto.request.stock.InquireDailyRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.MarketCapRequest;
 import com.profitkey.stock.dto.request.stock.VolumeRankRequest;
-import com.profitkey.stock.service.StockService;
+import com.profitkey.stock.service.stock.StockService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.profitkey.stock.service;
+package com.profitkey.stock.service.stock;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,7 +77,6 @@ public class StockService {
 	}
 
 	public ResponseEntity<Object> getInquireDailyItemchartprice(InquireDailyRequest request) {
-		log.info("hello2");
 		Object result = null;
 		String urlData = kisApiProperties.getInquireDailyUrl();
 		String trId = request.getTr_id();

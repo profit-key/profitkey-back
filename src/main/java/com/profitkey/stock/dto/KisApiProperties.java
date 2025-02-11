@@ -18,4 +18,10 @@ public class KisApiProperties {
 	private String inquireDailyUrl;
 	private String volumeRankUrl;
 	private String marketCapUrl;
+	private String investOpinionUrl;
+	private String incomeStatementUrl;
+	private String financialRatioUrl;
+	private String profitRatioUrl;
+	private String stabilityRatioUrl;
+	private String growthRatioUrl;
 }

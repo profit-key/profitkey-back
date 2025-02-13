@@ -24,4 +24,5 @@ public class KisApiProperties {
 	private String profitRatioUrl;
 	private String stabilityRatioUrl;
 	private String growthRatioUrl;
+	private String dividendUrl;
 }

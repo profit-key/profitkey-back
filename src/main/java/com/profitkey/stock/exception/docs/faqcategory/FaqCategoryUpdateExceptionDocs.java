@@ -4,9 +4,9 @@ import com.profitkey.stock.annotation.ExplainError;
 import com.profitkey.stock.exception.SwaggerException;
 import com.profitkey.stock.exception.docs.ExceptionDocs;
 import com.profitkey.stock.exception.errorcode.ProfitCodeException;
-import com.profitkey.stock.exception.testexception.faqcategory.DuplicateTestException;
-import com.profitkey.stock.exception.testexception.faqcategory.InvalidTestException;
-import com.profitkey.stock.exception.testexception.faqcategory.NotFoundTestException;
+import com.profitkey.stock.exception.testexception.faq.DuplicateTestException;
+import com.profitkey.stock.exception.testexception.faq.InvalidTestException;
+import com.profitkey.stock.exception.testexception.faq.NotFoundTestException;
 
 @ExceptionDocs
 public class FaqCategoryUpdateExceptionDocs implements SwaggerException {

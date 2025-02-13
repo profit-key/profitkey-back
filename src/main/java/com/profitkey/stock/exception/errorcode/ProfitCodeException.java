@@ -8,9 +8,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ProfitCodeException extends RuntimeException {
-    private BaseErrorCode errorCode;
+	private BaseErrorCode errorCode;
 
-    public ErrorReason getErrorReason() {
-        return this.errorCode.getErrorReason();
-    }
+	public ErrorReason getErrorReason() {
+		return this.errorCode.getErrorReason();
+	}
 }

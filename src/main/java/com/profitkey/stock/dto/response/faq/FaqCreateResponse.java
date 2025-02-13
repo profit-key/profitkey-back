@@ -15,15 +15,13 @@ import lombok.Setter;
 @Schema(description = "FAQ 생성 응답")
 public class FaqCreateResponse {
 	private Long id;
-	private String title;
 	private String question;
 	private String answer;
 	private Boolean published;
 
 	@Builder
-	public FaqCreateResponse(Long id, String faqCategoryName, String title, String question, String answer, Boolean published) {
+	public FaqCreateResponse(Long id, String question, String answer, Boolean published) {
 		this.id = id;
-		this.title = title;
 		this.question = question;
 		this.answer = answer;
 		this.published = published;

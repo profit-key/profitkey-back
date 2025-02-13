@@ -14,7 +14,6 @@ import lombok.Setter;
 @Schema(description = "FAQ 상세 조회 응답")
 public class FaqResponse {
     private Long id;
-    private String title;
     private String question;
     private String answer;
     private Boolean published;
@@ -23,7 +22,6 @@ public class FaqResponse {
     @Builder
     public FaqResponse(Long id, String title, String question, String answer, Boolean published, LocalDateTime createdAt, FileInfo[] fileInfos) {
         this.id = id;
-        this.title = title;
         this.question = question;
         this.answer = answer;
         this.published = published;

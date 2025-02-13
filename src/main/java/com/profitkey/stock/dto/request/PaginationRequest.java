@@ -8,15 +8,15 @@ import lombok.Setter;
 @Setter
 @Schema(description = "페이지네이션 요청")
 public class PaginationRequest {
-    
-    @Schema(description = "페이지 번호", example = "1", required = true)
-    private int page = 1;
 
-    @Schema(description = "페이지 크기", example = "10", required = true)
-    private int size = 10;
+	@Schema(description = "페이지 번호", example = "1", required = true)
+	private int page = 1;
 
-    public PaginationRequest(int page, int size) {
-        this.page = page;
-        this.size = size;
-    }
+	@Schema(description = "페이지 크기", example = "10", required = true)
+	private int size = 10;
+
+	public PaginationRequest(int page, int size) {
+		this.page = page;
+		this.size = size;
+	}
 }

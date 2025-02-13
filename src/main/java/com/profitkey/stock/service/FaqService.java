@@ -1,26 +1,22 @@
 package com.profitkey.stock.service;
 
-import com.profitkey.stock.dto.response.faq.FaqCreateResponse;
-import com.profitkey.stock.dto.response.faq.FaqListItemResponse;
-import com.profitkey.stock.dto.response.faq.FaqListResponse;
-import com.profitkey.stock.dto.response.faq.FaqResponse;
-import com.profitkey.stock.entity.Faq;
-import com.profitkey.stock.handler.PagenationHandler;
-import com.profitkey.stock.repository.UploadFileRepository;
-import com.profitkey.stock.repository.FaqRepository;
-
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+
+import com.profitkey.stock.dto.response.faq.FaqCreateResponse;
+import com.profitkey.stock.dto.response.faq.FaqListResponse;
+import com.profitkey.stock.dto.response.faq.FaqResponse;
+import com.profitkey.stock.entity.Faq;
+import com.profitkey.stock.handler.PagenationHandler;
+import com.profitkey.stock.repository.FaqRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -32,15 +28,14 @@ public class FaqService {
 	private final PagenationHandler pagenationHandler;
 
 	@Transactional
-	public FaqCreateResponse createFaq(Boolean published, String title, String question, String answer) {
+	public FaqCreateResponse createFaq(Boolean published, String question, String answer) {
 		try {
 			// FAQ 생성
-			Faq faq = Faq.builder().title(title).question(question).published(published).answer(answer).build();
+			Faq faq = Faq.builder().question(question).published(published).answer(answer).build();
 			faqRepository.save(faq);
 
 			FaqCreateResponse res = FaqCreateResponse.builder()
 				.id(faq.getId())
-				.title(faq.getTitle())
 				.question(faq.getQuestion())
 				.published(faq.getPublished())
 				.answer(faq.getAnswer())
@@ -61,38 +56,21 @@ public class FaqService {
 		Page<Faq> faqPage = faqRepository.findByPublishedTrueOrderByCreatedAtDesc(pageable);
 
 		// FAQ 목록을 FaqListItemResponse로 변환
-		FaqListItemResponse[] faqResponses = faqPage.getContent()
+		FaqResponse[] faqResponses = faqPage.getContent()
 			.stream()
-			.map(faq -> FaqListItemResponse.builder()
+			.map(faq -> FaqResponse.builder()
 				.id(faq.getId())
-				.title(faq.getTitle())
 				.question(faq.getQuestion())
+				.answer(faq.getAnswer())
+				.published(faq.getPublished())
+				.createdAt(faq.getCreatedAt())
 				.build())
-			.toArray(FaqListItemResponse[]::new);
+			.toArray(FaqResponse[]::new);
 
 		// FaqListResponse 생성 및 반환
 		return FaqListResponse.builder()
 			.faqList(faqResponses)
-			.pagination(
-				pagenationHandler.setPagenation(faqPage.getTotalPages(), faqPage.getTotalElements(), page))
+			.pagination(pagenationHandler.setPagenation(faqPage.getTotalPages(), faqPage.getTotalElements(), page))
 			.build();
 	}
-
-	@Transactional
-	public FaqResponse getFaqById(Long id) {
-		// FAQ 조회
-		Faq faq = faqRepository.findByIdAndPublishedTrue(id)
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "FAQ를 찾을 수 없습니다. ID: " + id));
-
-		// 응답 변환
-		return FaqResponse.builder()
-			.id(faq.getId())
-			.title(faq.getTitle())
-			.question(faq.getQuestion())
-			.answer(faq.getAnswer())
-			.published(faq.getPublished())
-			.createdAt(faq.getCreatedAt())
-			.build();
-	}
-
 }

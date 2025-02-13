@@ -11,11 +11,11 @@ import lombok.Setter;
 @Setter
 @Schema(description = "FAQ 목록 조회 응답")
 public class FaqListResponse {
-	private FaqListItemResponse[] faqList;
+	private FaqResponse[] faqList;
 	private Pagination pagination;
 
 	@Builder
-	public FaqListResponse(FaqListItemResponse[] faqList, Pagination pagination) {
+	public FaqListResponse(FaqResponse[] faqList, Pagination pagination) {
 		this.faqList = faqList;
 		this.pagination = pagination;
 	}

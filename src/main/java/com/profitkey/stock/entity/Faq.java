@@ -23,9 +23,6 @@ public class Faq {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, length = 255)
-	private String title;
-
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String question;
 
@@ -45,7 +42,6 @@ public class Faq {
 
 	@Builder
 	public Faq(String title, String question, String answer, Boolean published) {
-		this.title = title;
 		this.question = question;
 		this.answer = answer;
 		this.published = published == null ? true : published;

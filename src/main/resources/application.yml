@@ -29,6 +29,7 @@ korea-investment-api:
   profit-ratio-url: ${STOCK_KIS_PROFIT_RATIO_URL} # 국내주식 수익성비율
   stability-ratio-url: ${STOCK_KIS_STABILITY_RATIO_URL} # 국내주식 안정성비율
   growth-ratio-url: ${STOCK_KIS_GROWTH_RATIO_URL} # 국내주식 성장성비율
+  dividend-url: ${STOCK_KIS_DIVIDEND_URL} # 국내주식 예탁원정보(배당일정)
 
 jwt:
   secret: ${STOCK_JWT_SECRET}

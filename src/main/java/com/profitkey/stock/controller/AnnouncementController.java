@@ -10,12 +10,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.profitkey.stock.annotation.ApiErrorExceptions;
 import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.request.PaginationRequest;
 import com.profitkey.stock.dto.request.announcement.AnnouncementCreateRequest;
 import com.profitkey.stock.dto.response.announcement.AnnouncementCreateResponse;
 import com.profitkey.stock.dto.response.announcement.AnnouncementListResponse;
 import com.profitkey.stock.dto.response.announcement.AnnouncementResponse;
+import com.profitkey.stock.exception.docs.announcement.CreateAnnouncementExceptionDocs;
+import com.profitkey.stock.exception.docs.announcement.GetAnnouncementExceptionDocs;
+import com.profitkey.stock.exception.docs.faqcategory.CreateFaqExceptionDocs;
 import com.profitkey.stock.service.AnnouncementService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,6 +40,7 @@ public class AnnouncementController {
 	 */
 	@PostMapping("")
 	@Operation(summary = SwaggerDocs.SUMMARY_ANNOUNCE_CREATE, description = SwaggerDocs.DESCRIPTION_ANNOUNCE_CREATE)
+	@ApiErrorExceptions(CreateAnnouncementExceptionDocs.class)
 	public ResponseEntity<AnnouncementCreateResponse> createAnnounce(@RequestBody AnnouncementCreateRequest request) {
 		AnnouncementCreateResponse result = announcementService.createAnnouncement(request.getPublished(),
 			request.getTitle(), request.getContent());
@@ -61,10 +66,9 @@ public class AnnouncementController {
 	 */
 	@GetMapping("/{id}")
 	@Operation(summary = SwaggerDocs.SUMMARY_ANNOUNCE_INFO, description = SwaggerDocs.DESCRIPTION_ANNOUNCE_INFO)
+	@ApiErrorExceptions(GetAnnouncementExceptionDocs.class)
 	public ResponseEntity<AnnouncementResponse> getAnnouncement(
-		@Parameter(description = "공지사항 ID", required = true)
-		@PathVariable Long id
-	) {
+		@Parameter(description = "공지사항 ID", required = true) @PathVariable Long id) {
 		AnnouncementResponse response = announcementService.getAnnouncement(id);
 		return ResponseEntity.ok(response);
 	}

@@ -15,7 +15,7 @@ import com.profitkey.stock.dto.request.PaginationRequest;
 import com.profitkey.stock.dto.request.faq.FaqCreateRequest;
 import com.profitkey.stock.dto.response.faq.FaqCreateResponse;
 import com.profitkey.stock.dto.response.faq.FaqListResponse;
-import com.profitkey.stock.exception.docs.faqcategory.FaqCategoryExceptionDocs;
+import com.profitkey.stock.exception.docs.faqcategory.CreateFaqExceptionDocs;
 import com.profitkey.stock.service.FaqService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +35,7 @@ public class FaqController {
 	 */
 	@PostMapping("")
 	@Operation(summary = SwaggerDocs.SUMMARY_FAQ_CREATE, description = SwaggerDocs.DESCRIPTION_FAQ_CREATE)
-	@ApiErrorExceptions(FaqCategoryExceptionDocs.class)
+	@ApiErrorExceptions(CreateFaqExceptionDocs.class)
 	public ResponseEntity<FaqCreateResponse> createFaq(@RequestBody FaqCreateRequest request) {
 		FaqCreateResponse result = faqService.createFaq(request.getPublished(), request.getQuestion(),
 			request.getAnswer());

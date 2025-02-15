@@ -1,13 +1,7 @@
 package com.profitkey.stock.controller;
 
-import com.profitkey.stock.docs.SwaggerDocs;
-import com.profitkey.stock.entity.User;
-import com.profitkey.stock.service.AuthService;
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +9,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.profitkey.stock.docs.SwaggerDocs;
+import com.profitkey.stock.entity.Auth;
+import com.profitkey.stock.service.AuthService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/oauth2")
@@ -28,8 +31,8 @@ public class AuthController {
 	@GetMapping("/login/kakao")
 	public ResponseEntity<?> kakaoLogin(@RequestParam("code") String accessCode,
 		HttpServletResponse httpServletResponse) {
-		User user = authService.oAuthLogin(accessCode, httpServletResponse);
-		return ResponseEntity.ok(user);
+		Auth auth = authService.oAuthLogin(accessCode, httpServletResponse);
+		return ResponseEntity.ok(auth);
 	}
 
 	@Operation(summary = SwaggerDocs.SUMMARY_TOKEN_ISSUANCE,

@@ -1,16 +1,17 @@
 package com.profitkey.stock.util;
 
-import com.profitkey.stock.entity.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.profitkey.stock.entity.Auth;
+
 public class SecurityUtil {
-	public static User getUser() {
+	public static Auth getUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.getPrincipal() instanceof User) {
-			User user = (User)authentication.getPrincipal();
-			return user;
+		if (authentication != null && authentication.getPrincipal() instanceof Auth) {
+			Auth auth = (Auth)authentication.getPrincipal();
+			return auth;
 		}
-		return User.builder().build();
+		return Auth.builder().build();
 	}
 }

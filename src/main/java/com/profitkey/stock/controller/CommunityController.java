@@ -1,16 +1,5 @@
 package com.profitkey.stock.controller;
 
-import com.profitkey.stock.annotation.UserInfo;
-import com.profitkey.stock.docs.SwaggerDocs;
-import com.profitkey.stock.dto.request.community.CommunityRequest;
-import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
-import com.profitkey.stock.dto.request.community.LikeRequest;
-import com.profitkey.stock.dto.response.community.CommunityResponse;
-import com.profitkey.stock.entity.User;
-import com.profitkey.stock.service.CommunityService;
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +11,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.profitkey.stock.annotation.UserInfo;
+import com.profitkey.stock.docs.SwaggerDocs;
+import com.profitkey.stock.dto.request.community.CommunityRequest;
+import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
+import com.profitkey.stock.dto.request.community.LikeRequest;
+import com.profitkey.stock.dto.response.community.CommunityResponse;
+import com.profitkey.stock.entity.Auth;
+import com.profitkey.stock.service.CommunityService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/community")
@@ -106,8 +108,8 @@ public class CommunityController {
 	}
 
 	@GetMapping("/user")
-	public User getUserInfo(@UserInfo User user) {
-		return user;
+	public Auth getUserInfo(@UserInfo Auth auth) {
+		return auth;
 	}
 
 }

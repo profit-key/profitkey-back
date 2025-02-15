@@ -1,11 +1,13 @@
 package com.profitkey.stock.dto.response.mypage;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class UserInfoResponse {
 
 	@Schema(description = "사용자 이메일", example = "user@example.com")

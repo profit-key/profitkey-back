@@ -1,8 +1,5 @@
 package com.profitkey.stock.handler;
 
-import com.profitkey.stock.annotation.UserInfo;
-import com.profitkey.stock.dto.response.LoginUser;
-import com.profitkey.stock.entity.User;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,6 +7,10 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
+import com.profitkey.stock.annotation.UserInfo;
+import com.profitkey.stock.dto.response.LoginUser;
+import com.profitkey.stock.entity.Auth;
 
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -25,9 +26,9 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 		NativeWebRequest webRequest,
 		WebDataBinderFactory binderFactory) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.getPrincipal() instanceof User) {
-			User user = (User)authentication.getPrincipal();
-			return new LoginUser(user);
+		if (authentication != null && authentication.getPrincipal() instanceof Auth) {
+			Auth auth = (Auth)authentication.getPrincipal();
+			return new LoginUser(auth);
 		}
 		return new LoginUser();
 	}

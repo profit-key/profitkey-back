@@ -1,11 +1,12 @@
-package com.profitkey.stock.dto;
+package com.profitkey.stock.dto.response.mypage;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.entity.FavoriteStock;
-import com.profitkey.stock.entity.User;
+import com.profitkey.stock.entity.UserInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ public class MyPageResponse {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Builder
-	public static class UserInfo {
+	public static class UserInfoResponse {
 		private Long id;
 		private String email;
 		private String nickname;
@@ -27,16 +28,21 @@ public class MyPageResponse {
 		private Boolean isDeleted;
 		private String createdAt;
 
-		public static UserInfo from(User user) {
-			return UserInfo.builder()
-				.id(user.getId())
-				.email(user.getEmail())
-				.nickname(user.getNickname())
-				.profileImageUrl(user.getProfileImageUrl())
-				.isDeleted(user.getIsDeleted())
-				.createdAt(user.getCreatedAt().toString())
+		public static UserInfoResponse from(UserInfo userInfo) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+			return UserInfoResponse.builder()
+				.id(userInfo.getAuth() != null ? userInfo.getAuth().getId() : null)  // ✅ Auth에서 ID 가져오기
+				.email(userInfo.getAuth() != null ? userInfo.getAuth().getEmail() : null)  // ✅ Auth에서 이메일 가져오기
+				.nickname(userInfo.getNickname())  // ✅ UserInfo에서 닉네임 가져오기
+				.profileImageUrl(userInfo.getProfileImage())  // ✅ UserInfo에서 프로필 이미지 가져오기
+				.isDeleted(
+					userInfo.getIsDeleted() != null ? userInfo.getIsDeleted() : false)  // ✅ UserInfo에서 삭제 여부 가져오기
+				.createdAt(userInfo.getCreatedAt() != null ? userInfo.getCreatedAt().format(formatter) :
+					null)  // ✅ UserInfo에서 생성일 가져오기
 				.build();
 		}
+
 	}
 
 	// 관심 종목 응답
@@ -95,13 +101,13 @@ public class MyPageResponse {
 	@AllArgsConstructor
 	@Builder
 	public static class MyPage {
-		private UserInfo userInfo;
+		private UserInfoResponse userInfo;
 		private List<FavoriteStockInfo> favoriteStocks;
 		private List<CommentInfo> comments;
 
-		public static MyPage from(User user, List<FavoriteStock> favoriteStocks, List<Community> comments) {
+		public static MyPage from(UserInfo userInfo, List<FavoriteStock> favoriteStocks, List<Community> comments) {
 			return MyPage.builder()
-				.userInfo(UserInfo.from(user))
+				.userInfo(UserInfoResponse.from(userInfo))  // ✅ UserInfo를 기반으로 UserInfoResponse 생성
 				.favoriteStocks(FavoriteStockInfo.from(favoriteStocks))
 				.comments(CommentInfo.from(comments))
 				.build();

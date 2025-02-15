@@ -1,7 +1,8 @@
 package com.profitkey.stock.dto.response;
 
+import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.AuthProvider;
-import com.profitkey.stock.entity.User;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +16,10 @@ public class LoginUser {
 	private String nickname;
 
 	@Builder
-	public LoginUser(User user) {
-		this.id = user.getId();
-		this.email = user.getEmail();
-		this.provider = user.getProvider();
-		this.nickname = user.getNickname();
+	public LoginUser(Auth auth) {
+		this.id = auth.getId();
+		this.email = auth.getEmail();
+		this.provider = auth.getProvider();
+		this.nickname = auth.getUserInfo() != null ? auth.getUserInfo().getNickname() : null; // UserInfo에서 가져오기
 	}
 }

@@ -14,11 +14,13 @@ import com.profitkey.stock.entity.FavoriteStock;
 @Repository
 public interface FavoriteStockRepository extends JpaRepository<FavoriteStock, Long> {
 	/** 🔹 사용자의 관심 종목 조회 */
-	List<FavoriteStock> findByUserId(Long userId);
+	// UserInfo의 userId를 기준으로 FavoriteStock을 찾도록 수정
+	List<FavoriteStock> findByUser_UserId(Long userId);
 
 	/** 🔹 관심 종목 삭제 */
 	@Modifying
 	@Transactional
-	@Query("DELETE FROM FavoriteStock f WHERE f.user.id = :userId AND f.stockCode = :stockCode")
+	@Query("DELETE FROM FavoriteStock f WHERE f.user.userId = :userId AND f.stockCode = :stockCode")
 	void deleteByUserIdAndStockCode(@Param("userId") Long userId, @Param("stockCode") String stockCode);
+
 }

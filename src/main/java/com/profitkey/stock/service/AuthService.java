@@ -1,15 +1,20 @@
 package com.profitkey.stock.service;
 
-import com.profitkey.stock.entity.AuthProvider;
-import com.profitkey.stock.entity.User;
-import com.profitkey.stock.repository.user.UserRepository;
-import com.profitkey.stock.util.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.profitkey.stock.entity.Auth;
+import com.profitkey.stock.entity.AuthProvider;
+import com.profitkey.stock.entity.UserInfo;
+import com.profitkey.stock.repository.mypage.UserInfoRepository;
+import com.profitkey.stock.repository.user.AuthRepository;
+import com.profitkey.stock.util.JwtUtil;
+
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -17,41 +22,58 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
 	private final KakaoOAuth2Service kakaoOAuth2Service;
-	private final UserRepository userRepository;
+	private final AuthRepository authRepository;
+	private final UserInfoRepository userInfoRepository;
 	private final JwtUtil jwtUtil;
 
-	public User oAuthLogin(String code, HttpServletResponse response) {
+	public Auth oAuthLogin(String code, HttpServletResponse response) {
 		String accessToken = kakaoOAuth2Service.getAccessToken(code);
 		Map<String, Object> userInfo = kakaoOAuth2Service.getUserInfo(accessToken);
 
 		String email = (String)userInfo.get("email");
 		String nickname = (String)userInfo.get("nickname");
+		String profileImage = (String)userInfo.get("profile_image");
 
-		Optional<User> userOptional = userRepository.findByEmail(email);
-		User user = userOptional.orElseGet(() -> {
-			User newUser = new User(email, AuthProvider.KAKAO, accessToken, nickname);
-			return userRepository.save(newUser);
+		Optional<Auth> userOptional = authRepository.findByEmail(email);
+		Auth auth = userOptional.orElseGet(() -> {
+			Auth newAuth = Auth.builder()
+				.email(email)
+				.provider(AuthProvider.KAKAO)
+				.accessToken(accessToken)
+				.build();
+
+			Auth savedAuth = authRepository.save(newAuth);
+
+			UserInfo newUserInfo = UserInfo.builder()
+				.auth(savedAuth)
+				.nickname(nickname)
+				.profileImage(profileImage)
+				.build();
+
+			userInfoRepository.save(newUserInfo);
+
+			return savedAuth;
 		});
 
-		String jwtToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getProvider());
+		String jwtToken = jwtUtil.generateToken(auth.getId(), auth.getEmail(), auth.getProvider());
 		log.info("oAuthLogin jwtToken : {} ", jwtToken);
 		response.setHeader("Authorization", "Bearer " + jwtToken);
 
-		return user;
+		return auth;
 	}
 
 	public String issueToken(String email) {
-		User user = userRepository.findByEmail(email)
+		Auth auth = authRepository.findByEmail(email)
 			.orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
 
-		String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getProvider());
-		user.setAccessToken(accessToken);
-		userRepository.save(user);
+		String accessToken = jwtUtil.generateToken(auth.getId(), auth.getEmail(), auth.getProvider());
+		auth.setAccessToken(accessToken);
+		authRepository.save(auth);
 
 		return accessToken;
 	}
 
-	// 🔥 JWT 갱신 (Refresh Token 사용)
+	//  JWT 갱신 (Refresh Token 사용)
 	public String refreshToken(String refreshToken) {
 		String token = refreshToken.replace("Bearer ", "");
 
@@ -60,25 +82,25 @@ public class AuthService {
 		}
 
 		String email = jwtUtil.extractEmail(token);
-		User user = userRepository.findByEmail(email)
+		Auth auth = authRepository.findByEmail(email)
 			.orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
 
-		if (!user.getAccessToken().equals(token)) {
+		if (!auth.getAccessToken().equals(token)) {
 			throw new RuntimeException("토큰값이 일치하지 않습니다.");
 		}
 
-		return jwtUtil.generateToken(user.getId(), user.getEmail(), user.getProvider());
+		return jwtUtil.generateToken(auth.getId(), auth.getEmail(), auth.getProvider());
 	}
 
-	// 🔥 JWT 폐기 (로그아웃)
+	//  JWT 폐기 (로그아웃)
 	public void disposeToken(String token) {
 		String jwtToken = token.replace("Bearer ", "");
 		String email = jwtUtil.extractClaims(jwtToken).get("email").toString();
 
-		User user = userRepository.findByEmail(email)
+		Auth auth = authRepository.findByEmail(email)
 			.orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
 
-		user.setAccessToken(null);
-		userRepository.save(user);
+		auth.setAccessToken(null);
+		authRepository.save(auth);
 	}
 }

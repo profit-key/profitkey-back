@@ -16,7 +16,7 @@ import com.profitkey.stock.dto.request.mypage.UserUpdateRequest;
 import com.profitkey.stock.dto.response.mypage.MyPageCommunityResponse;
 import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
 import com.profitkey.stock.entity.FavoriteStock;
-import com.profitkey.stock.entity.User;
+import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.service.MyPageService;
 
 import lombok.RequiredArgsConstructor;
@@ -68,13 +68,14 @@ public class MyPageController {
 	// 📌 내 정보 조회
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<UserInfoResponse> getUserInfo(@PathVariable Long userId) {
-		User user = myPageService.getUserInfo(userId);
+		UserInfo userInfo = myPageService.getUserInfo(userId);
 
-		if (user != null) {
-			UserInfoResponse response = new UserInfoResponse();
-			response.setEmail(user.getEmail());
-			response.setNickname(user.getNickname());
-			response.setProfileImageUrl(user.getProfileImageUrl());
+		if (userInfo != null) {
+			UserInfoResponse response = UserInfoResponse.builder()
+				.email(userInfo.getAuth().getEmail())  // ✅ Auth에서 이메일 가져오기
+				.nickname(userInfo.getNickname())  // ✅ UserInfo에서 닉네임 가져오기
+				.profileImageUrl(userInfo.getProfileImage())  // ✅ UserInfo에서 프로필 이미지 가져오기
+				.build();
 			return ResponseEntity.ok(response);
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -82,10 +83,11 @@ public class MyPageController {
 	}
 
 	// 📌 회원 정보 수정 (닉네임, 프로필 이미지 변경)
-	@PatchMapping("/user/{userId}") //email은 수정 불가임요
-	public ResponseEntity<User> updateUserInfo(@PathVariable Long userId,
+	@PatchMapping("/user/{userId}") // email은 수정 불가
+	public ResponseEntity<UserInfo> updateUserInfo(@PathVariable Long userId,
 		@RequestBody UserUpdateRequest request) {
-		User updatedUser = myPageService.updateUserInfo(userId, request.getNickname(), request.getProfileImageUrl());
+		UserInfo updatedUser = myPageService.updateUserInfo(userId, request.getNickname(),
+			request.getProfileImageUrl());
 		return ResponseEntity.ok(updatedUser);
 	}
 

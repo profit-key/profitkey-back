@@ -18,7 +18,7 @@ public class FavoriteStock {
 	@Id
 	@ManyToOne()
 	@JoinColumn(name = "USER_ID", nullable = false)
-	private User user;
+	private UserInfo user;
 
 	@Id
 	@ManyToOne

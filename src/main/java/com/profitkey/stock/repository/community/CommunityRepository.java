@@ -1,7 +1,7 @@
 package com.profitkey.stock.repository.community;
 
-import com.profitkey.stock.entity.Community;
 import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.profitkey.stock.entity.Community;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
@@ -30,7 +32,8 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 	@Query(value = " SELECT COUNT(*) + 1 " +
 		"  FROM Community c " +
 		" WHERE SUBSTRING(c.id, 1, 8) = :today " +
-		"   AND SUBSTRING(c.id, 9, 6) = :stockCode ")
+		"   AND SUBSTRING(c.id, 9, 6) = :stockCode "
+		, nativeQuery = true)
 	int getNextSequence(@Param("today") String today, @Param("stockCode") String stockCode);
 
 	@Modifying

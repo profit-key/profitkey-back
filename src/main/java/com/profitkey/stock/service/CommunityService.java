@@ -64,7 +64,6 @@ public class CommunityService {
 	public CommunityResponse createCommunity(CommunityRequest request) {
 		String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String stockCode = request.getStockCode();
-		log.info("jayce log {}", stockCode);
 		int sequence = communityRepository.getNextSequence(today, stockCode);
 		String id = today + stockCode + String.format("%04d", sequence);
 

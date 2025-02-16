@@ -1,6 +1,8 @@
 package com.profitkey.stock.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -40,7 +42,7 @@ public class MyPageService {
 		userInfo.setNickname(nickname);
 		userInfo.setProfileImage(profileImageUrl);
 
-		return userInfoRepository.save(userInfo);
+		return userInfo;
 	}
 
 	/**
@@ -53,11 +55,25 @@ public class MyPageService {
 
 		// 소프트 삭제 처리
 		userInfo.setIsDeleted(true);
-		userInfoRepository.save(userInfo);
+		userInfo.setDeletedAt(LocalDateTime.now());
 
 		// Auth 엔티티 삭제
 		if (userInfo.getAuth() != null) {
 			authRepository.delete(userInfo.getAuth());
+		}
+	}
+
+	//탈퇴하면 30일 내 재가입 불가능
+	public void checkRejoinRestriction(String email) {
+		Optional<UserInfo> deletedUser = userInfoRepository.findByAuth_EmailAndIsDeleted(email, true);
+
+		if (deletedUser.isPresent()) {
+			LocalDateTime deletedAt = deletedUser.get().getDeletedAt();
+			LocalDateTime now = LocalDateTime.now();
+
+			if (deletedAt.plusDays(30).isAfter(now)) {
+				throw new RuntimeException("회원 탈퇴 후 30일 동안 재가입할 수 없습니다.");
+			}
 		}
 	}
 

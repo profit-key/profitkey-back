@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,10 +41,15 @@ public class UserInfo {
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "auth_id", referencedColumnName = "id")
+	@JsonManagedReference  // Auth에서 참조할 때 무한 참조 방지
 	private Auth auth;  // UserInfo와 1:1 관계인 Auth 객체
 
 	@Column(name = "IS_DELETED", nullable = false)
 	private Boolean isDeleted = false;
+
+	//탈퇴 시간 저장
+	@Column(name = "DELETED_AT")
+	private LocalDateTime deletedAt;
 
 	@CreationTimestamp
 	@Column(name = "CREATED_AT", updatable = false, nullable = false)

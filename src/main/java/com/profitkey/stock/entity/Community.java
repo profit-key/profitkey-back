@@ -15,7 +15,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
-@Table(name = "Community")
+@Table(name = "community")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

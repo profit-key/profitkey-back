@@ -13,15 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
 	@Query("SELECT c, " +
-		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id), " +
-		" (SELECT COUNT(*) FROM Community cc WHERE cc.parentId = c.id) " +
+		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id) AS like_count, " +
+		" (SELECT COUNT(*) FROM Community cc WHERE cc.parentId = c.id) AS replie_count " +
 		"  FROM Community c " +
 		" WHERE SUBSTRING(c.id, 9, 6) = :stockCode " +
 		"   AND c.parentId = '0'")
 	Page<Object[]> findByStockCodeWithCounts(@Param("stockCode") String stockCode, Pageable pageable);
 
 	@Query("SELECT c, " +
-		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id) " +
+		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id) AS like_count" +
 		"  FROM Community c " +
 		" WHERE c.parentId = :id " +
 		" ORDER BY c.createdAt ASC")

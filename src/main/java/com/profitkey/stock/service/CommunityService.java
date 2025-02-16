@@ -1,16 +1,5 @@
 package com.profitkey.stock.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
 import com.profitkey.stock.dto.request.community.LikeRequest;
@@ -23,9 +12,17 @@ import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.community.LikesRepository;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
 import com.profitkey.stock.util.SecurityUtil;
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -67,6 +64,7 @@ public class CommunityService {
 	public CommunityResponse createCommunity(CommunityRequest request) {
 		String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String stockCode = request.getStockCode();
+		log.info("jayce log {}", stockCode);
 		int sequence = communityRepository.getNextSequence(today, stockCode);
 		String id = today + stockCode + String.format("%04d", sequence);
 

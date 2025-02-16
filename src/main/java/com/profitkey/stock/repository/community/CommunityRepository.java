@@ -28,8 +28,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 	Page<Object[]> findByParentId(@Param("id") String id, Pageable pageable);
 
 	@Query(value = " SELECT COUNT(*) + 1 " +
-		// "  FROM Community c " +
-		"  FROM community c " +
+		"  FROM Community c " +
 		" WHERE SUBSTRING(c.id, 1, 8) = :today " +
 		"   AND SUBSTRING(c.id, 9, 6) = :stockCode "
 		, nativeQuery = true)

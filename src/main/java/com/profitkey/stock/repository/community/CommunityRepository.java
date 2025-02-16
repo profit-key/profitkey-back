@@ -30,8 +30,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 	@Query(value = " SELECT COUNT(*) + 1 " +
 		"  FROM Community c " +
 		" WHERE SUBSTRING(c.id, 1, 8) = :today " +
-		"   AND SUBSTRING(c.id, 9, 6) = :stockCode "
-		, nativeQuery = true)
+		"   AND SUBSTRING(c.id, 9, 6) = :stockCode ")
 	int getNextSequence(@Param("today") String today, @Param("stockCode") String stockCode);
 
 	@Modifying

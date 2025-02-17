@@ -181,4 +181,44 @@ public class SwaggerDocs {
 		토큰을 빈값으로 갱신합니다.
 		""";
 
+	/**
+	 * ****************************************
+	 * Mypage Swagger Docs 모음
+	 * ****************************************
+	 */
+	public static final String SUMMARY_FAVORITE_STOCKS = "관심 종목 조회 GET";
+	public static final String DESCRIPTION_FAVORITE_STOCKS = """
+		    사용자가 설정한 관심 종목 목록을 조회합니다.
+		""";
+
+	public static final String SUMMARY_DELETE_FAVORITE_STOCK = "관심 종목 삭제 DELETE";
+	public static final String DESCRIPTION_DELETE_FAVORITE_STOCK = """
+		    사용자가 설정한 관심 종목을 삭제합니다.
+		""";
+
+	public static final String SUMMARY_USER_COMMENTS = "사용자 댓글 조회 GET";
+	public static final String DESCRIPTION_USER_COMMENTS = """
+		    사용자가 작성한 댓글 목록을 조회합니다.
+		""";
+
+	public static final String SUMMARY_DELETE_USER_COMMENT = "사용자 댓글 삭제 DELETE";
+	public static final String DESCRIPTION_DELETE_USER_COMMENT = """
+		    사용자가 작성한 댓글을 삭제합니다.
+		""";
+
+	public static final String SUMMARY_USER_INFO = "내 정보 조회 GET";
+	public static final String DESCRIPTION_USER_INFO = """
+		    사용자의 정보를 조회합니다 (닉네임, 프로필 이미지 등).
+		""";
+
+	public static final String SUMMARY_UPDATE_USER_INFO = "회원 정보 수정 PATCH";
+	public static final String DESCRIPTION_UPDATE_USER_INFO = """
+		    사용자의 닉네임 또는 프로필 이미지를 수정합니다.
+		""";
+
+	public static final String SUMMARY_DELETE_USER = "회원 탈퇴 DELETE";
+	public static final String DESCRIPTION_DELETE_USER = """
+		    사용자를 탈퇴시키고 관련된 정보들을 소프트 딜리트합니다.
+		""";
+
 }

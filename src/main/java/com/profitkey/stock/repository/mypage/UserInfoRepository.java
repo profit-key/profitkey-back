@@ -9,7 +9,7 @@ import com.profitkey.stock.entity.UserInfo;
 
 @Repository
 public interface UserInfoRepository extends JpaRepository<UserInfo, Long> {
-	Optional<UserInfo> findById(Long id);
+	// Optional<UserInfo> findById(Long id);
 
 	// Auth 테이블의 이메일을 기준으로 UserInfo 조회
 	Optional<UserInfo> findByAuth_Email(String email);

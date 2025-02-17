@@ -69,13 +69,6 @@ public class MyPageController {
 		return ResponseEntity.ok(comments);
 	}
 
-	@DeleteMapping("/comments/{commentId}")
-	@Operation(summary = SwaggerDocs.SUMMARY_DELETE_USER_COMMENT, description = SwaggerDocs.DESCRIPTION_DELETE_USER_COMMENT)
-	public ResponseEntity<Void> deleteUserComment(@PathVariable Long commentId) {
-		myPageService.deleteUserComment(commentId);
-		return ResponseEntity.noContent().build();
-	}
-
 	/*
 	 * 관심 종목
 	 */

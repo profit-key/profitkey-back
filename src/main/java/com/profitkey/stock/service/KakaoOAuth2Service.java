@@ -1,10 +1,8 @@
 package com.profitkey.stock.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +14,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.profitkey.stock.util.NicknameUtil;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -82,8 +86,28 @@ public class KakaoOAuth2Service {
 			JsonNode jsonNode = objectMapper.readTree(response.getBody());
 
 			String id = jsonNode.get("id").asText();
-			String email = jsonNode.get("kakao_account").get("email").asText();
-			String nickname = jsonNode.get("properties").get("nickname").asText();
+
+			// 이메일이 없는 경우 예외 처리
+			String email = null;
+			JsonNode emailNode = jsonNode.get("kakao_account").get("email");
+			if (emailNode != null && !emailNode.isNull()) {
+				email = emailNode.asText();
+			}
+
+			// 기본적으로 랜덤 닉네임 설정
+			String nickname = NicknameUtil.generateRandomNickname();
+
+			// 카카오에서 닉네임이 제공되면 덮어쓰기
+			if (jsonNode.has("properties") && jsonNode.get("properties").has("nickname")) {
+				nickname = jsonNode.get("properties").get("nickname").asText();
+			}
+
+			// 이메일이 없을 때 랜덤 닉네임을 유지
+			if (email == null || email.isEmpty()) {
+				log.info("📌 이메일 없음 → 랜덤 닉네임 사용: {}", nickname);
+			} else {
+				log.info("📌 이메일 존재 → 카카오 닉네임 사용: {}", nickname);
+			}
 
 			Map<String, Object> userInfo = new HashMap<>();
 			userInfo.put("id", id);
@@ -96,4 +120,5 @@ public class KakaoOAuth2Service {
 			throw new RuntimeException("Failed to get Kakao User Info");
 		}
 	}
+
 }

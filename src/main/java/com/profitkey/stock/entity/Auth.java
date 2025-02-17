@@ -1,5 +1,7 @@
 package com.profitkey.stock.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,6 +40,7 @@ public class Auth {
 	private String accessToken;
 
 	@OneToOne(mappedBy = "auth", cascade = CascadeType.ALL)
+	@JsonBackReference  // UserInfo에서 참조할 때 무한 참조 방지
 	private UserInfo userInfo;
 
 	@Builder

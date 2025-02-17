@@ -1,18 +1,20 @@
 package com.profitkey.stock.entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "community")
@@ -27,7 +29,7 @@ public class Community {
 	private String id;
 
 	@Column(name = "WRITER_ID")
-	private Integer writerId;
+	private Long writerId;
 
 	@Column(name = "PARENT_ID")
 	private String parentId;

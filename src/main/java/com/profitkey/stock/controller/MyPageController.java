@@ -72,9 +72,9 @@ public class MyPageController {
 
 		if (userInfo != null) {
 			UserInfoResponse response = UserInfoResponse.builder()
-				.email(userInfo.getAuth().getEmail())  // ✅ Auth에서 이메일 가져오기
-				.nickname(userInfo.getNickname())  // ✅ UserInfo에서 닉네임 가져오기
-				.profileImageUrl(userInfo.getProfileImage())  // ✅ UserInfo에서 프로필 이미지 가져오기
+				.email(userInfo.getAuth().getEmail())  //  Auth에서 이메일 가져오기
+				.nickname(userInfo.getNickname())  // UserInfo에서 닉네임 가져오기
+				.profileImageUrl(userInfo.getProfileImage())  // UserInfo에서 프로필 이미지 가져오기
 				.build();
 			return ResponseEntity.ok(response);
 		} else {

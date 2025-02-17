@@ -25,6 +25,7 @@ public class AuthService {
 	private final AuthRepository authRepository;
 	private final UserInfoRepository userInfoRepository;
 	private final JwtUtil jwtUtil;
+	private final MyPageService myPageService;
 
 	public Auth oAuthLogin(String code, HttpServletResponse response) {
 		String accessToken = kakaoOAuth2Service.getAccessToken(code);
@@ -32,7 +33,10 @@ public class AuthService {
 
 		String email = (String)userInfo.get("email");
 		String nickname = (String)userInfo.get("nickname");
-		String profileImage = (String)userInfo.get("profile_image");
+		String profileImage = (String)userInfo.get("profileImage");
+
+		// 회원 탈퇴 후 재가입 30일 제한 체크
+		myPageService.checkRejoinRestriction(email);
 
 		Optional<Auth> userOptional = authRepository.findByEmail(email);
 		Auth auth = userOptional.orElseGet(() -> {

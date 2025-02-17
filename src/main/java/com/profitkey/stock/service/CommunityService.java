@@ -19,6 +19,7 @@ import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.entity.Likes;
 import com.profitkey.stock.entity.UserInfo;
+import com.profitkey.stock.exception.testexception.mypage.UnauthorizedException;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.community.LikesRepository;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
@@ -65,6 +66,13 @@ public class CommunityService {
 
 	@Transactional
 	public CommunityResponse createCommunity(CommunityRequest request) {
+		// 유저가 존재하지 않거나 삭제된 유저인 경우 예외 처리
+		UserInfo userInfo = userInfoRepository.findById(request.getWriterId())
+			.orElseThrow(() -> new UnauthorizedException("로그인하지 않았거나 삭제된 유저는 댓글을 달 수 없습니다."));
+
+		if (userInfo.getIsDeleted()) {
+			throw new UnauthorizedException("로그인하지 않았거나 삭제된 유저는 댓글을 달 수 없습니다.");
+		}
 		String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String stockCode = request.getStockCode();
 		int sequence = communityRepository.getNextSequence(today, stockCode);

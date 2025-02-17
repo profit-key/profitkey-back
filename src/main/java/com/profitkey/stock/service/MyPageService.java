@@ -125,14 +125,6 @@ public class MyPageService {
 			.collect(Collectors.toList());
 	}
 
-	/**
-	 * 사용자가 작성한 댓글 삭제
-	 */
-	@Transactional
-	public void deleteUserComment(Long commentId) {
-		communityRepository.deleteById(commentId);
-	}
-
 	// 📌 관심 종목
 
 	/**

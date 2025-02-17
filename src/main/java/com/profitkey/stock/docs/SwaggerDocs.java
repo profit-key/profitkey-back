@@ -201,11 +201,6 @@ public class SwaggerDocs {
 		    사용자가 작성한 댓글 목록을 조회합니다.
 		""";
 
-	public static final String SUMMARY_DELETE_USER_COMMENT = "사용자 댓글 삭제 DELETE";
-	public static final String DESCRIPTION_DELETE_USER_COMMENT = """
-		    사용자가 작성한 댓글을 삭제합니다.
-		""";
-
 	public static final String SUMMARY_USER_INFO = "내 정보 조회 GET";
 	public static final String DESCRIPTION_USER_INFO = """
 		    사용자의 정보를 조회합니다 (닉네임, 프로필 이미지 등).

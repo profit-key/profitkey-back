@@ -13,6 +13,7 @@ import com.profitkey.stock.dto.response.mypage.MyPageCommunityResponse;
 import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
 import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.entity.FavoriteStock;
+import com.profitkey.stock.entity.StockCode;
 import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.mypage.FavoriteStockRepository;
@@ -138,7 +139,15 @@ public class MyPageService {
 	 * 관심 종목 삭제
 	 */
 	@Transactional
-	public void deleteFavoriteStock(Long userId, String stockCode) {
-		favoriteStockRepository.deleteByUserIdAndStockCode(userId, stockCode);
+	public void deleteFavoriteStock(Long userId, String stockCodeString) {
+		// stockCodeString을 기반으로 StockCode 객체를 찾기
+		StockCode stockCode = favoriteStockRepository.findStockCodeByStockCode(stockCodeString);
+
+		if (stockCode != null) {
+			// StockCode 객체를 기반으로 관심 종목 삭제
+			favoriteStockRepository.deleteByUserIdAndStockCode(userId, stockCode);
+		} else {
+			throw new RuntimeException("Stock code not found: " + stockCodeString);
+		}
 	}
 }

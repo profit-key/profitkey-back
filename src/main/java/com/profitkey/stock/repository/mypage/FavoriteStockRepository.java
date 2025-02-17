@@ -10,17 +10,22 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.profitkey.stock.entity.FavoriteStock;
+import com.profitkey.stock.entity.StockCode;
 
 @Repository
 public interface FavoriteStockRepository extends JpaRepository<FavoriteStock, Long> {
-	/** 🔹 사용자의 관심 종목 조회 */
+	/** 사용자의 관심 종목 조회 */
 	// UserInfo의 userId를 기준으로 FavoriteStock을 찾도록 수정
 	List<FavoriteStock> findByUser_UserId(Long userId);
 
-	/** 🔹 관심 종목 삭제 */
+	// 관심 종목 삭제 (userId와 stockCode로 삭제)
 	@Modifying
 	@Transactional
 	@Query("DELETE FROM FavoriteStock f WHERE f.user.userId = :userId AND f.stockCode = :stockCode")
-	void deleteByUserIdAndStockCode(@Param("userId") Long userId, @Param("stockCode") String stockCode);
+	void deleteByUserIdAndStockCode(@Param("userId") Long userId, @Param("stockCode") StockCode stockCode);
+
+	// stockCode 문자열을 이용해 StockCode 객체를 조회
+	@Query("SELECT s FROM StockCode s WHERE s.stockCode = :stockCode")
+	StockCode findStockCodeByStockCode(@Param("stockCode") String stockCode);
 
 }

@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.profitkey.stock.dto.request.mypage.UserUpdateRequest;
 import com.profitkey.stock.dto.response.mypage.MyPageCommunityResponse;
+import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
 import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.entity.FavoriteStock;
 import com.profitkey.stock.entity.UserInfo;
@@ -32,17 +34,36 @@ public class MyPageService {
 	// 📌 회원 정보
 
 	/**
-	 * 회원 정보 수정 (닉네임, 프로필 이미지)
+	 * 내 정보 조회
 	 */
-	@Transactional
-	public UserInfo updateUserInfo(Long userId, String nickname, String profileImageUrl) {
+	public UserInfoResponse getUserInfo(Long userId) {
 		UserInfo userInfo = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-		userInfo.setNickname(nickname);
-		userInfo.setProfileImage(profileImageUrl);
+		return UserInfoResponse.fromEntity(userInfo);
+	}
 
-		return userInfo;
+	/**
+	 * 회원 정보 수정 (닉네임, 프로필 이미지)
+	 */
+
+	// 📌 회원 정보 수정 (닉네임, 프로필 이미지 변경)
+	@Transactional
+	public UserInfoResponse updateUserInfo(Long userId, UserUpdateRequest request) {
+		UserInfo userInfo = userInfoRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+
+		// 닉네임이 null이 아니면 업데이트
+		if (request.getNickname() != null) {
+			userInfo.setNickname(request.getNickname());
+		}
+
+		// 프로필 이미지 업데이트 (null도 허용)
+		if (request.getProfileImageUrl() != null) {
+			userInfo.setProfileImage(request.getProfileImageUrl());
+		}
+
+		return UserInfoResponse.fromEntity(userInfo);  // 업데이트된 정보 반환
 	}
 
 	/**
@@ -110,13 +131,6 @@ public class MyPageService {
 	@Transactional
 	public void deleteUserComment(Long commentId) {
 		communityRepository.deleteById(commentId);
-	}
-
-	/**
-	 * 내 정보 조회
-	 */
-	public UserInfo getUserInfo(Long userId) {
-		return userInfoRepository.findById(userId).orElse(null);
 	}
 
 	// 📌 관심 종목

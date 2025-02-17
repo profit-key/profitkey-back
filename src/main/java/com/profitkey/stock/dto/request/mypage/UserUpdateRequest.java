@@ -1,11 +1,11 @@
 package com.profitkey.stock.dto.request.mypage;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
+@Builder
 public class UserUpdateRequest {
 
 	@Schema(description = "사용자 닉네임", example = "햄스터")

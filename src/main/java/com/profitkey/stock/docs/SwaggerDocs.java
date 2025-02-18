@@ -216,6 +216,11 @@ public class SwaggerDocs {
 		    사용자의 프로필 사진을 수정합니다.
 		""";
 
+	public static final String SUMMARY_DELETE_PROFILE_IMAGE = "회원 프로필 사진 삭제 DELETE";
+	public static final String DESCRIPTION_DELETE_PROFILE_IMAGE = """
+		    사용자의 프로필 사진을 삭제합니다.
+		""";
+
 	public static final String SUMMARY_DELETE_USER = "회원 탈퇴 DELETE";
 	public static final String DESCRIPTION_DELETE_USER = """
 		    사용자를 탈퇴시키고 관련된 정보들을 소프트 딜리트합니다.

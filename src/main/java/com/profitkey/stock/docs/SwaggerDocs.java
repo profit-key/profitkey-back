@@ -206,9 +206,14 @@ public class SwaggerDocs {
 		    사용자의 정보를 조회합니다 (닉네임, 프로필 이미지 등).
 		""";
 
-	public static final String SUMMARY_UPDATE_USER_INFO = "회원 정보 수정 PATCH";
-	public static final String DESCRIPTION_UPDATE_USER_INFO = """
-		    사용자의 닉네임 또는 프로필 이미지를 수정합니다.
+	public static final String SUMMARY_UPDATE_NICKNAME = "회원 닉네임 수정 PUT";
+	public static final String DESCRIPTION_UPDATE_NICKNAME = """
+		    사용자의 닉네임을 수정합니다.
+		""";
+
+	public static final String SUMMARY_UPDATE_PROFILE_IMAGE = "회원 프로필 사진 수정 PUT";
+	public static final String DESCRIPTION_UPDATE_PROFILE_IMAGE = """
+		    사용자의 프로필 사진을 수정합니다.
 		""";
 
 	public static final String SUMMARY_DELETE_USER = "회원 탈퇴 DELETE";

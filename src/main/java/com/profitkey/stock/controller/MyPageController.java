@@ -1,25 +1,30 @@
 package com.profitkey.stock.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.profitkey.stock.docs.SwaggerDocs;
-import com.profitkey.stock.dto.request.mypage.UserUpdateRequest;
 import com.profitkey.stock.dto.response.mypage.MyPageCommunityResponse;
 import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
 import com.profitkey.stock.entity.FavoriteStock;
 import com.profitkey.stock.service.MyPageService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -44,14 +49,35 @@ public class MyPageController {
 		}
 	}
 
-	@PatchMapping("/user/{userId}")
-	@Operation(summary = SwaggerDocs.SUMMARY_UPDATE_USER_INFO, description = SwaggerDocs.DESCRIPTION_UPDATE_USER_INFO)
-	public ResponseEntity<UserInfoResponse> updateUserInfo(@PathVariable Long userId,
-		@RequestBody UserUpdateRequest request) {
-		UserInfoResponse response = myPageService.updateUserInfo(userId, request);
-		return ResponseEntity.ok(response);
+	//닉네임 수정
+	@PutMapping("/{userId}/nickname")
+	@Operation(summary = SwaggerDocs.SUMMARY_UPDATE_NICKNAME, description = SwaggerDocs.DESCRIPTION_UPDATE_NICKNAME)
+	public UserInfoResponse updateNickname(
+		@PathVariable Long userId,
+		@RequestParam String nickname
+	) {
+		return myPageService.updateNickname(userId, nickname);
 	}
 
+	// 프로필 이미지 수정
+	@PutMapping(value = "/{userId}/profile-image", consumes = "multipart/form-data", produces = "application/json")
+	@Operation(
+		summary = SwaggerDocs.SUMMARY_UPDATE_PROFILE_IMAGE,
+		description = SwaggerDocs.DESCRIPTION_UPDATE_PROFILE_IMAGE,
+		responses = {
+			@ApiResponse(responseCode = "200", description = "성공적으로 프로필 사진이 수정되었습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoResponse.class))),
+			@ApiResponse(responseCode = "400", description = "파일 업로드 실패", content = @Content),
+			@ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.", content = @Content)
+		}
+	)
+	public UserInfoResponse updateProfileImage(
+		@PathVariable Long userId,
+		@RequestPart("profileImage") MultipartFile profileImage
+	) throws IOException {
+		return myPageService.updateProfileImage(userId, profileImage);
+	}
+
+	//회원 탈퇴
 	@DeleteMapping("/user/{userId}")
 	@Operation(summary = SwaggerDocs.SUMMARY_DELETE_USER, description = SwaggerDocs.DESCRIPTION_DELETE_USER)
 	public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {

@@ -1,5 +1,6 @@
 package com.profitkey.stock.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -7,13 +8,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.profitkey.stock.dto.request.mypage.UserUpdateRequest;
 import com.profitkey.stock.dto.response.mypage.MyPageCommunityResponse;
 import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
 import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.entity.FavoriteStock;
 import com.profitkey.stock.entity.StockCode;
+import com.profitkey.stock.entity.UploadFile;
 import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.mypage.FavoriteStockRepository;
@@ -31,6 +33,7 @@ public class MyPageService {
 	private final CommunityRepository communityRepository;
 	private final UserInfoRepository userInfoRepository;
 	private final AuthRepository authRepository;
+	private final S3UploadService s3UploadService;
 
 	// 📌 회원 정보
 
@@ -48,23 +51,30 @@ public class MyPageService {
 	 * 회원 정보 수정 (닉네임, 프로필 이미지)
 	 */
 
-	// 📌 회원 정보 수정 (닉네임, 프로필 이미지 변경)
+	// 📌 회원 정보 수정 (닉네임, 프로필사진 수정 분리)
+
+	//닉네임 수정
 	@Transactional
-	public UserInfoResponse updateUserInfo(Long userId, UserUpdateRequest request) {
+	public UserInfoResponse updateNickname(Long userId, String newNickname) {
 		UserInfo userInfo = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-		// 닉네임이 null이 아니면 업데이트
-		if (request.getNickname() != null) {
-			userInfo.setNickname(request.getNickname());
-		}
+		userInfo.setNickname(newNickname);
 
-		// 프로필 이미지 업데이트 (null도 허용)
-		if (request.getProfileImageUrl() != null) {
-			userInfo.setProfileImage(request.getProfileImageUrl());
-		}
+		return UserInfoResponse.fromEntity(userInfo);
+	}
 
-		return UserInfoResponse.fromEntity(userInfo);  // 업데이트된 정보 반환
+	//프로필 사진 수정
+	@Transactional
+	public UserInfoResponse updateProfileImage(Long userId, MultipartFile profileImage) throws IOException {
+		UserInfo userInfo = userInfoRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+
+		// S3에 업로드 (새로운 public 메서드 사용)
+		UploadFile uploadedFile = s3UploadService.uploadSingleFile(profileImage);
+		userInfo.setProfileImage(uploadedFile.getFileKey());
+
+		return UserInfoResponse.fromEntity(userInfo);
 	}
 
 	/**

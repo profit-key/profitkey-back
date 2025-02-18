@@ -59,7 +59,7 @@ public class MyPageController {
 		return myPageService.updateNickname(userId, nickname);
 	}
 
-	// 프로필 이미지 수정
+	//프로필 이미지 수정
 	@PutMapping(value = "/{userId}/profile-image", consumes = "multipart/form-data", produces = "application/json")
 	@Operation(
 		summary = SwaggerDocs.SUMMARY_UPDATE_PROFILE_IMAGE,
@@ -75,6 +75,22 @@ public class MyPageController {
 		@RequestPart("profileImage") MultipartFile profileImage
 	) throws IOException {
 		return myPageService.updateProfileImage(userId, profileImage);
+	}
+
+	//프로필 이미지 삭제
+	@DeleteMapping("/{userId}/profile-image")
+	@Operation(
+		summary = SwaggerDocs.SUMMARY_DELETE_PROFILE_IMAGE,
+		description = SwaggerDocs.DESCRIPTION_DELETE_PROFILE_IMAGE,
+		responses = {
+			@ApiResponse(responseCode = "200", description = "프로필 사진이 성공적으로 삭제되었습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoResponse.class))),
+			@ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.", content = @Content)
+		}
+	)
+	public UserInfoResponse deleteProfileImage(
+		@PathVariable Long userId
+	) {
+		return myPageService.deleteProfileImage(userId);
 	}
 
 	//회원 탈퇴

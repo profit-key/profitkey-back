@@ -77,6 +77,18 @@ public class MyPageService {
 		return UserInfoResponse.fromEntity(userInfo);
 	}
 
+	//프로필 사진 삭제 (기본이미지로 변경)
+	@Transactional
+	public UserInfoResponse deleteProfileImage(Long userId) {
+		UserInfo userInfo = userInfoRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+
+		// 프로필 사진을 null로 설정
+		userInfo.setProfileImage(null);
+
+		return UserInfoResponse.fromEntity(userInfo);
+	}
+	
 	/**
 	 * 회원 탈퇴 (UserInfo 소프트 딜리트, Auth 삭제)
 	 */

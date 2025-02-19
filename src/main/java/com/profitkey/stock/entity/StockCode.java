@@ -27,8 +27,8 @@ public class StockCode {
 	@Column(name = "MARKET_CATEGORY", nullable = false)
 	private String marketCategory;
 
-	@OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
-	private List<StockInfo> stockInfos;
+	// @OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
+	// private List<StockInfo> stockInfos;
 
 	@OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
 	private List<FavoriteStock> favoriteStocks;

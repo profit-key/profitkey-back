@@ -14,6 +14,12 @@ spring:
     hibernate:
       ddl-auto: ${STOCK_JPA_OPTION_AUTO}
     show-sql: ${STOCK_JPA_OPTION_ISSHOW}
+  batch:
+    jdbc:
+      initialize-schema: never
+    #      initialize-schema: always
+    job:
+      enabled: false
 
   security:
     oauth2:

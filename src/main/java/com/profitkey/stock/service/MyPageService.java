@@ -88,7 +88,7 @@ public class MyPageService {
 
 		return UserInfoResponse.fromEntity(userInfo);
 	}
-	
+
 	/**
 	 * 회원 탈퇴 (UserInfo 소프트 딜리트, Auth 삭제)
 	 */

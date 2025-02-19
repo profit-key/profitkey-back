@@ -2,6 +2,7 @@ package com.profitkey.stock.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.profitkey.stock.docs.SwaggerDocs;
+import com.profitkey.stock.dto.response.mypage.FavoriteStockResponse;
 import com.profitkey.stock.dto.response.mypage.MyPageCommunityResponse;
 import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
 import com.profitkey.stock.entity.FavoriteStock;
@@ -114,13 +116,21 @@ public class MyPageController {
 	/*
 	 * 관심 종목
 	 */
+	//관심 종목 조회
 	@GetMapping("/favorite-stocks/{userId}")
 	@Operation(summary = SwaggerDocs.SUMMARY_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_FAVORITE_STOCKS)
-	public ResponseEntity<List<FavoriteStock>> getFavoriteStocks(@PathVariable Long userId) {
+	public ResponseEntity<List<FavoriteStockResponse>> getFavoriteStocks(@PathVariable Long userId) {
 		List<FavoriteStock> favoriteStocks = myPageService.getFavoriteStocks(userId);
-		return ResponseEntity.ok(favoriteStocks);
+
+		// FavoriteStock -> FavoriteStockResponse로 변환
+		List<FavoriteStockResponse> response = favoriteStocks.stream()
+			.map(FavoriteStockResponse::fromEntity)
+			.collect(Collectors.toList());
+
+		return ResponseEntity.ok(response);
 	}
 
+	//관심 종목 삭제
 	@DeleteMapping("/favorite-stocks/{userId}/{stockCode}")
 	@Operation(summary = SwaggerDocs.SUMMARY_DELETE_FAVORITE_STOCK, description = SwaggerDocs.DESCRIPTION_DELETE_FAVORITE_STOCK)
 	public ResponseEntity<Void> deleteFavoriteStock(@PathVariable Long userId, @PathVariable String stockCode) {

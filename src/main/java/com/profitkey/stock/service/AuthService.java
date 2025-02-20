@@ -27,6 +27,45 @@ public class AuthService {
 	private final JwtUtil jwtUtil;
 	private final MyPageService myPageService;
 
+	// public Auth oAuthLogin(String code, HttpServletResponse response) {
+	// 	String accessToken = kakaoOAuth2Service.getAccessToken(code);
+	// 	Map<String, Object> userInfo = kakaoOAuth2Service.getUserInfo(accessToken);
+	//
+	// 	String email = (String)userInfo.get("email");
+	// 	String nickname = (String)userInfo.get("nickname");
+	// 	String profileImage = (String)userInfo.get("profileImage");
+	//
+	// 	// 회원 탈퇴 후 재가입 30일 제한 체크
+	// 	myPageService.checkRejoinRestriction(email);
+	//
+	// 	Optional<Auth> userOptional = authRepository.findByEmail(email);
+	// 	Auth auth = userOptional.orElseGet(() -> {
+	// 		Auth newAuth = Auth.builder()
+	// 			.email(email)
+	// 			.provider(AuthProvider.KAKAO)
+	// 			.accessToken(accessToken)
+	// 			.build();
+	//
+	// 		Auth savedAuth = authRepository.save(newAuth);
+	//
+	// 		UserInfo newUserInfo = UserInfo.builder()
+	// 			.auth(savedAuth)
+	// 			.nickname(nickname)
+	// 			.profileImage(profileImage)
+	// 			.build();
+	//
+	// 		userInfoRepository.save(newUserInfo);
+	//
+	// 		return savedAuth;
+	// 	});
+	//
+	// 	String jwtToken = jwtUtil.generateToken(auth.getId(), auth.getEmail(), auth.getProvider());
+	// 	log.info("oAuthLogin jwtToken : {} ", jwtToken);
+	// 	response.setHeader("Authorization", "Bearer " + jwtToken);
+	//
+	// 	return auth;
+	// }
+
 	public Auth oAuthLogin(String code, HttpServletResponse response) {
 		String accessToken = kakaoOAuth2Service.getAccessToken(code);
 		Map<String, Object> userInfo = kakaoOAuth2Service.getUserInfo(accessToken);
@@ -55,9 +94,13 @@ public class AuthService {
 				.build();
 
 			userInfoRepository.save(newUserInfo);
-
 			return savedAuth;
 		});
+
+		// ✅ UserInfo에서 닉네임 조회 추가
+		String storedNickname = userInfoRepository.findByAuth(auth)
+			.map(UserInfo::getNickname)
+			.orElse(nickname); // 기존 닉네임이 없으면 카카오에서 가져온 닉네임 사용
 
 		String jwtToken = jwtUtil.generateToken(auth.getId(), auth.getEmail(), auth.getProvider());
 		log.info("oAuthLogin jwtToken : {} ", jwtToken);
@@ -106,5 +149,12 @@ public class AuthService {
 
 		auth.setAccessToken(null);
 		authRepository.save(auth);
+	}
+
+	// ✅ Auth 객체로부터 닉네임 조회하는 메서드 추가
+	public String getNickname(Auth auth) {
+		return userInfoRepository.findByAuth(auth)
+			.map(UserInfo::getNickname)
+			.orElse(null); // UserInfo가 없으면 null 반환
 	}
 }

@@ -7,8 +7,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,9 +38,6 @@ public class Auth {
 	// @OneToOne(mappedBy = "auth", cascade = CascadeType.ALL)
 	// @JsonBackReference  // UserInfo에서 참조할 때 무한 참조 방지
 	// private UserInfo userInfo;
-	@OneToOne
-	@JoinColumn(name = "user_id", referencedColumnName = "USER_ID")
-	private UserInfo userInfo;  // 단방향 참조
 
 	@Builder
 	public Auth(String email, AuthProvider provider, String accessToken) {

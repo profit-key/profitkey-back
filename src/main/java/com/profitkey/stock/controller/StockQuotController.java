@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class StockQuotController {
-	private final StockQuotService stockDetailService;
+	private final StockQuotService stockQuotService;
 
 	/**
 	 * [국내주식]기본시세 API CALL
@@ -32,7 +32,7 @@ public class StockQuotController {
 		description = SwaggerDocs.DESCRIPTION_STOCK_INQUIRE_PRICE)
 	@PostMapping("/inquire-price")
 	public ResponseEntity<Object> getInquirePrice(@RequestBody InquirePriceRequest request) {
-		return stockDetailService.getInquirePrice(request);
+		return stockQuotService.getInquirePrice(request);
 	}
 
 	/**
@@ -45,9 +45,7 @@ public class StockQuotController {
 		description = SwaggerDocs.DESCRIPTION_STOCK_INQUIRE_DAILY)
 	@PostMapping("/inquire-daily")
 	public ResponseEntity<Object> getInquireDaily(@RequestBody InquireDailyRequest request) {
-		log.info("request {}", request);
-		log.info("hello");
-		return stockDetailService.getInquireDaily(request);
+		return stockQuotService.getInquireDaily(request);
 	}
 
 	/**
@@ -60,7 +58,7 @@ public class StockQuotController {
 		description = SwaggerDocs.DESCRIPTION_STOCK_INVEST_OPINION)
 	@PostMapping("/invest-opinion")
 	public ResponseEntity<Object> getInvestOpinion(@RequestBody InvestOpinionRequest request) {
-		return stockDetailService.getInvestOpinion(request);
+		return stockQuotService.getInvestOpinion(request);
 	}
 
 	/**
@@ -72,7 +70,7 @@ public class StockQuotController {
 		description = SwaggerDocs.DESCRIPTION_STOCK_DETAIL)
 	@PostMapping("/stock-detail")
 	public ResponseEntity<Object> getStockDetail(@RequestBody StockDetailRequest request) {
-		return stockDetailService.getStockDetail(request);
+		return stockQuotService.getStockDetail(request);
 	}
 
 }

@@ -65,16 +65,36 @@ public class MyPageService {
 	}
 
 	//프로필 사진 수정
+	// @Transactional
+	// public UserInfoResponse updateProfileImage(Long userId, MultipartFile profileImage) throws IOException {
+	// 	UserInfo userInfo = userInfoRepository.findById(userId)
+	// 		.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+	//
+	// 	// S3에 업로드 (새로운 public 메서드 사용)
+	// 	UploadFile uploadedFile = s3UploadService.uploadSingleFile(profileImage);
+	// 	userInfo.setProfileImage(uploadedFile.getFileKey());
+	//
+	// 	return UserInfoResponse.fromEntity(userInfo);
+	// }
 	@Transactional
-	public UserInfoResponse updateProfileImage(Long userId, MultipartFile profileImage) throws IOException {
+	public UserInfoResponse updateProfileImage(Long userId, MultipartFile profileImage) throws IOException,
+		IOException {
 		UserInfo userInfo = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-		// S3에 업로드 (새로운 public 메서드 사용)
+		// 기존 프로필 이미지 삭제 (기본 이미지가 아니라면)
+		if (userInfo.getProfileImage() != null) {
+			s3UploadService.deleteFile(userInfo.getProfileImage());
+		}
+
+		// 새 이미지 업로드
 		UploadFile uploadedFile = s3UploadService.uploadSingleFile(profileImage);
 		userInfo.setProfileImage(uploadedFile.getFileKey());
 
-		return UserInfoResponse.fromEntity(userInfo);
+		// 업로드된 이미지의 URL 가져오기
+		String imageUrl = s3UploadService.getFileUrl(uploadedFile.getFileKey());
+
+		return UserInfoResponse.fromEntity(userInfo, imageUrl);
 	}
 
 	//프로필 사진 삭제 (기본이미지로 변경)

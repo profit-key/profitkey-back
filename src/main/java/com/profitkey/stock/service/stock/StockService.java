@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.profitkey.stock.dto.KisApiProperties;
 import com.profitkey.stock.dto.request.stock.FluctuationRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
+import com.profitkey.stock.entity.StockCode;
 import com.profitkey.stock.entity.StockInfo;
+import com.profitkey.stock.repository.StockCodeRepository;
 import com.profitkey.stock.repository.StockRepository;
 import com.profitkey.stock.util.DataConversionUtil;
 import com.profitkey.stock.util.DateTimeUtil;
@@ -30,6 +32,7 @@ public class StockService {
 	private final StockRankService stockRankService;
 	private final StockQuotService stockQuotService;
 	private final StockRepository stockRepository;
+	private final StockCodeRepository stockCodeRepository;
 	private final ObjectMapper objectMapper;
 
 	@Cacheable(value = "tokenCache", key = "'stockToken'", unless = "#result == null")
@@ -60,6 +63,7 @@ public class StockService {
 	}
 
 	private List<String> getTopStockCodes() {
+		// 주식 등락률 상위 get
 		Map<String, Object> fluctuationMap = objectMapper.convertValue(
 			stockRankService.getFluctuation(defaultFluctuation()).getBody(),
 			new TypeReference<>() {
@@ -77,6 +81,7 @@ public class StockService {
 		return stockCodes.stream().map(code -> {
 			try {
 				Thread.sleep(1000);
+				// 주식기본시세 호출
 				ResponseEntity<Object> response =
 					stockQuotService.getInquirePrice(new InquirePriceRequest("FHKST01010100", "J", code));
 
@@ -127,8 +132,12 @@ public class StockService {
 	}
 
 	private StockInfo buildStockInfo(Map<String, Object> output) {
+		String stockCodeStr = (String)output.get("stck_shrn_iscd");
+		StockCode stockCode = stockCodeRepository.findById(stockCodeStr)
+			.orElseThrow(() -> new IllegalArgumentException("StockCode not found: " + stockCodeStr));
+
 		return StockInfo.builder()
-			.stockCode((String)output.get("stck_shrn_iscd"))
+			.stockCode(stockCode)
 			.baseDate(DateTimeUtil.curDate(""))
 			.endingPrice(DataConversionUtil.toBigDecimal(output.get("stck_prpr")))
 			.openingPrice(DataConversionUtil.toInteger(output.get("opening_price")))

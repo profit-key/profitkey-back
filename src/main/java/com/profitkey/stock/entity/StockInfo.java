@@ -3,6 +3,9 @@ package com.profitkey.stock.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import lombok.AccessLevel;
@@ -17,18 +20,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-// @IdClass(StockInfoId.class)
+@IdClass(StockInfoId.class)
 @AllArgsConstructor
 @Builder
 public class StockInfo {
-	// @Id
-	// @ManyToOne()
-	// @JoinColumn(name = "STOCK_CODE", nullable = false)
 	@Id
-	@Column(name = "STOCK_CODE")
-	private String stockCode;
+	@ManyToOne()
+	@JoinColumn(name = "STOCK_CODE", nullable = false)
+	private StockCode stockCode;
 
-	// @Id
+	@Id
 	@Column(name = "BASE_DATE", nullable = false, length = 8)
 	private String baseDate;
 

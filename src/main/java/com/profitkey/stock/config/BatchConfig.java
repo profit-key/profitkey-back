@@ -41,7 +41,7 @@ public class BatchConfig {
 	public Step createStockInfoStep() {
 		log.info("createStockInfoStep batch-------------------------*********");
 
-		stockRepository.deleteAll();
+		// stockRepository.deleteAll();
 
 		return new StepBuilder("createStockInfoStep", jobRepository)
 			.tasklet((contribution, chunkContext) -> {

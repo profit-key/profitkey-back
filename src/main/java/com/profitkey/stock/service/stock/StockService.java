@@ -5,8 +5,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.profitkey.stock.dto.KisApiProperties;
-import com.profitkey.stock.dto.request.stock.FluctuationRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
+import com.profitkey.stock.dto.request.stock.MarketCapDefaultRequest;
+import com.profitkey.stock.dto.request.stock.MarketCapRequest;
 import com.profitkey.stock.entity.StockCode;
 import com.profitkey.stock.entity.StockInfo;
 import com.profitkey.stock.repository.StockCodeRepository;
@@ -55,7 +56,7 @@ public class StockService {
 
 	public String getStockNameByCode(String code) {
 		StockCode stockCode = stockCodeRepository.findByStockCode(code);
-		return (stockCode != null) ? stockCode.getStockName() : null;
+		return (stockCode != null) ? stockCode.getStockName() : "";
 	}
 
 	public List<StockCode> searchStocksByCodePattern(String code) {
@@ -72,16 +73,17 @@ public class StockService {
 	}
 
 	private List<String> getTopStockCodes() {
-		// 주식 등락률 상위 get
-		Map<String, Object> fluctuationMap = objectMapper.convertValue(
-			stockRankService.getFluctuation(defaultFluctuation()).getBody(),
+		// 주식 시가총액 상위 get
+		MarketCapRequest marketCapRequest = new MarketCapDefaultRequest();
+		Map<String, Object> marketCapMap = objectMapper.convertValue(
+			stockRankService.getMarketCap(marketCapRequest).getBody(),
 			new TypeReference<>() {
 			}
 		);
-		List<Map<String, Object>> outputList = (List<Map<String, Object>>)fluctuationMap.get("output");
+		List<Map<String, Object>> outputList = (List<Map<String, Object>>)marketCapMap.get("output");
 
 		return outputList.stream()
-			.map(stock -> (String)stock.get("stck_shrn_iscd"))
+			.map(stock -> (String)stock.get("mksc_shrn_iscd"))
 			.limit(3) // 테스트용으로 상위 3개만 제한
 			.collect(Collectors.toList());
 	}
@@ -112,32 +114,6 @@ public class StockService {
 		log.info("Stock Data: {}", stockData);
 		Map<String, Object> output = (Map<String, Object>)stockData.get("output");
 		stockRepository.save(buildStockInfo(output));
-	}
-
-	private FluctuationRequest defaultFluctuation() {
-		String trId = "FHPST01700000";
-		String custtype = "P";
-		String fidRsflRate2 = "";
-		String fidCondMrktDivCode = "J";
-		String fidCondScrDivCode = "20170";
-		String fidInputIscd = "0000";
-		String fidRankSortClsCode = "0";
-		String fidInputCnt1 = "0";
-		String fidPrcClsCode = "0";
-		String fidInputPrice1 = "";
-		String fidInputPrice2 = "";
-		String fidVolCnt = "";
-		String fidTrgtClsCode = "0";
-		String fidTrgtExlsClsCode = "0";
-		String fidDivClsCode = "";
-		String fidRsflRate1 = "";
-
-		FluctuationRequest fluctuationRequest = new FluctuationRequest(trId, custtype, fidRsflRate2,
-			fidCondMrktDivCode, fidCondScrDivCode, fidInputIscd, fidRankSortClsCode, fidInputCnt1, fidPrcClsCode,
-			fidInputPrice1,
-			fidInputPrice2, fidVolCnt, fidTrgtClsCode, fidTrgtExlsClsCode, fidDivClsCode, fidRsflRate1
-		);
-		return fluctuationRequest;
 	}
 
 	private StockInfo buildStockInfo(Map<String, Object> output) {

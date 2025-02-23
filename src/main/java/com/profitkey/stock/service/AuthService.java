@@ -106,6 +106,11 @@ public class AuthService {
 		log.info("oAuthLogin jwtToken : {} ", jwtToken);
 		response.setHeader("Authorization", "Bearer " + jwtToken);
 
+		//(추가) Auth 객체에 JWT토큰 저장
+		auth.setAccessToken(jwtToken);
+		authRepository.save(auth);
+		log.info("Auth 엔티티에 JWT 저장 완료: email={}, token={}", auth.getEmail(), jwtToken);
+
 		return auth;
 	}
 

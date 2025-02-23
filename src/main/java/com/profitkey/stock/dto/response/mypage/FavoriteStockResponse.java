@@ -1,13 +1,11 @@
 package com.profitkey.stock.dto.response.mypage;
 
-import java.math.BigDecimal;
-import java.util.Comparator;
-
 import com.profitkey.stock.entity.FavoriteStock;
 import com.profitkey.stock.entity.StockCode;
 import com.profitkey.stock.entity.StockInfo;
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.math.BigDecimal;
+import java.util.Comparator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,12 +20,12 @@ public class FavoriteStockResponse {
 	private Integer fiftyTwoWeekLow;
 	private BigDecimal pbr;
 	private BigDecimal per;
-	private Integer eps;
+	private BigDecimal eps;
 	private Long marketCap;
 
 	@Builder
 	public FavoriteStockResponse(String stockCode, String stockName, Integer fiftyTwoWeekHigh, Integer fiftyTwoWeekLow,
-		BigDecimal pbr, BigDecimal per, Integer eps, Long marketCap) {
+		BigDecimal pbr, BigDecimal per, BigDecimal eps, Long marketCap) {
 		this.stockCode = stockCode;
 		this.stockName = stockName;
 		this.fiftyTwoWeekHigh = fiftyTwoWeekHigh;

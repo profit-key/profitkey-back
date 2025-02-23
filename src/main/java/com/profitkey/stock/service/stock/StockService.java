@@ -53,6 +53,15 @@ public class StockService {
 		return rootNode.get("access_token").asText();
 	}
 
+	public String getStockNameByCode(String code) {
+		StockCode stockCode = stockCodeRepository.findByStockCode(code);
+		return (stockCode != null) ? stockCode.getStockName() : null;
+	}
+
+	public List<StockCode> searchStocksByCodePattern(String code) {
+		return stockCodeRepository.findByStockCodeLike(code + "%");
+	}
+
 	public void createStockInfo() {
 		log.info("start job createStockInfo");
 
@@ -133,8 +142,7 @@ public class StockService {
 
 	private StockInfo buildStockInfo(Map<String, Object> output) {
 		String stockCodeStr = (String)output.get("stck_shrn_iscd");
-		StockCode stockCode = stockCodeRepository.findById(stockCodeStr)
-			.orElseThrow(() -> new IllegalArgumentException("StockCode not found: " + stockCodeStr));
+		StockCode stockCode = stockCodeRepository.findByStockCode(stockCodeStr);
 
 		return StockInfo.builder()
 			.stockCode(stockCode)

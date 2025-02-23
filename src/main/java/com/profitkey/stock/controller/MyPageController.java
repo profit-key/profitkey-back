@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -30,6 +29,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -145,13 +145,8 @@ public class MyPageController {
 	// /me 엔드포인트 추가
 	@Operation(summary = SwaggerDocs.SUMMARY_TOKEN_ME, description = SwaggerDocs.DESCRIPTION_TOKEN_ME)
 	@GetMapping("/me")
-	public ResponseEntity<Map<String, Object>> getCurrentUserInfo(@RequestHeader("Authorization") String token) {
-		// Authorization 헤더에서 Bearer 토큰을 추출
-		String accessToken = token.replace("Bearer ", "");
-
-		// 토큰으로부터 사용자 정보 가져오기
-		Map<String, Object> userInfo = authService.getUserInfoFromToken(accessToken);
-
-		return ResponseEntity.ok(userInfo);  // 사용자 정보 반환
+	public ResponseEntity<Map<String, Object>> getUserInfo(HttpServletRequest request) {
+		Map<String, Object> userInfo = authService.getUserInfoFromToken(request);
+		return ResponseEntity.ok(userInfo);
 	}
 }

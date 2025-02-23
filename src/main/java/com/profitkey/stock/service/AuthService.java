@@ -12,6 +12,7 @@ import com.profitkey.stock.repository.mypage.UserInfoRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
 import com.profitkey.stock.util.JwtUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -166,7 +167,9 @@ public class AuthService {
 
 	// (추가) access token 으로 내 정보 불러오기
 	// AuthService에 사용자 정보 반환 메서드 추가
-	public Map<String, Object> getUserInfoFromToken(String token) {
+	public Map<String, Object> getUserInfoFromToken(HttpServletRequest request) {
+		String token = extractTokenFromRequest(request); // 요청에서 토큰 추출
+
 		String email = jwtUtil.extractEmail(token);
 
 		Auth auth = authRepository.findByEmail(email)
@@ -185,6 +188,15 @@ public class AuthService {
 			"nickname", userInfo.getNickname(),
 			"profileImage", profileImageUrl  // S3 URL 또는 빈 문자열 반환
 		);
+	}
+
+	// HTTP 요청에서 토큰 추출
+	private String extractTokenFromRequest(HttpServletRequest request) {
+		String token = request.getHeader("Authorization");
+		if (token != null && token.startsWith("Bearer ")) {
+			return token.substring(7);  // "Bearer "를 제외한 실제 토큰 반환
+		}
+		throw new RuntimeException("Authorization 헤더가 없습니다.");
 	}
 
 }

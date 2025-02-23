@@ -1,6 +1,22 @@
 package com.profitkey.stock.config;
 
 import static java.util.stream.Collectors.*;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springdoc.core.customizers.OperationCustomizer;
+import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.HandlerMethod;
+
 import com.profitkey.stock.annotation.ApiErrorCode;
 import com.profitkey.stock.annotation.ApiErrorExceptions;
 import com.profitkey.stock.annotation.DisableSwaggerSecurity;
@@ -11,7 +27,9 @@ import com.profitkey.stock.dto.common.ErrorResponse;
 import com.profitkey.stock.dto.common.ExampleHolder;
 import com.profitkey.stock.exception.errorcode.BaseErrorCode;
 import com.profitkey.stock.exception.errorcode.ProfitCodeException;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.examples.Example;
@@ -19,20 +37,9 @@ import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.customizers.OperationCustomizer;
-import org.springdoc.core.models.GroupedOpenApi;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.method.HandlerMethod;
 
 @Configuration
 @RequiredArgsConstructor
@@ -42,7 +49,22 @@ public class SwaggerConfig {
 
 	@Bean
 	public OpenAPI swaggerApi() {
-		return environmentChecker.getSwaggerInfoByEnv();
+		//(기존)
+		// return environmentChecker.getSwaggerInfoByEnv();
+
+		//(추가 수정)
+		OpenAPI openAPI = environmentChecker.getSwaggerInfoByEnv();  // 기존 설정 가져오기
+
+		// 기존 설정에 보안 스킴 추가
+		openAPI.addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
+			.components(new Components()
+				.addSecuritySchemes("BearerAuth", new SecurityScheme()
+					.type(SecurityScheme.Type.HTTP)
+					.scheme("bearer")
+					.bearerFormat("JWT")
+				)
+			);
+		return openAPI;
 	}
 
 	@Bean
@@ -159,5 +181,4 @@ public class SwaggerConfig {
 			responses.addApiResponse(status.toString(), apiResponse);
 		});
 	}
-
 }

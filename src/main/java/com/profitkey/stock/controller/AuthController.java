@@ -32,7 +32,15 @@ public class AuthController {
 	public ResponseEntity<?> kakaoLogin(@RequestParam("code") String accessCode,
 		HttpServletResponse httpServletResponse) {
 		Auth auth = authService.oAuthLogin(accessCode, httpServletResponse);
-		return ResponseEntity.ok(auth);
+		String jwtToken = auth.getAccessToken(); // (추가) Auth에 저장된 JWT 토큰 가져오기
+
+		// return ResponseEntity.ok(auth);
+
+		// (추가) Json 형태로 응답 반환
+		return ResponseEntity.ok(Map.of(
+			"accessToken", jwtToken,
+			"email", auth.getEmail()
+		));
 	}
 
 	@Operation(summary = SwaggerDocs.SUMMARY_TOKEN_ISSUANCE,

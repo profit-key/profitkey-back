@@ -35,8 +35,8 @@ public class UserInfo {
 	@Column(nullable = false, unique = true)
 	private String nickname;
 
-	@Column(length = 255)
-	private String profileImage = "";
+	@Column(length = 255, nullable = false, columnDefinition = "VARCHAR(255) DEFAULT ''")
+	private String profileImage;
 
 	// @OneToOne(cascade = CascadeType.ALL)
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

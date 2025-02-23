@@ -26,6 +26,7 @@ public class AuthService {
 	private final UserInfoRepository userInfoRepository;
 	private final JwtUtil jwtUtil;
 	private final MyPageService myPageService;
+	private final S3UploadService s3UploadService;
 
 	// public Auth oAuthLogin(String code, HttpServletResponse response) {
 	// 	String accessToken = kakaoOAuth2Service.getAccessToken(code);
@@ -157,4 +158,28 @@ public class AuthService {
 			.map(UserInfo::getNickname)
 			.orElse(null); // UserInfo가 없으면 null 반환
 	}
+
+	// (추가) access token 으로 내 정보 불러오기
+	// AuthService에 사용자 정보 반환 메서드 추가
+	public Map<String, Object> getUserInfoFromToken(String token) {
+		String email = jwtUtil.extractEmail(token);
+
+		Auth auth = authRepository.findByEmail(email)
+			.orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
+
+		UserInfo userInfo = userInfoRepository.findByAuth(auth)
+			.orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
+
+		// 프로필 이미지가 존재하면 S3 URL을 반환하고, 없으면 빈 문자열 처리
+		String profileImageUrl =
+			userInfo.getProfileImage().isEmpty() ? "" : s3UploadService.getFileUrl(userInfo.getProfileImage());
+
+		return Map.of(
+			"email", auth.getEmail(),
+			"userId", userInfo.getUserId(),
+			"nickname", userInfo.getNickname(),
+			"profileImage", profileImageUrl  // S3 URL 또는 빈 문자열 반환
+		);
+	}
+
 }

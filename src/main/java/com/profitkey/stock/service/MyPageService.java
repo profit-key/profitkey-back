@@ -44,7 +44,11 @@ public class MyPageService {
 		UserInfo userInfo = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-		return UserInfoResponse.fromEntity(userInfo);
+		// 프로필 이미지가 존재하면 S3 URL로 반환, 없으면 빈 문자열 처리
+		String profileImageUrl =
+			userInfo.getProfileImage().isEmpty() ? "" : s3UploadService.getFileUrl(userInfo.getProfileImage());
+
+		return UserInfoResponse.fromEntity(userInfo, profileImageUrl);  // S3 URL을 반환
 	}
 
 	/**

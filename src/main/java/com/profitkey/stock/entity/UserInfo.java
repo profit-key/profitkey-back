@@ -36,7 +36,7 @@ public class UserInfo {
 	private String nickname;
 
 	@Column(length = 255)
-	private String profileImage;
+	private String profileImage = "";
 
 	// @OneToOne(cascade = CascadeType.ALL)
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

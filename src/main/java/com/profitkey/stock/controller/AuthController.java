@@ -58,4 +58,17 @@ public class AuthController {
 		authService.disposeToken(token);
 		return ResponseEntity.ok("정상처리되었습니다.");
 	}
+
+	// /me 엔드포인트 추가
+	@Operation(summary = SwaggerDocs.SUMMARY_TOKEN_ME, description = SwaggerDocs.DESCRIPTION_TOKEN_ME)
+	@GetMapping("/me")
+	public ResponseEntity<Map<String, Object>> getCurrentUserInfo(@RequestHeader("Authorization") String token) {
+		// Authorization 헤더에서 Bearer 토큰을 추출
+		String accessToken = token.replace("Bearer ", "");
+
+		// 토큰으로부터 사용자 정보 가져오기
+		Map<String, Object> userInfo = authService.getUserInfoFromToken(accessToken);
+
+		return ResponseEntity.ok(userInfo);  // 사용자 정보 반환
+	}
 }

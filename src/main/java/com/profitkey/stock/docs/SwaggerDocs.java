@@ -181,6 +181,11 @@ public class SwaggerDocs {
 		토큰을 빈값으로 갱신합니다.
 		""";
 
+	public static final String SUMMARY_TOKEN_ME = "access token으로 내 정보 조회";
+	public static final String DESCRIPTION_TOKEN_ME = """
+		access token으로 내 정보를 불러오는 API입니다.
+		""";
+
 	/**
 	 * ****************************************
 	 * Mypage Swagger Docs 모음

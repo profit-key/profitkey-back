@@ -1,5 +1,6 @@
 package com.profitkey.stock.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -9,23 +10,29 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "StockInfos")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @IdClass(StockInfoId.class)
+@AllArgsConstructor
+@Builder
 public class StockInfo {
 	@Id
 	@ManyToOne()
 	@JoinColumn(name = "STOCK_CODE", nullable = false)
+	@JsonIgnore
 	private StockCode stockCode;
 
 	@Id
-	@Column(name = "BASE_DT", nullable = false, length = 8)
+	@Column(name = "BASE_DATE", nullable = false, length = 8)
 	private String baseDate;
 
 	@Column(name = "ENDING_PRICE", nullable = false, precision = 12, scale = 0)
@@ -59,32 +66,12 @@ public class StockInfo {
 	private BigDecimal per;
 
 	@Column(name = "EPS", nullable = false)
-	private Integer eps;
+	private BigDecimal eps;
 
 	@Column(name = "PBR", precision = 5, scale = 2, nullable = false)
 	private BigDecimal pbr;
 
 	@Column(name = "BPS", nullable = false)
-	private Integer bps;
+	private BigDecimal bps;
 
-	@Builder
-	private StockInfo(StockCode stockCode, String baseDate, BigDecimal endingPrice, Integer openingPrice,
-		Integer highPrice, Integer lowPrice, Long tradingVolume, Long tradingValue, Long marketCap,
-		Integer fiftyTwoWeekHigh, Integer fiftyTwoWeekLow, BigDecimal per, Integer eps, BigDecimal pbr, Integer bps) {
-		this.stockCode = stockCode;
-		this.baseDate = baseDate;
-		this.endingPrice = endingPrice;
-		this.openingPrice = openingPrice;
-		this.highPrice = highPrice;
-		this.lowPrice = lowPrice;
-		this.tradingVolume = tradingVolume;
-		this.tradingValue = tradingValue;
-		this.marketCap = marketCap;
-		this.fiftyTwoWeekHigh = fiftyTwoWeekHigh;
-		this.fiftyTwoWeekLow = fiftyTwoWeekLow;
-		this.per = per;
-		this.eps = eps;
-		this.pbr = pbr;
-		this.bps = bps;
-	}
-} 
+}

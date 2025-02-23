@@ -7,6 +7,7 @@ import com.profitkey.stock.dto.request.stock.DividendRequest;
 import com.profitkey.stock.dto.request.stock.InquireDailyRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.InvestOpinionRequest;
+import com.profitkey.stock.dto.request.stock.SearchInfoRequest;
 import com.profitkey.stock.dto.request.stock.StockDetailRequest;
 import com.profitkey.stock.util.HeaderUtil;
 import com.profitkey.stock.util.HttpClientUtil;
@@ -181,5 +182,40 @@ public class StockQuotService {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("INTERNAL_SERVER_ERROR");
 		}
+	}
+
+	public ResponseEntity<Object> getSearchInfo(SearchInfoRequest request) {
+		Object result = null;
+		String urlData = kisApiProperties.getSearchInfo();
+
+		String trId = request.getTr_id();
+		String custtype = request.getCusttype();
+		String pdno = request.getPdno();
+		String prdtTypeCd = request.getPrdtTypeCd();
+
+		StringBuilder paramDataBuilder = new StringBuilder("?");
+		paramDataBuilder.append("tr_id=").append(trId).append("&");
+		paramDataBuilder.append("custtype=").append(custtype).append("&");
+		paramDataBuilder.append("PDNO=").append(pdno).append("&");
+		paramDataBuilder.append("PRDT_TYPE_CD=").append(prdtTypeCd).append("&");
+		paramDataBuilder.setLength(paramDataBuilder.length() - 1);
+
+		String fullUrl = urlData + paramDataBuilder.toString();
+
+		SearchInfoRequest requestParam = new SearchInfoRequest(
+			trId, custtype, pdno, prdtTypeCd
+		);
+
+		log.info("full url : {}", fullUrl);
+
+		try {
+			URL url = new URL(fullUrl);
+			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
+			ObjectMapper objectMapper = new ObjectMapper();
+			result = objectMapper.readValue(jsonString, Object.class);
+		} catch (IOException e) {
+			e.getMessage();
+		}
+		return ResponseEntity.ok(result);
 	}
 }

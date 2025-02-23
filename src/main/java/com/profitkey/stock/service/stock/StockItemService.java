@@ -219,9 +219,6 @@ public class StockItemService {
 		String shtCd = request.getShtCd();
 		String highGb = request.getHighGb();
 
-		log.info("trId url : {}", trId);
-		log.info("fDt url : {}", fDt);
-
 		StringBuilder paramDataBuilder = new StringBuilder("?");
 		paramDataBuilder.append("tr_id=").append(trId).append("&");
 		paramDataBuilder.append("custtype=").append(custtype).append("&");
@@ -239,6 +236,8 @@ public class StockItemService {
 			trId, custtype, cts, gb1, fDt, tDt, shtCd, highGb
 		);
 
+		log.info("full url : {}", fullUrl);
+		
 		try {
 			URL url = new URL(fullUrl);
 			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);

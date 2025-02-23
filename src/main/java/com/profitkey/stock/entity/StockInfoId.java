@@ -23,4 +23,4 @@ public class StockInfoId implements Serializable {
 	public void setStockCode(StockCode stockCode) {
 		this.stockCode = stockCode;
 	}
-} 
+}

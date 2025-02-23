@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.service.AuthService;
+import com.profitkey.stock.util.JwtUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AuthController {
 	private final AuthService authService;
+	private final JwtUtil jwtUtil;
 
 	@Operation(summary = SwaggerDocs.SUMMARY_KAKAO_LOGIN,
 		description = SwaggerDocs.DESCRIPTION_KAKAO_LOGIN)
@@ -32,11 +34,15 @@ public class AuthController {
 	public ResponseEntity<?> kakaoLogin(@RequestParam("code") String accessCode,
 		HttpServletResponse httpServletResponse) {
 		Auth auth = authService.oAuthLogin(accessCode, httpServletResponse);
-		String jwtToken = auth.getAccessToken(); // (추가) Auth에 저장된 JWT 토큰 가져오기
+		// (추가) Auth에 저장된 JWT 토큰 가져오기
+		String jwtToken = jwtUtil.generateToken(auth.getId(), auth.getEmail(), auth.getProvider());
+		log.info("Generated JWT Token: {}", jwtToken);
 
 		// return ResponseEntity.ok(auth);
 
-		// (추가) Json 형태로 응답 반환
+		// (추가) JWT 응답 객체에 담아서 반환
+		auth.setAccessToken(jwtToken);
+
 		return ResponseEntity.ok(Map.of(
 			"accessToken", jwtToken,
 			"email", auth.getEmail()

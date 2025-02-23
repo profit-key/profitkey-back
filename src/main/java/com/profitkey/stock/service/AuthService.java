@@ -92,7 +92,7 @@ public class AuthService {
 			UserInfo newUserInfo = UserInfo.builder()
 				.auth(savedAuth)
 				.nickname(nickname)
-				.profileImage(profileImage)
+				.profileImage(profileImage != null ? profileImage : "") // null 방지
 				.build();
 
 			userInfoRepository.save(newUserInfo);

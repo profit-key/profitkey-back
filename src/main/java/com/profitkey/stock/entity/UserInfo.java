@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public class UserInfo {
 	@Column(nullable = false, unique = true)
 	private String nickname;
 
-	@Column(length = 255, nullable = false, columnDefinition = "VARCHAR(255) DEFAULT ''")
+	@Column(length = 255, nullable = false)
 	private String profileImage;
 
 	// @OneToOne(cascade = CascadeType.ALL)
@@ -66,5 +67,12 @@ public class UserInfo {
 		this.isDeleted = false;
 		this.createdAt = LocalDateTime.now();
 		this.updatedAt = LocalDateTime.now();
+	}
+
+	@PrePersist
+	public void prePersist() {
+		if (this.profileImage == null) {
+			this.profileImage = ""; // profileImage가 null이면 빈 문자열로 설정
+		}
 	}
 }

@@ -16,8 +16,7 @@ spring:
     show-sql: ${STOCK_JPA_OPTION_ISSHOW}
   batch:
     jdbc:
-      initialize-schema: never
-    #      initialize-schema: always
+      initialize-schema: always
     job:
       enabled: false
 

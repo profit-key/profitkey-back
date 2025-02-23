@@ -17,6 +17,7 @@ spring:
   batch:
     jdbc:
       initialize-schema: never
+      table-prefix: "batch_"
     job:
       enabled: false
   security:

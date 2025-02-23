@@ -1,6 +1,6 @@
 package com.profitkey.stock.config;
 
-import com.profitkey.stock.repository.StockRepository;
+import com.profitkey.stock.repository.stock.StockRepository;
 import com.profitkey.stock.service.stock.StockService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;

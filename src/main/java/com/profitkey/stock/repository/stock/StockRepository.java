@@ -1,4 +1,4 @@
-package com.profitkey.stock.repository;
+package com.profitkey.stock.repository.stock;
 
 import com.profitkey.stock.entity.StockInfo;
 import org.springframework.data.jpa.repository.JpaRepository;

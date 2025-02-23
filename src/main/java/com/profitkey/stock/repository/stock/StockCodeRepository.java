@@ -1,4 +1,4 @@
-package com.profitkey.stock.repository;
+package com.profitkey.stock.repository.stock;
 
 import com.profitkey.stock.entity.StockCode;
 import java.util.List;

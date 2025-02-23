@@ -2,7 +2,6 @@ package com.profitkey.stock.dto.response;
 
 import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.AuthProvider;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

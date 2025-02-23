@@ -1,5 +1,6 @@
 package com.profitkey.stock.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,12 +29,15 @@ public class StockCode {
 	private String marketCategory;
 
 	@OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<StockInfo> stockInfos;
-
+	
 	@OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<FavoriteStock> favoriteStocks;
 
 	@OneToMany(mappedBy = "stockCode", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<AiAnalysisOpinion> aiAnalysisOpinions;
 
 	@Builder

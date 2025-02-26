@@ -36,4 +36,6 @@ public interface FavoriteStockRepository extends JpaRepository<FavoriteStock, Lo
 	@Query("SELECT s FROM StockCode s WHERE s.stockCode = :stockCode")
 	StockCode findStockCodeByStockCode(@Param("stockCode") String stockCode);
 
+	boolean existsByUser_UserIdAndStockCode_StockCode(Long userId, String stockCode);
+
 }

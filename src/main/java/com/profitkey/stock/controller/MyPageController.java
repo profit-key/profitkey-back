@@ -3,7 +3,6 @@ package com.profitkey.stock.controller;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.response.mypage.FavoriteStockResponse;
 import com.profitkey.stock.dto.response.mypage.MyPageCommunityResponse;
 import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
-import com.profitkey.stock.entity.FavoriteStock;
+import com.profitkey.stock.repository.mypage.FavoriteStockRepository;
 import com.profitkey.stock.service.AuthService;
 import com.profitkey.stock.service.MyPageService;
 
@@ -39,6 +38,7 @@ public class MyPageController {
 
 	private final MyPageService myPageService;
 	private final AuthService authService;
+	private final FavoriteStockRepository favoriteStockRepository;
 
 	/*
 	 * 내 정보
@@ -124,13 +124,7 @@ public class MyPageController {
 	@GetMapping("/favorite-stocks/{userId}")
 	@Operation(summary = SwaggerDocs.SUMMARY_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_FAVORITE_STOCKS)
 	public ResponseEntity<List<FavoriteStockResponse>> getFavoriteStocks(@PathVariable Long userId) {
-		List<FavoriteStock> favoriteStocks = myPageService.getFavoriteStocks(userId);
-
-		// FavoriteStock -> FavoriteStockResponse로 변환
-		List<FavoriteStockResponse> response = favoriteStocks.stream()
-			.map(FavoriteStockResponse::fromEntity)
-			.collect(Collectors.toList());
-
+		List<FavoriteStockResponse> response = myPageService.getFavoriteStocks(userId);
 		return ResponseEntity.ok(response);
 	}
 

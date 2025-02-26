@@ -2,10 +2,8 @@ package com.profitkey.stock.dto.response.mypage;
 
 import com.profitkey.stock.entity.FavoriteStock;
 import com.profitkey.stock.entity.StockCode;
-import com.profitkey.stock.entity.StockInfo;
+
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.math.BigDecimal;
-import java.util.Comparator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,42 +14,24 @@ import lombok.Setter;
 public class FavoriteStockResponse {
 	private String stockCode;
 	private String stockName;
-	private Integer fiftyTwoWeekHigh;
-	private Integer fiftyTwoWeekLow;
-	private BigDecimal pbr;
-	private BigDecimal per;
-	private BigDecimal eps;
-	private Long marketCap;
+	private boolean isLiked;
 
 	@Builder
-	public FavoriteStockResponse(String stockCode, String stockName, Integer fiftyTwoWeekHigh, Integer fiftyTwoWeekLow,
-		BigDecimal pbr, BigDecimal per, BigDecimal eps, Long marketCap) {
+	public FavoriteStockResponse(String stockCode, String stockName, boolean isLiked) {
 		this.stockCode = stockCode;
 		this.stockName = stockName;
-		this.fiftyTwoWeekHigh = fiftyTwoWeekHigh;
-		this.fiftyTwoWeekLow = fiftyTwoWeekLow;
-		this.pbr = pbr;
-		this.per = per;
-		this.eps = eps;
-		this.marketCap = marketCap;
+		this.isLiked = isLiked;
 	}
 
-	public static FavoriteStockResponse fromEntity(FavoriteStock favoriteStock) {
-		StockCode stockCode = favoriteStock.getStockCode();
-		StockInfo latestStockInfo = stockCode.getStockInfos().stream()
-			.max(Comparator.comparing(StockInfo::getBaseDate))
-			.orElse(null); // 최신 날짜의 주식 정보 가져오기
+	// 엔티티를 DTO로 변환하는 메서드 수정
+	public static FavoriteStockResponse fromEntity(FavoriteStock favoriteStock, boolean isLiked) {
+		StockCode stockCodeEntity = favoriteStock.getStockCode();
 
-		return new FavoriteStockResponse(
-			stockCode.getStockCode(),
-			stockCode.getStockName(),
-			latestStockInfo != null ? latestStockInfo.getFiftyTwoWeekHigh() : null,
-			latestStockInfo != null ? latestStockInfo.getFiftyTwoWeekLow() : null,
-			latestStockInfo != null ? latestStockInfo.getPbr() : null,
-			latestStockInfo != null ? latestStockInfo.getPer() : null,
-			latestStockInfo != null ? latestStockInfo.getEps() : null,
-			latestStockInfo != null ? latestStockInfo.getMarketCap() : null
-		);
+		return FavoriteStockResponse.builder()
+			.stockCode(stockCodeEntity.getStockCode())
+			.stockName(stockCodeEntity.getStockName())
+			.isLiked(isLiked)
+			.build();
 	}
 
 }

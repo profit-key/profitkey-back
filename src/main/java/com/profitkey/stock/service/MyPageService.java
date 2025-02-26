@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.profitkey.stock.dto.response.mypage.FavoriteStockResponse;
 import com.profitkey.stock.dto.response.mypage.MyPageCommunityResponse;
 import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
 import com.profitkey.stock.entity.Community;
@@ -180,8 +181,17 @@ public class MyPageService {
 	/**
 	 * 관심 종목 조회
 	 */
-	public List<FavoriteStock> getFavoriteStocks(Long userId) {
-		return favoriteStockRepository.findByUser_UserId(userId);
+	public List<FavoriteStockResponse> getFavoriteStocks(Long userId) {
+		List<FavoriteStock> favoriteStocks = favoriteStockRepository.findByUser_UserId(userId);
+
+		return favoriteStocks.stream()
+			.map(favoriteStock -> {
+				boolean isLiked = favoriteStockRepository.existsByUser_UserIdAndStockCode_StockCode(
+					userId, favoriteStock.getStockCode().getStockCode()
+				);
+				return FavoriteStockResponse.fromEntity(favoriteStock, isLiked);
+			})
+			.collect(Collectors.toList());
 	}
 
 	/**

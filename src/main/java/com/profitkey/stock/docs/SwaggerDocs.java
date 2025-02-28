@@ -193,9 +193,9 @@ public class SwaggerDocs {
 	 * Mypage Swagger Docs 모음
 	 * ****************************************
 	 */
-	public static final String SUMMARY_POST_FAVORITE_STOCKS = "관심 종목 조회 GET";
+	public static final String SUMMARY_POST_FAVORITE_STOCKS = "관심 종목 등록 POST";
 	public static final String DESCRIPTION_POST_FAVORITE_STOCKS = """
-		    사용자가 설정한 관심 종목 목록을 조회합니다.
+		    사용자가 관심 종목을 추가합니다.
 		""";
 
 	public static final String SUMMARY_FAVORITE_STOCKS = "관심 종목 조회 GET";

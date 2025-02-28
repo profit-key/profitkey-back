@@ -5,10 +5,14 @@ import com.profitkey.stock.dto.KisApiProperties;
 import com.profitkey.stock.dto.request.stock.InquireDailyRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.InvestOpinionRequest;
+import com.profitkey.stock.dto.request.stock.StockDetailRequest;
+import com.profitkey.stock.entity.StockInfo;
+import com.profitkey.stock.repository.stock.StockInfoRepository;
 import com.profitkey.stock.util.HeaderUtil;
 import com.profitkey.stock.util.HttpClientUtil;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Service;
 public class StockQuotService {
 	private final KisApiProperties kisApiProperties;
 	private final StockItemService stockItemService;
+	private final StockInfoRepository stockInfoRepository;
 
 	public ResponseEntity<Object> getInquirePrice(InquirePriceRequest request) {
 		Object result = null;
@@ -119,9 +124,10 @@ public class StockQuotService {
 		return ResponseEntity.ok(result);
 	}
 
-	// public ResponseEntity<Object> getStockDetail(StockDetailRequest request) {
-	// 	return ResponseEntity.ok(filteredOutput);
-	// }
+	public ResponseEntity<StockInfo> getStockDetail(StockDetailRequest request) {
+		Optional<StockInfo> stockInfo = stockInfoRepository.findLatestStockInfo();
+		return stockInfo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+	}
 	// public ResponseEntity<Object> getStockDetail(StockDetailRequest request) {
 	// 	ObjectMapper objectMapper = new ObjectMapper();
 	// 	String trId1 = "FHKST01010100";

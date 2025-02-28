@@ -83,6 +83,8 @@ public class SwaggerDocs {
 		isLike(true) : 좋아요<br/>
 		isLike(false) : 좋아요 취소
 		""";
+	public static final String SUMMARY_COMMUNITY_SORT = "최신순/인기순 정렬";
+	public static final String DESCRIPTION_COMMUNITY_SORT = "'최신순' 또는 '인기순'으로 댓글을 정렬합니다.";
 	/**
 	 * ****************************************
 	 * Stock Swagger Docs 모음
@@ -191,6 +193,11 @@ public class SwaggerDocs {
 	 * Mypage Swagger Docs 모음
 	 * ****************************************
 	 */
+	public static final String SUMMARY_POST_FAVORITE_STOCKS = "관심 종목 조회 GET";
+	public static final String DESCRIPTION_POST_FAVORITE_STOCKS = """
+		    사용자가 설정한 관심 종목 목록을 조회합니다.
+		""";
+
 	public static final String SUMMARY_FAVORITE_STOCKS = "관심 종목 조회 GET";
 	public static final String DESCRIPTION_FAVORITE_STOCKS = """
 		    사용자가 설정한 관심 종목 목록을 조회합니다.

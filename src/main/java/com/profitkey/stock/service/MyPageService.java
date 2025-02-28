@@ -21,6 +21,7 @@ import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.mypage.FavoriteStockRepository;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
+import com.profitkey.stock.repository.stock.StockCodeRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class MyPageService {
 	private final UserInfoRepository userInfoRepository;
 	private final AuthRepository authRepository;
 	private final S3UploadService s3UploadService;
+	private final StockCodeRepository stockCodeRepository;
 
 	// 📌 회원 정보
 
@@ -177,6 +179,31 @@ public class MyPageService {
 	}
 
 	// 📌 관심 종목
+	/*
+	/* 관심 종목 찜하기
+	 */
+	@Transactional
+	public void addFavoriteStock(Long userId, String stockCode) {
+		UserInfo user = userInfoRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("User not found for ID: " + userId));
+
+		StockCode stockCodeEntity = stockCodeRepository.findByStockCode(stockCode);
+		if (stockCodeEntity == null) {
+			throw new IllegalArgumentException("Stock code not found for: " + stockCode);
+		}
+
+		FavoriteStock favoriteStock = FavoriteStock.builder()
+			.user(user)
+			.stockCode(stockCodeEntity)
+			.build();
+
+		favoriteStockRepository.save(favoriteStock);
+	}
+
+	private UserInfo getUserById(Long userId) {
+		// UserInfo를 userId로 조회하는 로직 구현
+		return new UserInfo(); // 예시로 새로운 UserInfo 객체 리턴 (실제 구현 필요)
+	}
 
 	/**
 	 * 관심 종목 조회

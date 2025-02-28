@@ -7,8 +7,7 @@ spring:
   
   jpa:
     hibernate:
-      #      ddl-auto: ${STOCK_JPA_OPTION_AUTO}
-      ddl-auto: update
+      ddl-auto: ${STOCK_JPA_OPTION_AUTO}
     show-sql: false
 
 openapi:

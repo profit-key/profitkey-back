@@ -6,6 +6,7 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,10 @@ public class FavoriteStock {
 	@ManyToOne
 	@JoinColumn(name = "STOCK_CODE", columnDefinition = "VARCHAR(12)")
 	private StockCode stockCode;
-} 
+
+	@Builder
+	public FavoriteStock(UserInfo user, StockCode stockCode) {
+		this.user = user;
+		this.stockCode = stockCode;
+	}
+}

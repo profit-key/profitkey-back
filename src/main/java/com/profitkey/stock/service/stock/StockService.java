@@ -1,21 +1,23 @@
 package com.profitkey.stock.service.stock;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.profitkey.stock.dto.KisApiProperties;
+import com.profitkey.stock.dto.request.stock.DividendDefaultRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.MarketCapDefaultRequest;
 import com.profitkey.stock.dto.request.stock.MarketCapRequest;
 import com.profitkey.stock.entity.StockCode;
 import com.profitkey.stock.entity.StockInfo;
+import com.profitkey.stock.entity.StockSort;
 import com.profitkey.stock.repository.stock.StockCodeRepository;
 import com.profitkey.stock.repository.stock.StockRepository;
 import com.profitkey.stock.util.DataConversionUtil;
 import com.profitkey.stock.util.DateTimeUtil;
 import com.profitkey.stock.util.HttpClientUtil;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,6 +34,7 @@ public class StockService {
 	private final KisApiProperties kisApiProperties;
 	private final StockRankService stockRankService;
 	private final StockQuotService stockQuotService;
+	private final StockItemService stockItemService;
 	private final StockRepository stockRepository;
 	private final StockCodeRepository stockCodeRepository;
 	private final ObjectMapper objectMapper;
@@ -68,8 +71,7 @@ public class StockService {
 
 		List<String> stockCodes = getTopStockCodes();
 		List<Map<String, Object>> stockDataList = fetchStockData(stockCodes);
-
-		stockDataList.forEach(this::saveStockInfo);
+		stockDataList.forEach(stockData -> saveStockInfo(stockData, StockSort.MARKET_CAP));
 	}
 
 	private List<String> getTopStockCodes() {
@@ -90,52 +92,78 @@ public class StockService {
 
 	private List<Map<String, Object>> fetchStockData(List<String> stockCodes) {
 		return stockCodes.stream().map(code -> {
+
 			try {
 				Thread.sleep(1000);
-				// 주식기본시세 호출
-				ResponseEntity<Object> response =
-					stockQuotService.getInquirePrice(new InquirePriceRequest("FHKST01010100", "J", code));
 
-				return objectMapper.readValue(
-					objectMapper.writeValueAsString(response.getBody()),
-					new TypeReference<Map<String, Object>>() {
+				// 주식기본시세 호출
+				ResponseEntity<Object> responseIp =
+					stockQuotService.getInquirePrice(new InquirePriceRequest("FHKST01010100", "J", code));
+				// 배당일정 호출
+				ResponseEntity<Object> responseDr =
+					stockItemService.getDividend(new DividendDefaultRequest(code));
+
+				Map<String, Object> inquirePriceMap =
+					objectMapper.convertValue(responseIp.getBody(), new TypeReference<Map<String, Object>>() {
+					});
+				Map<String, Object> dividendMap =
+					objectMapper.convertValue(responseDr.getBody(), new TypeReference<Map<String, Object>>() {
+					});
+				Map<String, Object> output = (Map<String, Object>)inquirePriceMap.get("output");
+				List<Map<String, Object>> output2 = (List<Map<String, Object>>)dividendMap.get("output1");
+
+				Map<String, Object> filteredOutput = new HashMap<>();
+				if (output != null) {
+					filteredOutput.put("stock_code", code);
+					filteredOutput.put("w52_hgpr", output.get("w52_hgpr"));
+					filteredOutput.put("w52_lwpr", output.get("w52_lwpr"));
+					filteredOutput.put("per", output.get("per"));
+					filteredOutput.put("pbr", output.get("pbr"));
+					filteredOutput.put("eps", output.get("eps"));
+					filteredOutput.put("bps", output.get("bps"));
+					filteredOutput.put("dryy_hgpr_vrss_prpr_rate", output.get("dryy_hgpr_vrss_prpr_rate"));
+					filteredOutput.put("dryy_lwpr_vrss_prpr_rate", output.get("dryy_lwpr_vrss_prpr_rate"));
+					if (output2 != null) {
+						Map<String, Object> firstRecord = output2.get(0);
+						filteredOutput.put("divi_rate", firstRecord.get("divi_rate"));
+						filteredOutput.put("divi_amt", firstRecord.get("eper_sto_divi_amt"));
 					}
-				);
+				}
+				log.info("filteredOutput : {}", filteredOutput);
+				return filteredOutput;
 			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
 				throw new RuntimeException(e);
-			} catch (JsonProcessingException e) {
-				throw new RuntimeException("JSON 변환 오류", e);
 			}
 		}).collect(Collectors.toList());
 	}
 
-	private void saveStockInfo(Map<String, Object> stockData) {
-		log.info("Stock Data: {}", stockData);
-		Map<String, Object> output = (Map<String, Object>)stockData.get("output");
-		stockRepository.save(buildStockInfo(output));
+	private void saveStockInfo(Map<String, Object> stockData, StockSort stockSort) {
+		stockRepository.save(buildStockInfo(stockData, stockSort));
 	}
 
-	private StockInfo buildStockInfo(Map<String, Object> output) {
-		String stockCodeStr = (String)output.get("stck_shrn_iscd");
+	private StockInfo buildStockInfo(Map<String, Object> output, StockSort stockSort) {
+		String stockCodeStr = (String)output.get("stock_code");
 		StockCode stockCode = stockCodeRepository.findByStockCode(stockCodeStr);
 
 		return StockInfo.builder()
 			.stockCode(stockCode)
-			.baseDate(DateTimeUtil.curDate(""))
+			.baseDate(DateTimeUtil.curDate(""))    // 날짜
+			.division(stockSort)    // 구분
 			.endingPrice(DataConversionUtil.toBigDecimal(output.get("stck_prpr")))
-			.openingPrice(DataConversionUtil.toInteger(output.get("opening_price")))
-			.highPrice(DataConversionUtil.toInteger(output.get("high_price")))
-			.lowPrice(DataConversionUtil.toInteger(output.get("low_price")))
-			.tradingVolume(DataConversionUtil.toLong(output.get("trading_volume")))
-			.tradingValue(DataConversionUtil.toLong(output.get("trading_value")))
-			.marketCap(DataConversionUtil.toLong(output.get("market_cap")))
-			.fiftyTwoWeekHigh(DataConversionUtil.toInteger(output.get("fifty_two_week_high")))
-			.fiftyTwoWeekLow(DataConversionUtil.toInteger(output.get("fifty_two_week_low")))
+			.openingPrice(DataConversionUtil.toInteger(output.get("stck_oprc")))    // 시가
+			.highPrice(DataConversionUtil.toInteger(output.get("stck_hgpr")))    // 주식최고가
+			.lowPrice(DataConversionUtil.toInteger(output.get("stck_lwpr")))    // 주식최저가
+			.tradingVolume(DataConversionUtil.toLong(output.get("acml_vol")))    // 거래량
+			.tradingValue(DataConversionUtil.toLong(output.get("acml_tr_pbmn")))    // 거래대금
+			.marketCap(DataConversionUtil.toLong(output.get("hts_avls")))    // 시가총액
+			.fiftyTwoWeekHigh(DataConversionUtil.toInteger(output.get("w52_hgpr")))    // 52주 최고가
+			.fiftyTwoWeekLow(DataConversionUtil.toInteger(output.get("w52_lwpr")))    // 52주 최저가
 			.per(DataConversionUtil.toBigDecimal(output.get("per")))
 			.eps(DataConversionUtil.toBigDecimal(output.get("eps")))
 			.pbr(DataConversionUtil.toBigDecimal(output.get("pbr")))
 			.bps(DataConversionUtil.toBigDecimal(output.get("bps")))
+			.diviRate(DataConversionUtil.toBigDecimal(output.get("divi_rate")))    // 배당률
+			.diviAmt(DataConversionUtil.toBigDecimal(output.get("divi_amt")))    // 배당금
 			.build();
 	}
 

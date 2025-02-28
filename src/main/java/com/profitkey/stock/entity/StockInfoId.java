@@ -19,6 +19,7 @@ public class StockInfoId implements Serializable {
 	@JoinColumn(name = "STOCK_CODE")
 	private StockCode stockCode;
 	private String baseDate;
+	private StockSort division;
 
 	public void setStockCode(StockCode stockCode) {
 		this.stockCode = stockCode;

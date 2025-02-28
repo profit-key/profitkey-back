@@ -12,7 +12,8 @@ spring:
   
   jpa:
     hibernate:
-      ddl-auto: ${STOCK_JPA_OPTION_AUTO}
+      #      ddl-auto: ${STOCK_JPA_OPTION_AUTO}
+      ddl-auto: update
     show-sql: ${STOCK_JPA_OPTION_ISSHOW}
   batch:
     jdbc:

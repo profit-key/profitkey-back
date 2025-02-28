@@ -7,9 +7,11 @@ import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.InvestOpinionRequest;
 import com.profitkey.stock.dto.request.stock.StockDetailRequest;
 import com.profitkey.stock.entity.StockInfo;
+import com.profitkey.stock.repository.stock.StockCodeRepository;
 import com.profitkey.stock.repository.stock.StockInfoRepository;
 import com.profitkey.stock.util.HeaderUtil;
 import com.profitkey.stock.util.HttpClientUtil;
+import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
@@ -23,7 +25,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class StockQuotService {
 	private final KisApiProperties kisApiProperties;
-	private final StockItemService stockItemService;
+	private final StockService stockService;
+	private final StockCodeRepository stockCodeRepository;
 	private final StockInfoRepository stockInfoRepository;
 
 	public ResponseEntity<Object> getInquirePrice(InquirePriceRequest request) {
@@ -124,10 +127,25 @@ public class StockQuotService {
 		return ResponseEntity.ok(result);
 	}
 
+	@Transactional
 	public ResponseEntity<StockInfo> getStockDetail(StockDetailRequest request) {
+		String fidInput = request.getFidInput();
+		log.info("StockDetailRequest : {}", fidInput);
 		Optional<StockInfo> stockInfo = stockInfoRepository.findLatestStockInfo();
-		return stockInfo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+
+		if (!stockCodeRepository.existsByStockCode(fidInput)) {
+			return ResponseEntity.badRequest().body(null);
+		}
+
+		if (stockInfo.isEmpty()) {
+			// 주식정보없으면 넣어서 주식기본정보 재조회
+			stockService.createStockInfo(fidInput);
+			stockInfo = stockInfoRepository.findLatestStockInfo();
+		}
+
+		return ResponseEntity.ok(stockInfo.get());
 	}
+
 	// public ResponseEntity<Object> getStockDetail(StockDetailRequest request) {
 	// 	ObjectMapper objectMapper = new ObjectMapper();
 	// 	String trId1 = "FHKST01010100";

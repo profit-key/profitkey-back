@@ -1,10 +1,10 @@
 package com.profitkey.stock.service.stock;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.profitkey.stock.dto.KisApiProperties;
 import com.profitkey.stock.dto.request.stock.DividendDefaultRequest;
+import com.profitkey.stock.dto.request.stock.DividendRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.MarketCapDefaultRequest;
 import com.profitkey.stock.dto.request.stock.MarketCapRequest;
@@ -15,15 +15,16 @@ import com.profitkey.stock.repository.stock.StockCodeRepository;
 import com.profitkey.stock.repository.stock.StockRepository;
 import com.profitkey.stock.util.DataConversionUtil;
 import com.profitkey.stock.util.DateTimeUtil;
+import com.profitkey.stock.util.HeaderUtil;
 import com.profitkey.stock.util.HttpClientUtil;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -33,29 +34,9 @@ import org.springframework.stereotype.Service;
 public class StockService {
 	private final KisApiProperties kisApiProperties;
 	private final StockRankService stockRankService;
-	private final StockQuotService stockQuotService;
-	private final StockItemService stockItemService;
 	private final StockRepository stockRepository;
 	private final StockCodeRepository stockCodeRepository;
 	private final ObjectMapper objectMapper;
-
-	@Cacheable(value = "tokenCache", key = "'stockToken'", unless = "#result == null")
-	public String getToken() throws IOException {
-		String url = kisApiProperties.getOauth2TokenUrl();
-		String data = """
-			{
-			    "grant_type": "client_credentials",
-			    "appkey": "%s",
-			    "appsecret": "%s"
-			}
-			""".formatted(kisApiProperties.getApiKey(), kisApiProperties.getSecretKey());
-		;
-
-		String jsonResponse = HttpClientUtil.sendPostRequest(url, data);
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonNode rootNode = objectMapper.readTree(jsonResponse);
-		return rootNode.get("access_token").asText();
-	}
 
 	public String getStockNameByCode(String code) {
 		StockCode stockCode = stockCodeRepository.findByStockCode(code);
@@ -72,6 +53,13 @@ public class StockService {
 		List<String> stockCodes = getTopStockCodes();
 		List<Map<String, Object>> stockDataList = fetchStockData(stockCodes);
 		stockDataList.forEach(stockData -> saveStockInfo(stockData, StockSort.MARKET_CAP));
+	}
+
+	public void createStockInfo(String stockCode) {
+		List<String> stockCodes = List.of(stockCode);
+		StockSort stockSort = StockSort.BASIC;
+		List<Map<String, Object>> stockDataList = fetchStockData(stockCodes);
+		stockDataList.forEach(stockData -> saveStockInfo(stockData, stockSort));
 	}
 
 	private List<String> getTopStockCodes() {
@@ -98,10 +86,10 @@ public class StockService {
 
 				// 주식기본시세 호출
 				ResponseEntity<Object> responseIp =
-					stockQuotService.getInquirePrice(new InquirePriceRequest("FHKST01010100", "J", code));
+					getInquirePrice(new InquirePriceRequest("FHKST01010100", "J", code));
 				// 배당일정 호출
 				ResponseEntity<Object> responseDr =
-					stockItemService.getDividend(new DividendDefaultRequest(code));
+					getDividend(new DividendDefaultRequest(code));
 
 				Map<String, Object> inquirePriceMap =
 					objectMapper.convertValue(responseIp.getBody(), new TypeReference<Map<String, Object>>() {
@@ -167,4 +155,68 @@ public class StockService {
 			.build();
 	}
 
+	private ResponseEntity<Object> getInquirePrice(InquirePriceRequest request) {
+		Object result = null;
+		String urlData = kisApiProperties.getInquirePriceUrl();
+		String trId = request.getTr_id();
+		String mrktDivCode = request.getMrktDivCode();
+		String fidInput = request.getFidInput();
+		String paramData = String.format("?fid_cond_mrkt_div_code=%s&fid_input_iscd=%s", mrktDivCode, fidInput);
+		String fullUrl = urlData + paramData;
+
+		InquirePriceRequest requestParam = new InquirePriceRequest(trId, mrktDivCode, fidInput);
+
+		try {
+			URL url = new URL(fullUrl);
+			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
+			ObjectMapper objectMapper = new ObjectMapper();
+			result = objectMapper.readValue(jsonString, Object.class);
+		} catch (IOException e) {
+			e.getMessage();
+		}
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<Object> getDividend(DividendRequest request) {
+		Object result = null;
+		String urlData = kisApiProperties.getDividendUrl();
+
+		String trId = request.getTr_id();
+		String custtype = request.getCusttype();
+		String cts = request.getCts();
+		String gb1 = request.getGb1();
+		String fDt = request.getFdt();
+		String tDt = request.getTdt();
+		String shtCd = request.getShtCd();
+		String highGb = request.getHighGb();
+
+		StringBuilder paramDataBuilder = new StringBuilder("?");
+		paramDataBuilder.append("tr_id=").append(trId).append("&");
+		paramDataBuilder.append("custtype=").append(custtype).append("&");
+		paramDataBuilder.append("CTS=").append(cts).append("&");
+		paramDataBuilder.append("GB1=").append(gb1).append("&");
+		paramDataBuilder.append("F_DT=").append(fDt).append("&");
+		paramDataBuilder.append("T_DT=").append(tDt).append("&");
+		paramDataBuilder.append("SHT_CD=").append(shtCd).append("&");
+		paramDataBuilder.append("HIGH_GB=").append(highGb).append("&");
+		paramDataBuilder.setLength(paramDataBuilder.length() - 1);
+
+		String fullUrl = urlData + paramDataBuilder.toString();
+
+		DividendRequest requestParam = new DividendRequest(
+			trId, custtype, cts, gb1, fDt, tDt, shtCd, highGb
+		);
+
+		log.info("full url : {}", fullUrl);
+
+		try {
+			URL url = new URL(fullUrl);
+			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
+			ObjectMapper objectMapper = new ObjectMapper();
+			result = objectMapper.readValue(jsonString, Object.class);
+		} catch (IOException e) {
+			log.error("Error fetching data: {}", e.getMessage());
+		}
+		return ResponseEntity.ok(result);
+	}
 }

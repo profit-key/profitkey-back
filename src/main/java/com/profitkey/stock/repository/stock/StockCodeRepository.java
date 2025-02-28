@@ -9,4 +9,6 @@ public interface StockCodeRepository extends JpaRepository<StockCode, String> {
 
 	List<StockCode> findByStockCodeLike(String code);
 
+	boolean existsByStockCode(String stockCode);
+
 }

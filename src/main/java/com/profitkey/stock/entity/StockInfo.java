@@ -27,7 +27,7 @@ import lombok.Setter;
 @Builder
 public class StockInfo {
 	@Id
-	@ManyToOne()
+	@ManyToOne
 	@JoinColumn(name = "STOCK_CODE", nullable = false)
 	private StockCode stockCode;
 

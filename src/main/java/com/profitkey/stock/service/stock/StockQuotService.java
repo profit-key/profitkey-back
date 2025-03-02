@@ -139,7 +139,7 @@ public class StockQuotService {
 
 		if (stockInfo.isEmpty()) {
 			// 주식정보없으면 넣어서 주식기본정보 재조회
-			stockService.createStockInfo(fidInput);
+			stockService.createBasicInfo(fidInput);
 			stockInfo = stockInfoRepository.findLatestStockInfo();
 		}
 

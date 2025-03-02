@@ -13,7 +13,6 @@ public class StockDetailRequest {
 	private String fidInput;
 	@Schema(description = "고객 타입 P: 개인, B: 법인", example = "P")
 	private String custtype;
-
 	@Schema(description = "CTS", example = "")
 	private String cts;
 	@Schema(description = "조회구분", example = "0")

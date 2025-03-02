@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.profitkey.stock.dto.KisApiProperties;
 import com.profitkey.stock.dto.request.stock.DividendDefaultRequest;
 import com.profitkey.stock.dto.request.stock.DividendRequest;
+import com.profitkey.stock.dto.request.stock.HtsTopViewRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.MarketCapDefaultRequest;
 import com.profitkey.stock.dto.request.stock.MarketCapRequest;
@@ -47,22 +48,33 @@ public class StockService {
 		return stockCodeRepository.findByStockCodeLike(code + "%");
 	}
 
-	public void createStockInfo() {
+	public void createStockInfo() throws InterruptedException {
 		log.info("start job createStockInfo");
+		createMarketInfo();
+		Thread.sleep(10000);
+		createHtsTopInfo();
+	}
 
-		List<String> stockCodes = getTopStockCodes();
+	public void createHtsTopInfo() {
+		List<String> stockCodes = getHtsTopStockCodes();
+		List<Map<String, Object>> stockDataList = fetchStockData(stockCodes);
+		stockDataList.forEach(stockData -> saveStockInfo(stockData, StockSort.HTS_TOP));
+	}
+
+	public void createMarketInfo() {
+		List<String> stockCodes = getMarketStockCodes();
 		List<Map<String, Object>> stockDataList = fetchStockData(stockCodes);
 		stockDataList.forEach(stockData -> saveStockInfo(stockData, StockSort.MARKET_CAP));
 	}
 
-	public void createStockInfo(String stockCode) {
+	public void createBasicInfo(String stockCode) {
 		List<String> stockCodes = List.of(stockCode);
 		StockSort stockSort = StockSort.BASIC;
 		List<Map<String, Object>> stockDataList = fetchStockData(stockCodes);
 		stockDataList.forEach(stockData -> saveStockInfo(stockData, stockSort));
 	}
 
-	private List<String> getTopStockCodes() {
+	private List<String> getMarketStockCodes() {
 		// 주식 시가총액 상위 get
 		MarketCapRequest marketCapRequest = new MarketCapDefaultRequest();
 		Map<String, Object> marketCapMap = objectMapper.convertValue(
@@ -78,12 +90,29 @@ public class StockService {
 			.collect(Collectors.toList());
 	}
 
+	private List<String> getHtsTopStockCodes() {
+		// 주식 시가총액 상위 get
+		HtsTopViewRequest htsTopViewRequest = new HtsTopViewRequest("HHMCM000100C0", "P");
+		Map<String, Object> HtsTopViewMap = objectMapper.convertValue(
+			stockRankService.getHtsTopView(htsTopViewRequest).getBody(),
+			new TypeReference<>() {
+			}
+		);
+		List<Map<String, Object>> outputList = (List<Map<String, Object>>)HtsTopViewMap.get("output1");
+
+		return outputList.stream()
+			.map(stock -> (String)stock.get("mksc_shrn_iscd"))
+			.limit(3) // 테스트용으로 상위 3개만 제한
+			.collect(Collectors.toList());
+	}
+
 	private List<Map<String, Object>> fetchStockData(List<String> stockCodes) {
 		return stockCodes.stream().map(code -> {
 
 			try {
 				Thread.sleep(1000);
-
+				log.info("=============================================================================");
+				log.info("fetch stock code : {}", code);
 				// 주식기본시세 호출
 				ResponseEntity<Object> responseIp =
 					getInquirePrice(new InquirePriceRequest("FHKST01010100", "J", code));
@@ -111,7 +140,7 @@ public class StockService {
 					filteredOutput.put("bps", output.get("bps"));
 					filteredOutput.put("dryy_hgpr_vrss_prpr_rate", output.get("dryy_hgpr_vrss_prpr_rate"));
 					filteredOutput.put("dryy_lwpr_vrss_prpr_rate", output.get("dryy_lwpr_vrss_prpr_rate"));
-					if (output2 != null) {
+					if (output2.size() > 0) {
 						Map<String, Object> firstRecord = output2.get(0);
 						filteredOutput.put("divi_rate", firstRecord.get("divi_rate"));
 						filteredOutput.put("divi_amt", firstRecord.get("eper_sto_divi_amt"));
@@ -126,6 +155,7 @@ public class StockService {
 	}
 
 	private void saveStockInfo(Map<String, Object> stockData, StockSort stockSort) {
+		log.info("saveStockInfo stockSort : {}", stockSort);
 		stockRepository.save(buildStockInfo(stockData, stockSort));
 	}
 

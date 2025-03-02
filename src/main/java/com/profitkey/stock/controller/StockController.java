@@ -48,6 +48,8 @@ public class StockController {
 	 * @param code 종목코드
 	 * @return 종목명
 	 */
+	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_SEARCH,
+		description = SwaggerDocs.DESCRIPTION_STOCK_SEARCH)
 	@GetMapping("/{code}")
 	public String getStockName(@PathVariable String code) {
 		return stockService.getStockNameByCode(code);
@@ -58,6 +60,8 @@ public class StockController {
 	 * @param code 종목코드 앞자리
 	 * @return 종목목록
 	 */
+	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_SEARCH_LIKE,
+		description = SwaggerDocs.DESCRIPTION_STOCK_SEARCH_LIKE)
 	@GetMapping("/search/{code}")
 	public List<StockCode> searchStocks(@PathVariable String code) {
 		return stockService.searchStocksByCodePattern(code);

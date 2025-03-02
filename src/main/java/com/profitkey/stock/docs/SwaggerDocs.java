@@ -92,6 +92,12 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_STOCK_TOKEN = """
 		한국투자증권 OEPN API에서 사용할 토큰을 가져옵니다.<br/>
 		모의서버에서는 1분에 한번으로 제한됩니다.""";
+	public static final String SUMMARY_STOCK_SEARCH = "주식종목명 검색";
+	public static final String DESCRIPTION_STOCK_SEARCH = """
+		입력한 종목코드로 종목명을 조회합니다.""";
+	public static final String SUMMARY_STOCK_SEARCH_LIKE = "주식종목명 Like 다건 검색";
+	public static final String DESCRIPTION_STOCK_SEARCH_LIKE = """
+		입력한 종목코드 앞자리로 시작하는 종목 목록을 조회합니다.""";
 	public static final String SUMMARY_STOCK_INQUIRE_PRICE = "주식 현재 시세 GET";
 	public static final String DESCRIPTION_STOCK_INQUIRE_PRICE = """
 		종목 코드에 따라 국내 주식 시세를 불러옵니다.
@@ -156,6 +162,14 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_STOCK_DIVIDEND = """
 		 해당 종목의 기간별 배당내역을 가져옵니다.
 		""";
+	public static final String SUMMARY_STOCK_DAILY_RANK = "주식메인 순위";
+	public static final String DESCRIPTION_STOCK_DAILY_RANK = """
+		 		*division
+				 BASIC : 기본
+				 MARKET_CAP : 시가총액
+				 HTS_TOP : HTS TOP 20
+		""";
+
 	/**
 	 * ****************************************
 	 * Login/Token Docs 모음

@@ -86,7 +86,7 @@ public class StockService {
 
 		return outputList.stream()
 			.map(stock -> (String)stock.get("mksc_shrn_iscd"))
-			.limit(3) // 테스트용으로 상위 3개만 제한
+			.limit(5)
 			.collect(Collectors.toList());
 	}
 
@@ -102,7 +102,7 @@ public class StockService {
 
 		return outputList.stream()
 			.map(stock -> (String)stock.get("mksc_shrn_iscd"))
-			.limit(3) // 테스트용으로 상위 3개만 제한
+			.limit(5)
 			.collect(Collectors.toList());
 	}
 

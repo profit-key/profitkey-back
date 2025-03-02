@@ -30,8 +30,8 @@ public class StockInfoController {
 	 * 	HTS_TOP : HTS TOP 20
 	 * @return 종목기본정보 목록
 	 */
-	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_DETAIL,
-		description = SwaggerDocs.DESCRIPTION_STOCK_DETAIL)
+	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_DAILY_RANK,
+		description = SwaggerDocs.DESCRIPTION_STOCK_DAILY_RANK)
 	@GetMapping("/daily-rank/{division}")
 	public ResponseEntity<List<StockInfoResponse>> getDailyRank(@PathVariable StockSort division) {
 		return ResponseEntity.ok(stockInfoService.getDailyRank(division));

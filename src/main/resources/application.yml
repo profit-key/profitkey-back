@@ -25,6 +25,7 @@ korea-investment-api:
   volume-rank-url: ${STOCK_KIS_VOLUME_RANK_URL} # 국내주식 거래량순위
   fluctuation-url: ${STOCK_KIS_FLUCTUATION_URL} # 국내주식 등락률 순위
   market-cap-url: ${STOCK_KIS_MARKET_CAP_URL} # 국내주식 시가총액 상위
+  hts-top-view-url: ${STOCK_KIS_HTS_TOP_VIEW_URL} # HTS조회상위20종목
   income-statement-url: ${STOCK_KIS_INCOME_STATMENT_URL} # 국내주식 손익계산서
   financial-ratio-url: ${STOCK_KIS_FINANCIAL_RATIO_URL} # 국내주식 재무비율
   profit-ratio-url: ${STOCK_KIS_PROFIT_RATIO_URL} # 국내주식 수익성비율

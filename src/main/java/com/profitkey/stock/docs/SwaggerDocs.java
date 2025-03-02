@@ -114,7 +114,10 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_STOCK_MARKET_CAP = """
 		조건별 시가총액이 높은 종목을 불러옵니다.
 		""";
-
+	public static final String SUMMARY_STOCK_HTS_TOP_VIEW = "국내주식 HTS 상위20 GET";
+	public static final String DESCRIPTION_STOCK_HTS_TOP_VIEW = """
+		HTS조회상위20종목 API입니다.
+		""";
 	public static final String SUMMARY_STOCK_INVEST_OPINION = "국내주식 종목투자의견 GET";
 	public static final String DESCRIPTION_STOCK_INVEST_OPINION = """
 		 회원사별로 종목에 대한 투자 가치를 제시합니다.<br/>

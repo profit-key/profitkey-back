@@ -1,8 +1,9 @@
 package com.profitkey.stock.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
@@ -26,14 +27,18 @@ import lombok.Setter;
 @Builder
 public class StockInfo {
 	@Id
-	@ManyToOne()
+	@ManyToOne
 	@JoinColumn(name = "STOCK_CODE", nullable = false)
-	@JsonIgnore
 	private StockCode stockCode;
 
 	@Id
 	@Column(name = "BASE_DATE", nullable = false, length = 8)
 	private String baseDate;
+
+	@Id
+	@Enumerated(EnumType.STRING)
+	@Column(name = "DIVISION", nullable = false)
+	private StockSort division;
 
 	@Column(name = "ENDING_PRICE", nullable = false, precision = 12, scale = 0)
 	private BigDecimal endingPrice;
@@ -73,5 +78,11 @@ public class StockInfo {
 
 	@Column(name = "BPS", nullable = false)
 	private BigDecimal bps;
+
+	@Column(name = "DIVI_RATE", nullable = false)
+	private BigDecimal diviRate;
+
+	@Column(name = "DIVI_AMT", nullable = false)
+	private BigDecimal diviAmt;
 
 }

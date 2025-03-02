@@ -1,7 +1,7 @@
 package com.profitkey.stock.util;
 
 import com.profitkey.stock.dto.KisApiProperties;
-import com.profitkey.stock.service.stock.StockService;
+import com.profitkey.stock.service.stock.StockTokenService;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -11,18 +11,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class HeaderUtil {
 	private static KisApiProperties kisApiProperties;
-	private static StockService stockService;
+	private static StockTokenService stockTokenService;
 
-	public HeaderUtil(KisApiProperties kisApiProperties, StockService stockService) {
+	public HeaderUtil(KisApiProperties kisApiProperties, StockTokenService stockTokenService) {
 		HeaderUtil.kisApiProperties = kisApiProperties;
-		HeaderUtil.stockService = stockService;
+		HeaderUtil.stockTokenService = stockTokenService;
 	}
 
 	public static Map<String, String> getCommonHeaders() throws IOException {
 		Map<String, String> headers = new HashMap<>();
 
 		headers.put("Content-Type", "application/json");
-		headers.put("authorization", "Bearer " + stockService.getToken());
+		headers.put("authorization", "Bearer " + stockTokenService.getToken());
 		headers.put("appKey", kisApiProperties.getApiKey());
 		headers.put("appSecret", kisApiProperties.getSecretKey());
 		return headers;

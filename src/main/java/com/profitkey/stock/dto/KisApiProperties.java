@@ -18,6 +18,7 @@ public class KisApiProperties {
 	private String inquireDailyUrl;
 	private String volumeRankUrl;
 	private String marketCapUrl;
+	private String htsTopViewUrl;
 	private String investOpinionUrl;
 	private String searchInfo;
 	private String incomeStatementUrl;

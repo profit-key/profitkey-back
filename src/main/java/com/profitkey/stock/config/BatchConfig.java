@@ -2,6 +2,7 @@ package com.profitkey.stock.config;
 
 import com.profitkey.stock.repository.stock.StockRepository;
 import com.profitkey.stock.service.stock.StockService;
+import com.profitkey.stock.util.DateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -41,7 +42,8 @@ public class BatchConfig {
 	public Step createStockInfoStep() {
 		log.info("createStockInfoStep batch-------------------------*********");
 
-		// stockRepository.deleteAll();
+		String today = DateTimeUtil.curDate("");
+		stockRepository.deleteByBaseDate(today);
 
 		return new StepBuilder("createStockInfoStep", jobRepository)
 			.tasklet((contribution, chunkContext) -> {

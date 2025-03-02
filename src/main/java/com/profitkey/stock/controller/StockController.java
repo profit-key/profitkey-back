@@ -4,6 +4,7 @@ import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.entity.StockCode;
 import com.profitkey.stock.handler.BatchScheduler;
 import com.profitkey.stock.service.stock.StockService;
+import com.profitkey.stock.service.stock.StockTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StockController {
 
 	private final StockService stockService;
+	private final StockTokenService stockTokenService;
 	private final BatchScheduler batchScheduler;
 
 	/**
@@ -38,7 +40,7 @@ public class StockController {
 		description = SwaggerDocs.DESCRIPTION_STOCK_TOKEN)
 	@GetMapping("/get-token")
 	public String getToken() throws IOException {
-		return stockService.getToken();
+		return stockTokenService.getToken();
 	}
 
 	/**

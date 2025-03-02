@@ -5,6 +5,7 @@ import com.profitkey.stock.dto.request.stock.InquireDailyRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.InvestOpinionRequest;
 import com.profitkey.stock.dto.request.stock.StockDetailRequest;
+import com.profitkey.stock.entity.StockInfo;
 import com.profitkey.stock.service.stock.StockQuotService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -69,7 +70,7 @@ public class StockQuotController {
 	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_DETAIL,
 		description = SwaggerDocs.DESCRIPTION_STOCK_DETAIL)
 	@PostMapping("/stock-detail")
-	public ResponseEntity<Object> getStockDetail(@RequestBody StockDetailRequest request) {
+	public ResponseEntity<StockInfo> getStockDetail(@RequestBody StockDetailRequest request) {
 		return stockQuotService.getStockDetail(request);
 	}
 

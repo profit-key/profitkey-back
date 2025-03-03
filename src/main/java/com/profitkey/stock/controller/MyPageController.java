@@ -132,10 +132,12 @@ public class MyPageController {
 	 * 관심 종목
 	 */
 	//관심 종목 추가
-	@PostMapping("/users/{userId}/favorite-stocks")
+	@PostMapping("/{userId}/favorite-stocks")
 	@Operation(summary = SwaggerDocs.SUMMARY_POST_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_POST_FAVORITE_STOCKS)
-	public void addFavoriteStock(@PathVariable Long userId, @RequestBody FavoriteStockRequest request) {
-		myPageService.addFavoriteStock(userId, request.getStockCode());
+	public ResponseEntity<Boolean> addFavoriteStock(@PathVariable Long userId,
+		@RequestBody FavoriteStockRequest request) {
+		boolean isLiked = myPageService.addFavoriteStock(userId, request.getStockCode());
+		return ResponseEntity.ok(isLiked); // 찜 유무 반환
 	}
 
 	//관심 종목 조회

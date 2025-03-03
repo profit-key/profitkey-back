@@ -183,7 +183,7 @@ public class MyPageService {
 	/* 관심 종목 찜하기
 	 */
 	@Transactional
-	public void addFavoriteStock(Long userId, String stockCode) {
+	public boolean addFavoriteStock(Long userId, String stockCode) {
 		UserInfo user = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("User not found for ID: " + userId));
 
@@ -198,6 +198,9 @@ public class MyPageService {
 			.build();
 
 		favoriteStockRepository.save(favoriteStock);
+
+		// 찜 유무 반환
+		return favoriteStockRepository.existsByUser_UserIdAndStockCode_StockCode(userId, stockCode);
 	}
 
 	private UserInfo getUserById(Long userId) {

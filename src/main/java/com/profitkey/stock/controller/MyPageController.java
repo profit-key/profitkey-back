@@ -132,10 +132,10 @@ public class MyPageController {
 	 * 관심 종목
 	 */
 	//관심 종목 추가
-	@PostMapping("{userId}/favorite-stocks")
+	@PostMapping("/users/{userId}/favorite-stocks")
 	@Operation(summary = SwaggerDocs.SUMMARY_POST_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_POST_FAVORITE_STOCKS)
-	public void addFavoriteStock(@RequestBody FavoriteStockRequest request) {
-		myPageService.addFavoriteStock(request.getUserId(), request.getStockCode());
+	public void addFavoriteStock(@PathVariable Long userId, @RequestBody FavoriteStockRequest request) {
+		myPageService.addFavoriteStock(userId, request.getStockCode());
 	}
 
 	//관심 종목 조회

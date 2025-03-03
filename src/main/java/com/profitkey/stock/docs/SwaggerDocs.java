@@ -198,6 +198,11 @@ public class SwaggerDocs {
 		    사용자가 관심 종목을 추가합니다.
 		""";
 
+	public static final String SUMMARY_GET_FAVORITE_STOCKS = "종목 상세 like GET";
+	public static final String DESCRIPTION_GET_FAVORITE_STOCKS = """
+		    종목 상세 페이지 내 like 여부를 체크합니다.
+		""";
+
 	public static final String SUMMARY_FAVORITE_STOCKS = "관심 종목 조회 GET";
 	public static final String DESCRIPTION_FAVORITE_STOCKS = """
 		    사용자가 설정한 관심 종목 목록을 조회합니다.

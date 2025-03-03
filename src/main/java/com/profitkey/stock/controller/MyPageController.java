@@ -28,6 +28,7 @@ import com.profitkey.stock.service.AuthService;
 import com.profitkey.stock.service.MyPageService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -138,6 +139,17 @@ public class MyPageController {
 		@RequestBody FavoriteStockRequest request) {
 		boolean isLiked = myPageService.addFavoriteStock(userId, request.getStockCode());
 		return ResponseEntity.ok(isLiked); // 찜 유무 반환
+	}
+
+	//관심 종목 상세 좋아요 유무 조회
+	@GetMapping("/{userId}/favorite-stocks/{stockCode}")
+	@Operation(summary = SwaggerDocs.SUMMARY_GET_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_GET_FAVORITE_STOCKS)
+	public ResponseEntity<Boolean> isFavoriteStock(
+		@PathVariable @Parameter(description = "사용자 ID") Long userId,
+		@PathVariable @Parameter(description = "찜 여부를 확인할 종목 코드") String stockCode
+	) {
+		boolean isLiked = myPageService.isFavoriteStock(userId, stockCode);
+		return ResponseEntity.ok(isLiked);
 	}
 
 	//관심 종목 조회

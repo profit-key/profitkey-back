@@ -224,6 +224,11 @@ public class MyPageService {
 			.collect(Collectors.toList());
 	}
 
+	// 종목 상세 좋아요 유무 조회
+	public boolean isFavoriteStock(Long userId, String stockCode) {
+		return favoriteStockRepository.existsByUser_UserIdAndStockCode_StockCode(userId, stockCode);
+	}
+
 	/**
 	 * 관심 종목 삭제
 	 */

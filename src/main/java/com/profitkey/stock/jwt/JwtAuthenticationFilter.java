@@ -26,13 +26,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 		throws ServletException, IOException {
 		String token = request.getHeader("Authorization");
-		log.info("token token token : {}", token);
 		if (token != null && token.startsWith("Bearer ")) {
 			token = token.replace("Bearer ", "");
 		}
 		if (token != null && jwtUtil.validateToken(token)) {
 			String id = jwtUtil.extractId(token);
-			log.info("token token email : {}", id);
 			UserDetails userDetails = User.builder().username(id).password("").roles("USER").build();
 			UsernamePasswordAuthenticationToken authentication =
 				new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

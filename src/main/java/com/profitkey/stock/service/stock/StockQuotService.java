@@ -129,18 +129,17 @@ public class StockQuotService {
 
 	@Transactional
 	public ResponseEntity<StockInfo> getStockDetail(StockDetailRequest request) {
-		String fidInput = request.getFidInput();
-		log.info("StockDetailRequest : {}", fidInput);
-		Optional<StockInfo> stockInfo = stockInfoRepository.findLatestStockInfo();
-
-		if (!stockCodeRepository.existsByStockCode(fidInput)) {
+		String stockCode = request.getFidInput();
+		log.info("StockDetailRequest : {}", stockCode);
+		if (!stockCodeRepository.existsByStockCode(stockCode)) {
 			return ResponseEntity.badRequest().body(null);
 		}
 
+		Optional<StockInfo> stockInfo = stockInfoRepository.findLatestStockInfo(stockCode);
 		if (stockInfo.isEmpty()) {
 			// 주식정보없으면 넣어서 주식기본정보 재조회
-			stockService.createBasicInfo(fidInput);
-			stockInfo = stockInfoRepository.findLatestStockInfo();
+			stockService.createBasicInfo(stockCode);
+			stockInfo = stockInfoRepository.findLatestStockInfo(stockCode);
 		}
 
 		return ResponseEntity.ok(stockInfo.get());

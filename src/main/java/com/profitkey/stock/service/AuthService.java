@@ -1,21 +1,18 @@
 package com.profitkey.stock.service;
 
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
 import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.AuthProvider;
 import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
 import com.profitkey.stock.util.JwtUtil;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -135,9 +132,9 @@ public class AuthService {
 			throw new RuntimeException("토큰 검증에 실패하였습니다.");
 		}
 
-		String email = jwtUtil.extractEmail(token);
-		Auth auth = authRepository.findByEmail(email)
-			.orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
+		String id = jwtUtil.extractId(token);
+		Auth auth = authRepository.findById(Long.valueOf(id))
+			.orElseThrow(() -> new RuntimeException("id가 존재하지 않습니다."));
 
 		if (!auth.getAccessToken().equals(token)) {
 			throw new RuntimeException("토큰값이 일치하지 않습니다.");
@@ -170,9 +167,9 @@ public class AuthService {
 	public Map<String, Object> getUserInfoFromToken(HttpServletRequest request) {
 		String token = extractTokenFromRequest(request); // 요청에서 토큰 추출
 
-		String email = jwtUtil.extractEmail(token);
+		String id = jwtUtil.extractId(token);
 
-		Auth auth = authRepository.findByEmail(email)
+		Auth auth = authRepository.findById(Long.valueOf(id))
 			.orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
 
 		UserInfo userInfo = userInfoRepository.findByAuth(auth)

@@ -1,21 +1,18 @@
 package com.profitkey.stock.service;
 
-import java.util.Map;
-
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.RefreshTokenEntity;
 import com.profitkey.stock.repository.user.AuthRepository;
 import com.profitkey.stock.repository.user.RefreshTokenRepository;
 import com.profitkey.stock.util.JwtUtil;
-
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -38,9 +35,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			.orElseThrow(() -> new RuntimeException("User not found"));
 
 		String accessToken = jwtUtil.generateToken(auth.getId(), auth.getEmail(), auth.getProvider());
-		String refreshToken = jwtUtil.generateRefreshToken(email);
+		String refreshToken = jwtUtil.generateRefreshToken(auth.getId());
 
-		refreshTokenRepository.save(new RefreshTokenEntity(email, refreshToken));
+		refreshTokenRepository.save(new RefreshTokenEntity(auth.getId(), refreshToken));
 
 		System.out.println("Access Token: " + accessToken);
 		System.out.println("Refresh Token: " + refreshToken);

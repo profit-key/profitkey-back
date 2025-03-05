@@ -3,15 +3,15 @@ package com.profitkey.stock.util;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.profitkey.stock.entity.Auth;
-
 public class SecurityUtil {
-	public static Auth getUser() {
+	public static Long getCurrentUserId() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.getPrincipal() instanceof Auth) {
-			Auth auth = (Auth)authentication.getPrincipal();
-			return auth;
+
+		if (authentication == null || authentication.getPrincipal() == "anonymousUser") {
+			throw new RuntimeException("로그인한 사용자가 아닙니다.");
 		}
-		return Auth.builder().build();
+
+		return Long.parseLong(authentication.getName());
 	}
+
 }

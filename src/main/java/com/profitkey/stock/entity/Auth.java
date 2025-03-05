@@ -40,7 +40,8 @@ public class Auth {
 	// private UserInfo userInfo;
 
 	@Builder
-	public Auth(String email, AuthProvider provider, String accessToken) {
+	public Auth(Long id, String email, AuthProvider provider, String accessToken) {
+		this.id = id;
 		this.email = email;
 		this.provider = provider;
 		this.accessToken = accessToken;

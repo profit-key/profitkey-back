@@ -210,52 +210,52 @@ public class SwaggerDocs {
 	 * Mypage Swagger Docs 모음
 	 * ****************************************
 	 */
-	public static final String SUMMARY_POST_FAVORITE_STOCKS = "관심 종목 등록 POST";
+	public static final String SUMMARY_POST_FAVORITE_STOCKS = "관심 종목 등록";
 	public static final String DESCRIPTION_POST_FAVORITE_STOCKS = """
 		    사용자가 관심 종목을 추가합니다.
 		""";
 
-	public static final String SUMMARY_GET_FAVORITE_STOCKS = "종목 상세 like GET";
+	public static final String SUMMARY_GET_FAVORITE_STOCKS = "종목 상세 like 유무 조회";
 	public static final String DESCRIPTION_GET_FAVORITE_STOCKS = """
 		    종목 상세 페이지 내 like 여부를 체크합니다.
 		""";
 
-	public static final String SUMMARY_FAVORITE_STOCKS = "관심 종목 조회 GET";
+	public static final String SUMMARY_FAVORITE_STOCKS = "관심 종목 조회";
 	public static final String DESCRIPTION_FAVORITE_STOCKS = """
 		    사용자가 설정한 관심 종목 목록을 조회합니다.
 		""";
 
-	public static final String SUMMARY_DELETE_FAVORITE_STOCK = "관심 종목 삭제 DELETE";
+	public static final String SUMMARY_DELETE_FAVORITE_STOCK = "관심 종목 삭제";
 	public static final String DESCRIPTION_DELETE_FAVORITE_STOCK = """
 		    사용자가 설정한 관심 종목을 삭제합니다.
 		""";
 
-	public static final String SUMMARY_USER_COMMENTS = "사용자 댓글 조회 GET";
+	public static final String SUMMARY_USER_COMMENTS = "사용자 댓글 조회";
 	public static final String DESCRIPTION_USER_COMMENTS = """
 		    사용자가 작성한 댓글 목록을 조회합니다.
 		""";
 
-	public static final String SUMMARY_USER_INFO = "내 정보 조회 GET";
+	public static final String SUMMARY_USER_INFO = "내 정보 조회";
 	public static final String DESCRIPTION_USER_INFO = """
 		    사용자의 정보를 조회합니다 (닉네임, 프로필 이미지 등).
 		""";
 
-	public static final String SUMMARY_UPDATE_NICKNAME = "회원 닉네임 수정 PUT";
+	public static final String SUMMARY_UPDATE_NICKNAME = "회원 닉네임 수정";
 	public static final String DESCRIPTION_UPDATE_NICKNAME = """
 		    사용자의 닉네임을 수정합니다.
 		""";
 
-	public static final String SUMMARY_UPDATE_PROFILE_IMAGE = "회원 프로필 사진 수정 PUT";
+	public static final String SUMMARY_UPDATE_PROFILE_IMAGE = "회원 프로필 사진 수정";
 	public static final String DESCRIPTION_UPDATE_PROFILE_IMAGE = """
 		    사용자의 프로필 사진을 수정합니다.
 		""";
 
-	public static final String SUMMARY_DELETE_PROFILE_IMAGE = "회원 프로필 사진 삭제 DELETE";
+	public static final String SUMMARY_DELETE_PROFILE_IMAGE = "회원 프로필 사진 삭제";
 	public static final String DESCRIPTION_DELETE_PROFILE_IMAGE = """
 		    사용자의 프로필 사진을 삭제합니다.
 		""";
 
-	public static final String SUMMARY_DELETE_USER = "회원 탈퇴 DELETE";
+	public static final String SUMMARY_DELETE_USER = "회원 탈퇴";
 	public static final String DESCRIPTION_DELETE_USER = """
 		    사용자를 탈퇴시키고 관련된 정보들을 소프트 딜리트합니다.
 		""";

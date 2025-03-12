@@ -100,8 +100,12 @@ public class MyPageService {
 	public UserInfoResponse deleteProfileImage(Long userId) {
 		UserInfo userInfo = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+		// 기존 프로필 이미지가 존재하면 S3에서 삭제
+		if (userInfo.getProfileImage() != null && !userInfo.getProfileImage().isEmpty()) {
+			s3UploadService.deleteFile(userInfo.getProfileImage());
+		}
 
-		// 프로필 사진을 빈 문자열("")로 변경
+		// 프로필 이미지를 빈 문자열("")로 설정 (기본 이미지로 변경)
 		userInfo.setProfileImage("");
 
 		return UserInfoResponse.fromEntity(userInfo);

@@ -1,18 +1,21 @@
 package com.profitkey.stock.service;
 
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.AuthProvider;
 import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
 import com.profitkey.stock.util.JwtUtil;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -25,45 +28,6 @@ public class AuthService {
 	private final JwtUtil jwtUtil;
 	private final MyPageService myPageService;
 	private final S3UploadService s3UploadService;
-
-	// public Auth oAuthLogin(String code, HttpServletResponse response) {
-	// 	String accessToken = kakaoOAuth2Service.getAccessToken(code);
-	// 	Map<String, Object> userInfo = kakaoOAuth2Service.getUserInfo(accessToken);
-	//
-	// 	String email = (String)userInfo.get("email");
-	// 	String nickname = (String)userInfo.get("nickname");
-	// 	String profileImage = (String)userInfo.get("profileImage");
-	//
-	// 	// 회원 탈퇴 후 재가입 30일 제한 체크
-	// 	myPageService.checkRejoinRestriction(email);
-	//
-	// 	Optional<Auth> userOptional = authRepository.findByEmail(email);
-	// 	Auth auth = userOptional.orElseGet(() -> {
-	// 		Auth newAuth = Auth.builder()
-	// 			.email(email)
-	// 			.provider(AuthProvider.KAKAO)
-	// 			.accessToken(accessToken)
-	// 			.build();
-	//
-	// 		Auth savedAuth = authRepository.save(newAuth);
-	//
-	// 		UserInfo newUserInfo = UserInfo.builder()
-	// 			.auth(savedAuth)
-	// 			.nickname(nickname)
-	// 			.profileImage(profileImage)
-	// 			.build();
-	//
-	// 		userInfoRepository.save(newUserInfo);
-	//
-	// 		return savedAuth;
-	// 	});
-	//
-	// 	String jwtToken = jwtUtil.generateToken(auth.getId(), auth.getEmail(), auth.getProvider());
-	// 	log.info("oAuthLogin jwtToken : {} ", jwtToken);
-	// 	response.setHeader("Authorization", "Bearer " + jwtToken);
-	//
-	// 	return auth;
-	// }
 
 	public Auth oAuthLogin(String code, HttpServletResponse response) {
 		String accessToken = kakaoOAuth2Service.getAccessToken(code);

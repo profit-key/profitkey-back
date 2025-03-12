@@ -11,9 +11,12 @@ import com.profitkey.stock.repository.stock.StockCodeRepository;
 import com.profitkey.stock.repository.stock.StockInfoRepository;
 import com.profitkey.stock.util.HeaderUtil;
 import com.profitkey.stock.util.HttpClientUtil;
+import com.profitkey.stock.util.OpinionConverter;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -120,7 +123,17 @@ public class StockQuotService {
 			URL url = new URL(fullUrl);
 			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
 			ObjectMapper objectMapper = new ObjectMapper();
-			result = objectMapper.readValue(jsonString, Object.class);
+			Map<String, Object> responseMap = objectMapper.readValue(jsonString, Map.class);
+
+			if (responseMap.containsKey("output")) {
+				OpinionConverter opinionConverter = new OpinionConverter();
+				List<Map<String, Object>> outputList = (List<Map<String, Object>>)responseMap.get("output");
+				List<Map<String, Object>> convertedList =
+					opinionConverter.convertOpinions(outputList);
+				responseMap.put("output", convertedList);
+				return ResponseEntity.ok(responseMap);
+			}
+
 		} catch (IOException e) {
 			e.getMessage();
 		}

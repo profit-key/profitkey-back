@@ -95,7 +95,6 @@ public class MyPageService {
 		return UserInfoResponse.fromEntity(userInfo, imageUrl);
 	}
 
-	//프로필 사진 삭제 (기본이미지로 변경)
 	@Transactional
 	public UserInfoResponse deleteProfileImage(Long userId) {
 		UserInfo userInfo = userInfoRepository.findById(userId)

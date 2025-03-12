@@ -145,12 +145,12 @@ public class StockService {
 					filteredOutput.put("dryy_hgpr_vrss_prpr_rate", output.get("dryy_hgpr_vrss_prpr_rate"));
 					filteredOutput.put("dryy_lwpr_vrss_prpr_rate", output.get("dryy_lwpr_vrss_prpr_rate"));
 
-					BigDecimal totalDiviRate = BigDecimal.ZERO;
+					BigDecimal totalDiviAmt = BigDecimal.ZERO;
 					List<Map<String, Object>> output1List = (List<Map<String, Object>>)dividendMap.get("output1");
 
 					if (output1List != null && !output1List.isEmpty()) {
 						for (Map<String, Object> record : output1List) {
-							totalDiviRate = totalDiviRate.add(new BigDecimal(record.get("divi_rate").toString()));
+							totalDiviAmt = totalDiviAmt.add(new BigDecimal(record.get("divi_rate").toString()));
 						}
 					}
 
@@ -158,7 +158,7 @@ public class StockService {
 					BigDecimal eps = new BigDecimal(output.get("eps").toString());
 
 					// 배당 수익률 = {배당금 / ( eps * per )} * 100 = (배당금 / 현재주가) * 100     (%)
-					BigDecimal totalDiviAmt = totalDiviRate
+					BigDecimal totalDiviRate = totalDiviAmt
 						.divide(per.multiply(eps), 10, BigDecimal.ROUND_HALF_UP)
 						.multiply(BigDecimal.valueOf(100));
 

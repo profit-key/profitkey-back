@@ -95,12 +95,10 @@ public class MyPageService {
 		return UserInfoResponse.fromEntity(userInfo, imageUrl);
 	}
 
-	//프로필 사진 삭제 (기본이미지로 변경)
 	@Transactional
 	public UserInfoResponse deleteProfileImage(Long userId) {
 		UserInfo userInfo = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-
 		// 기존 프로필 이미지가 존재하면 S3에서 삭제
 		if (userInfo.getProfileImage() != null && !userInfo.getProfileImage().isEmpty()) {
 			s3UploadService.deleteFile(userInfo.getProfileImage());

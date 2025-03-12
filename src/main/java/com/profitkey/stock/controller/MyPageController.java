@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.profitkey.stock.annotation.AuthCheck;
 import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.request.mypage.FavoriteStockRequest;
 import com.profitkey.stock.dto.response.mypage.FavoriteStockResponse;
@@ -26,9 +27,9 @@ import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
 import com.profitkey.stock.repository.mypage.FavoriteStockRepository;
 import com.profitkey.stock.service.AuthService;
 import com.profitkey.stock.service.MyPageService;
+import com.profitkey.stock.util.SecurityUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,10 +48,11 @@ public class MyPageController {
 	/*
 	 * 내 정보
 	 */
-	@GetMapping("/user/{userId}")
+	@GetMapping("/user")
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_USER_INFO, description = SwaggerDocs.DESCRIPTION_USER_INFO)
-	public ResponseEntity<UserInfoResponse> getUserInfo(@PathVariable Long userId) {
-		UserInfoResponse response = myPageService.getUserInfo(userId);
+	public ResponseEntity<UserInfoResponse> getUserInfo() {
+		UserInfoResponse response = myPageService.getUserInfo(SecurityUtil.getCurrentUserId());
 
 		if (response != null) {
 			return ResponseEntity.ok(response);
@@ -60,17 +62,17 @@ public class MyPageController {
 	}
 
 	//닉네임 수정
-	@PutMapping("/{userId}/nickname")
+	@PutMapping("/nickname")
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_UPDATE_NICKNAME, description = SwaggerDocs.DESCRIPTION_UPDATE_NICKNAME)
-	public UserInfoResponse updateNickname(
-		@PathVariable Long userId,
-		@RequestParam String nickname
-	) {
+	public UserInfoResponse updateNickname(@RequestParam String nickname) {
+		Long userId = SecurityUtil.getCurrentUserId();
 		return myPageService.updateNickname(userId, nickname);
 	}
 
 	//프로필 이미지 수정
-	@PutMapping(value = "/{userId}/profile-image", consumes = "multipart/form-data", produces = "application/json")
+	@PutMapping(value = "/profile-image", consumes = "multipart/form-data", produces = "application/json")
+	@AuthCheck
 	@Operation(
 		summary = SwaggerDocs.SUMMARY_UPDATE_PROFILE_IMAGE,
 		description = SwaggerDocs.DESCRIPTION_UPDATE_PROFILE_IMAGE,
@@ -80,15 +82,15 @@ public class MyPageController {
 			@ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.", content = @Content)
 		}
 	)
-	public UserInfoResponse updateProfileImage(
-		@PathVariable Long userId,
-		@RequestPart("profileImage") MultipartFile profileImage
-	) throws IOException {
+	public UserInfoResponse updateProfileImage(@RequestPart("profileImage") MultipartFile profileImage) throws
+		IOException {
+		Long userId = SecurityUtil.getCurrentUserId();
 		return myPageService.updateProfileImage(userId, profileImage);
 	}
 
 	//프로필 이미지 삭제
-	@DeleteMapping("/{userId}/profile-image")
+	@DeleteMapping("/profile-image")
+	@AuthCheck
 	@Operation(
 		summary = SwaggerDocs.SUMMARY_DELETE_PROFILE_IMAGE,
 		description = SwaggerDocs.DESCRIPTION_DELETE_PROFILE_IMAGE,
@@ -97,9 +99,8 @@ public class MyPageController {
 			@ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.", content = @Content)
 		}
 	)
-	public UserInfoResponse deleteProfileImage(
-		@PathVariable Long userId
-	) {
+	public UserInfoResponse deleteProfileImage() {
+		Long userId = SecurityUtil.getCurrentUserId();
 		return myPageService.deleteProfileImage(userId);
 	}
 
@@ -112,9 +113,11 @@ public class MyPageController {
 	}
 
 	//회원 탈퇴
-	@DeleteMapping("/user/{userId}")
+	@DeleteMapping("/user")
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_DELETE_USER, description = SwaggerDocs.DESCRIPTION_DELETE_USER)
-	public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+	public ResponseEntity<Void> deleteUser() {
+		Long userId = SecurityUtil.getCurrentUserId();
 		myPageService.deleteUser(userId);
 		return ResponseEntity.noContent().build();
 	}
@@ -122,48 +125,50 @@ public class MyPageController {
 	/*
 	 * 댓글 (community)
 	 */
-	@GetMapping("/comments/{userId}")
+	@GetMapping("/comments")
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_USER_COMMENTS, description = SwaggerDocs.DESCRIPTION_USER_COMMENTS)
-	public ResponseEntity<List<MyPageCommunityResponse>> getUserComments(@PathVariable Long userId) {
-		List<MyPageCommunityResponse> comments = myPageService.getUserComments(userId);
-		return ResponseEntity.ok(comments);
+	public ResponseEntity<List<MyPageCommunityResponse>> getUserComments() {
+		Long userId = SecurityUtil.getCurrentUserId();
+		return ResponseEntity.ok(myPageService.getUserComments(userId));
 	}
 
 	/*
 	 * 관심 종목
 	 */
 	//관심 종목 추가
-	@PostMapping("/{userId}/favorite-stocks")
+	@PostMapping("/favorite-stocks")
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_POST_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_POST_FAVORITE_STOCKS)
-	public ResponseEntity<Boolean> addFavoriteStock(@PathVariable Long userId,
-		@RequestBody FavoriteStockRequest request) {
-		boolean isLiked = myPageService.addFavoriteStock(userId, request.getStockCode());
-		return ResponseEntity.ok(isLiked); // 찜 유무 반환
+	public ResponseEntity<Boolean> addFavoriteStock(@RequestBody FavoriteStockRequest request) {
+		Long userId = SecurityUtil.getCurrentUserId();
+		return ResponseEntity.ok(myPageService.addFavoriteStock(userId, request.getStockCode()));
 	}
 
 	//관심 종목 상세 좋아요 유무 조회
-	@GetMapping("/{userId}/favorite-stocks/{stockCode}")
+	@GetMapping("/favorite-stocks/{stockCode}")
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_GET_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_GET_FAVORITE_STOCKS)
-	public ResponseEntity<Boolean> isFavoriteStock(
-		@PathVariable @Parameter(description = "사용자 ID") Long userId,
-		@PathVariable @Parameter(description = "찜 여부를 확인할 종목 코드") String stockCode
-	) {
-		boolean isLiked = myPageService.isFavoriteStock(userId, stockCode);
-		return ResponseEntity.ok(isLiked);
+	public ResponseEntity<Boolean> isFavoriteStock(@PathVariable String stockCode) {
+		Long userId = SecurityUtil.getCurrentUserId();
+		return ResponseEntity.ok(myPageService.isFavoriteStock(userId, stockCode));
 	}
 
 	//관심 종목 조회
-	@GetMapping("/favorite-stocks/{userId}")
+	@GetMapping("/favorite-stocks")
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_FAVORITE_STOCKS)
-	public ResponseEntity<List<FavoriteStockResponse>> getFavoriteStocks(@PathVariable Long userId) {
-		List<FavoriteStockResponse> response = myPageService.getFavoriteStocks(userId);
-		return ResponseEntity.ok(response);
+	public ResponseEntity<List<FavoriteStockResponse>> getFavoriteStocks() {
+		Long userId = SecurityUtil.getCurrentUserId();
+		return ResponseEntity.ok(myPageService.getFavoriteStocks(userId));
 	}
 
 	//관심 종목 삭제
-	@DeleteMapping("/favorite-stocks/{userId}/{stockCode}")
+	@DeleteMapping("/favorite-stocks/{stockCode}")
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_DELETE_FAVORITE_STOCK, description = SwaggerDocs.DESCRIPTION_DELETE_FAVORITE_STOCK)
-	public ResponseEntity<Void> deleteFavoriteStock(@PathVariable Long userId, @PathVariable String stockCode) {
+	public ResponseEntity<Void> deleteFavoriteStock(@PathVariable String stockCode) {
+		Long userId = SecurityUtil.getCurrentUserId();
 		myPageService.deleteFavoriteStock(userId, stockCode);
 		return ResponseEntity.noContent().build();
 	}

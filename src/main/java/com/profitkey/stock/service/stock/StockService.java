@@ -19,6 +19,7 @@ import com.profitkey.stock.util.DateTimeUtil;
 import com.profitkey.stock.util.HeaderUtil;
 import com.profitkey.stock.util.HttpClientUtil;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -113,12 +114,16 @@ public class StockService {
 				Thread.sleep(1000);
 				log.info("=============================================================================");
 				log.info("fetch stock code : {}", code);
+
+				String toDate = DateTimeUtil.curDate("yyyyMMdd");
+				String fromDate = DateTimeUtil.adjustDate(toDate, -1, 0, 0);
+
 				// 주식기본시세 호출
 				ResponseEntity<Object> responseIp =
 					getInquirePrice(new InquirePriceRequest("FHKST01010100", "J", code));
 				// 배당일정 호출
 				ResponseEntity<Object> responseDr =
-					getDividend(new DividendDefaultRequest(code));
+					getDividend(new DividendDefaultRequest(code, fromDate, toDate));
 
 				Map<String, Object> inquirePriceMap =
 					objectMapper.convertValue(responseIp.getBody(), new TypeReference<Map<String, Object>>() {
@@ -127,7 +132,6 @@ public class StockService {
 					objectMapper.convertValue(responseDr.getBody(), new TypeReference<Map<String, Object>>() {
 					});
 				Map<String, Object> output = (Map<String, Object>)inquirePriceMap.get("output");
-				List<Map<String, Object>> output2 = (List<Map<String, Object>>)dividendMap.get("output1");
 
 				Map<String, Object> filteredOutput = new HashMap<>();
 				if (output != null) {
@@ -140,11 +144,26 @@ public class StockService {
 					filteredOutput.put("bps", output.get("bps"));
 					filteredOutput.put("dryy_hgpr_vrss_prpr_rate", output.get("dryy_hgpr_vrss_prpr_rate"));
 					filteredOutput.put("dryy_lwpr_vrss_prpr_rate", output.get("dryy_lwpr_vrss_prpr_rate"));
-					if (output2.size() > 0) {
-						Map<String, Object> firstRecord = output2.get(0);
-						filteredOutput.put("divi_rate", firstRecord.get("divi_rate"));
-						filteredOutput.put("divi_amt", firstRecord.get("eper_sto_divi_amt"));
+
+					BigDecimal totalDiviRate = BigDecimal.ZERO;
+					List<Map<String, Object>> output1List = (List<Map<String, Object>>)dividendMap.get("output1");
+
+					if (output1List != null && !output1List.isEmpty()) {
+						for (Map<String, Object> record : output1List) {
+							totalDiviRate = totalDiviRate.add(new BigDecimal(record.get("divi_rate").toString()));
+						}
 					}
+
+					BigDecimal per = new BigDecimal(output.get("per").toString());
+					BigDecimal eps = new BigDecimal(output.get("eps").toString());
+
+					// 배당 수익률 = {배당금 / ( eps * per )} * 100 = (배당금 / 현재주가) * 100     (%)
+					BigDecimal totalDiviAmt = totalDiviRate
+						.divide(per.multiply(eps), 10, BigDecimal.ROUND_HALF_UP)
+						.multiply(BigDecimal.valueOf(100));
+
+					filteredOutput.put("divi_rate", totalDiviRate);
+					filteredOutput.put("divi_amt", totalDiviAmt);
 				}
 				log.info("filteredOutput : {}", filteredOutput);
 				return filteredOutput;

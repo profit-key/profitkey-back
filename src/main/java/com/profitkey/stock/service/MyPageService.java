@@ -74,18 +74,6 @@ public class MyPageService {
 		return UserInfoResponse.fromEntity(userInfo);
 	}
 
-	//프로필 사진 수정
-	// @Transactional
-	// public UserInfoResponse updateProfileImage(Long userId, MultipartFile profileImage) throws IOException {
-	// 	UserInfo userInfo = userInfoRepository.findById(userId)
-	// 		.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-	//
-	// 	// S3에 업로드 (새로운 public 메서드 사용)
-	// 	UploadFile uploadedFile = s3UploadService.uploadSingleFile(profileImage);
-	// 	userInfo.setProfileImage(uploadedFile.getFileKey());
-	//
-	// 	return UserInfoResponse.fromEntity(userInfo);
-	// }
 	@Transactional
 	public UserInfoResponse updateProfileImage(Long userId, MultipartFile profileImage) throws IOException,
 		IOException {

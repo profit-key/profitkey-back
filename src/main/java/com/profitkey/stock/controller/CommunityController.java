@@ -37,14 +37,6 @@ public class CommunityController {
 	 * @param page 페이지번호
 	 * @return 조회한 데이터 목록(페이징)
 	 */
-	// @GetMapping("/{stockCode}/{page}")
-	// @Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LIST, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LIST)
-	// public ResponseEntity<Page<CommunityResponse>> getCommunityList(@PathVariable String stockCode,
-	// 	@PathVariable int page) {
-	// 	Page<CommunityResponse> communityPage = communityService.getCommunityByStockCode(stockCode, page);
-	// 	return ResponseEntity.ok(communityPage);
-	// }
-	// 프론트 요청으로 requestParam으로 수정 (3.11)
 	@GetMapping("/{stockCode}")
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LIST, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LIST)
 	public ResponseEntity<Page<CommunityResponse>> getCommunityList(
@@ -61,13 +53,6 @@ public class CommunityController {
 	 * @param page 페이지번호
 	 * @return 조회한 댓글 + 대댓글 목록(페이징)
 	 */
-	// @GetMapping("/detail/{page}")
-	// @Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_DETAIL, description = SwaggerDocs.DESCRIPTION_COMMUNITY_DETAIL)
-	// public ResponseEntity<Page<CommunityResponse>> getCommunity(@RequestParam String id, @PathVariable int page) {
-	// 	Page<CommunityResponse> communityPage = communityService.getCommunityById(id, page);
-	// 	return ResponseEntity.ok(communityPage);
-	// }
-	//프론트 요청으로 "댓글 조회" 아래와 같이 수정함 (3.11)
 	@GetMapping("/detail")
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_DETAIL, description = SwaggerDocs.DESCRIPTION_COMMUNITY_DETAIL)
 	public ResponseEntity<Page<CommunityResponse>> getCommunity(
@@ -124,10 +109,4 @@ public class CommunityController {
 
 		return ResponseEntity.ok().build();
 	}
-
-	// @GetMapping("/user")
-	// public Auth getUserInfo(@UserInfo Auth auth) {
-	// 	return auth;
-	// }
-
 }

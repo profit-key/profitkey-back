@@ -1,5 +1,6 @@
 package com.profitkey.stock.util;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -26,6 +27,13 @@ public class DateTimeUtil {
 		}
 		LocalDateTime dateTime = LocalDateTime.now();
 		return dateTime.format(DateTimeFormatter.ofPattern(pattern));
+	}
+
+	public static String adjustDate(String dateStr, int years, int months, int days) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		LocalDate date = LocalDate.parse(dateStr, formatter);
+		LocalDate adjustedDate = date.plusYears(years).plusMonths(months).plusDays(days);
+		return adjustedDate.format(formatter);
 	}
 
 } 

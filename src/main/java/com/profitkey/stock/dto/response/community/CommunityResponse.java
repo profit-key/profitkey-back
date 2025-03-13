@@ -25,7 +25,7 @@ public class CommunityResponse {
 			.writerId(community.getWriterId())
 			.parentId(community.getParentId())
 			.content(community.getContent())
-			.createdAt(community.getCreatedAt())
+			.createdAt(community.getCreatedAt() != null ? community.getCreatedAt() : LocalDateTime.now())
 			.updatedAt(community.getUpdatedAt())
 			.likeCount(likeCount)
 			.replieCount(replieCount)

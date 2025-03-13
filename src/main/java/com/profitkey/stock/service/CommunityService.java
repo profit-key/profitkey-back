@@ -1,5 +1,16 @@
 package com.profitkey.stock.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.profitkey.stock.annotation.AuthCheck;
 import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
@@ -12,17 +23,9 @@ import com.profitkey.stock.exception.testexception.mypage.UnauthorizedException;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.community.LikesRepository;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -118,6 +121,16 @@ public class CommunityService {
 	// todo : 댓글삭제할때 좋아요도 삭제되야할듯
 	public void unlikeComment(LikeRequest request) {
 		likesRepository.deleteByCommentIdAndWriterId(request.getCommentId(), request.getUserId());
+	}
+
+	// 최신순 댓글 조회
+	public Page<Object[]> getLatestComments(Pageable pageable) {
+		return communityRepository.findLatest(pageable);
+	}
+
+	// 인기순 댓글 조회
+	public Page<Object[]> getPopularComments(Pageable pageable) {
+		return communityRepository.findCommentsByPopularity(pageable);
 	}
 
 }

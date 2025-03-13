@@ -38,8 +38,11 @@ public class AuthService {
 		String profileImage = (String)userInfo.get("profileImage");
 
 		// 회원 탈퇴 후 재가입 30일 제한 체크
-		myPageService.checkRejoinRestriction(email);
-
+		Optional<UserInfo> existingUserInfo = userInfoRepository.findByAuth_EmailAndDeletedAtNotNull(email);
+		if (existingUserInfo.isPresent()) {
+			myPageService.checkRejoinRestriction(email);  // 탈퇴 후 재가입 제한 체크
+		}
+		
 		Optional<Auth> userOptional = authRepository.findByEmail(email);
 		Auth auth = userOptional.orElseGet(() -> {
 			Auth newAuth = Auth.builder()

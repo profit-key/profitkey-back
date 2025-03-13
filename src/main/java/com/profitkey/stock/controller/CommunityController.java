@@ -1,6 +1,9 @@
 package com.profitkey.stock.controller;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,7 @@ import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
 import com.profitkey.stock.dto.request.community.LikeRequest;
 import com.profitkey.stock.dto.response.community.CommunityResponse;
+import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.service.CommunityService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -108,5 +112,25 @@ public class CommunityController {
 		}
 
 		return ResponseEntity.ok().build();
+	}
+
+	// 최신순 정렬 API
+	@GetMapping("/latest")
+	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LATEST, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LATEST)
+	public ResponseEntity<Page<CommunityResponse>> getLatestComments(
+		@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+		Page<Object[]> result = communityService.getLatestComments(pageable);
+		Page<CommunityResponse> response = result.map(obj ->
+			CommunityResponse.fromEntity((Community)obj[0], (long)obj[1], 0L)
+		);
+		return ResponseEntity.ok(response);
+	}
+
+	// 인기순 정렬 API
+	@GetMapping("/popular")
+	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LIKES, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LIKES)
+	public Page<Object[]> getPopularComments(Pageable pageable) {
+		return communityService.getPopularComments(pageable);
 	}
 }

@@ -113,50 +113,29 @@ public class MyPageService {
 	/**
 	 * 회원 탈퇴 (UserInfo 소프트 딜리트, Auth 삭제)
 	 */
-	// @Transactional
-	// public void deleteUser(Long userId) {
-	// 	UserInfo userInfo = userInfoRepository.findById(userId)
-	// 		.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-	//
-	// 	// 소프트 삭제 처리
-	// 	userInfo.setIsDeleted(true);
-	// 	userInfo.setDeletedAt(LocalDateTime.now());
-	//
-	// 	// Auth 엔티티 삭제
-	// 	if (userInfo.getAuth() != null) {
-	// 		authRepository.delete(userInfo.getAuth());
-	// 	}
-	// }
 	@Transactional
 	public void deleteUser(Long userId) {
 		UserInfo userInfo = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-		// 1. Auth 삭제
+		// 소프트 삭제 처리
+		userInfo.setIsDeleted(true);
+		userInfo.setDeletedAt(LocalDateTime.now());
+
+		// Auth 엔티티 삭제
 		if (userInfo.getAuth() != null) {
-			authRepository.delete(userInfo.getAuth()); // Auth 즉시 삭제
+			authRepository.delete(userInfo.getAuth());
 		}
-
-		// 2. UserInfo에서 Auth 참조를 null로 설정
-		userInfo.setAuth(null); // Auth 참조를 null로 설정
-
-		// 3. UserInfo 소프트 삭제 처리
-		userInfo.setIsDeleted(true); // 삭제 상태로 변경
-		userInfo.setDeletedAt(LocalDateTime.now()); // 삭제 시각 기록
-		userInfoRepository.save(userInfo); // UserInfo 소프트 삭제
 	}
 
 	//탈퇴하면 30일 내 재가입 불가능
-	//탈퇴하면 30일 내 재가입 불가능
-	// 탈퇴하면 30일 내 재가입 불가능
 	public void checkRejoinRestriction(String email) {
-		Optional<UserInfo> deletedUser = userInfoRepository.findByAuth_EmailAndDeletedAtNotNull(email);
+		Optional<UserInfo> deletedUser = userInfoRepository.findByAuth_EmailAndIsDeleted(email, true);
 
 		if (deletedUser.isPresent()) {
 			LocalDateTime deletedAt = deletedUser.get().getDeletedAt();
 			LocalDateTime now = LocalDateTime.now();
 
-			// 30일 이내에 재가입 불가능
 			if (deletedAt.plusDays(30).isAfter(now)) {
 				throw new RuntimeException("회원 탈퇴 후 30일 동안 재가입할 수 없습니다.");
 			}

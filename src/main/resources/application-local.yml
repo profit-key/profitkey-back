@@ -33,12 +33,26 @@ spring:
             scope:
               - profile_nickname
               - account_email
+          google:
+            client-id: ${STOCK_GOOGLE_CLIENT_ID}
+            client-secret: ${STOCK_GOOGLE_CLIENT_SECRET}
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            authorization-grant-type: authorization_code
+            client-name: google
+            scope:
+              - email
+              - profile
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
 
 springdoc:
   default-consumes-media-type: ${STOCK_CONSUMES_MEDIATYPE}

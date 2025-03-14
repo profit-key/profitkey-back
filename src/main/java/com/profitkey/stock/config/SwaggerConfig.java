@@ -42,7 +42,22 @@ public class SwaggerConfig {
 
 	@Bean
 	public OpenAPI swaggerApi() {
+		//(기존)
 		return environmentChecker.getSwaggerInfoByEnv();
+
+		// //(추가 수정)
+		// OpenAPI openAPI = environmentChecker.getSwaggerInfoByEnv();  // 기존 설정 가져오기
+		//
+		// // 기존 설정에 보안 스킴 추가
+		// openAPI.addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
+		// 	.components(new Components()
+		// 		.addSecuritySchemes("BearerAuth", new SecurityScheme()
+		// 			.type(SecurityScheme.Type.HTTP)
+		// 			.scheme("bearer")
+		// 			.bearerFormat("JWT")
+		// 		)
+		// 	);
+		// return openAPI;
 	}
 
 	@Bean
@@ -159,5 +174,4 @@ public class SwaggerConfig {
 			responses.addApiResponse(status.toString(), apiResponse);
 		});
 	}
-
 }

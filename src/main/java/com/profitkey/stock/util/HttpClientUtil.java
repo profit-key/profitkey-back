@@ -34,7 +34,13 @@ public class HttpClientUtil {
 
 			conn.connect();
 
-			return readResponse(conn, conn.getResponseCode());
+			int responseCode = conn.getResponseCode();
+			System.out.println("HTTP 응답 코드: " + responseCode);
+
+			String responseMessage = readResponse(conn, responseCode);
+			System.out.println("HTTP 응답 데이터: " + responseMessage);
+
+			return responseMessage;
 		} catch (IOException e) {
 			throw new RuntimeException("HTTP 요청 중 오류 발생", e);
 		} finally {

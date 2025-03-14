@@ -1,8 +1,5 @@
 package com.profitkey.stock.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,7 +7,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -39,12 +35,13 @@ public class Auth {
 	@Column(name = "ACCESS_TOKEN", columnDefinition = "TEXT")
 	private String accessToken;
 
-	@OneToOne(mappedBy = "auth", cascade = CascadeType.ALL)
-	@JsonBackReference  // UserInfo에서 참조할 때 무한 참조 방지
-	private UserInfo userInfo;
+	// @OneToOne(mappedBy = "auth", cascade = CascadeType.ALL)
+	// @JsonBackReference  // UserInfo에서 참조할 때 무한 참조 방지
+	// private UserInfo userInfo;
 
 	@Builder
-	public Auth(String email, AuthProvider provider, String accessToken) {
+	public Auth(Long id, String email, AuthProvider provider, String accessToken) {
+		this.id = id;
 		this.email = email;
 		this.provider = provider;
 		this.accessToken = accessToken;

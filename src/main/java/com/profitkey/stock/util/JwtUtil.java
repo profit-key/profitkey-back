@@ -29,7 +29,7 @@ public class JwtUtil {
 
 		return Jwts.builder()
 			.setClaims(new HashMap<>())
-			.setSubject(email)
+			.setSubject(String.valueOf(id))
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
 			.signWith(SignatureAlgorithm.HS256, secretKey)
@@ -44,9 +44,9 @@ public class JwtUtil {
 			.getBody();
 	}
 
-	public String generateRefreshToken(String email) {
+	public String generateRefreshToken(Long id) {
 		return Jwts.builder()
-			.setSubject(email)
+			.setSubject(id.toString())
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
 			.signWith(SignatureAlgorithm.HS256, secretKey)
@@ -54,7 +54,7 @@ public class JwtUtil {
 	}
 
 	// JWT 검증 및 정보 추출
-	public String extractEmail(String token) {
+	public String extractId(String token) {
 		return getClaims(token).getSubject();
 	}
 

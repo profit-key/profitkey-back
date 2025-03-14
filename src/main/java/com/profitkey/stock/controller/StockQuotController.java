@@ -5,6 +5,7 @@ import com.profitkey.stock.dto.request.stock.InquireDailyRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.InvestOpinionRequest;
 import com.profitkey.stock.dto.request.stock.StockDetailRequest;
+import com.profitkey.stock.entity.StockInfo;
 import com.profitkey.stock.service.stock.StockQuotService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class StockQuotController {
-	private final StockQuotService stockDetailService;
+	private final StockQuotService stockQuotService;
 
 	/**
 	 * [국내주식]기본시세 API CALL
@@ -32,7 +33,7 @@ public class StockQuotController {
 		description = SwaggerDocs.DESCRIPTION_STOCK_INQUIRE_PRICE)
 	@PostMapping("/inquire-price")
 	public ResponseEntity<Object> getInquirePrice(@RequestBody InquirePriceRequest request) {
-		return stockDetailService.getInquirePrice(request);
+		return stockQuotService.getInquirePrice(request);
 	}
 
 	/**
@@ -45,9 +46,7 @@ public class StockQuotController {
 		description = SwaggerDocs.DESCRIPTION_STOCK_INQUIRE_DAILY)
 	@PostMapping("/inquire-daily")
 	public ResponseEntity<Object> getInquireDaily(@RequestBody InquireDailyRequest request) {
-		log.info("request {}", request);
-		log.info("hello");
-		return stockDetailService.getInquireDaily(request);
+		return stockQuotService.getInquireDaily(request);
 	}
 
 	/**
@@ -60,7 +59,7 @@ public class StockQuotController {
 		description = SwaggerDocs.DESCRIPTION_STOCK_INVEST_OPINION)
 	@PostMapping("/invest-opinion")
 	public ResponseEntity<Object> getInvestOpinion(@RequestBody InvestOpinionRequest request) {
-		return stockDetailService.getInvestOpinion(request);
+		return stockQuotService.getInvestOpinion(request);
 	}
 
 	/**
@@ -71,8 +70,8 @@ public class StockQuotController {
 	@Operation(summary = SwaggerDocs.SUMMARY_STOCK_DETAIL,
 		description = SwaggerDocs.DESCRIPTION_STOCK_DETAIL)
 	@PostMapping("/stock-detail")
-	public ResponseEntity<Object> getStockDetail(@RequestBody StockDetailRequest request) {
-		return stockDetailService.getStockDetail(request);
+	public ResponseEntity<StockInfo> getStockDetail(@RequestBody StockDetailRequest request) {
+		return stockQuotService.getStockDetail(request);
 	}
 
 }

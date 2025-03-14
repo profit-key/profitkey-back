@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.profitkey.stock.dto.response.mypage.FavoriteStockResponse;
 import com.profitkey.stock.dto.response.mypage.MyPageCommunityResponse;
 import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
 import com.profitkey.stock.entity.Community;
@@ -20,6 +21,7 @@ import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.mypage.FavoriteStockRepository;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
+import com.profitkey.stock.repository.stock.StockCodeRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class MyPageService {
 	private final UserInfoRepository userInfoRepository;
 	private final AuthRepository authRepository;
 	private final S3UploadService s3UploadService;
+	private final StockCodeRepository stockCodeRepository;
 
 	// 📌 회원 정보
 
@@ -44,7 +47,14 @@ public class MyPageService {
 		UserInfo userInfo = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-		return UserInfoResponse.fromEntity(userInfo);
+		// 프로필 이미지가 존재하면 S3 URL을 반환하고, 없으면 빈 문자열 처리
+		String profileImageUrl = "";  // 기본값으로 빈 문자열 할당
+
+		if (userInfo.getProfileImage() != null && !userInfo.getProfileImage().isEmpty()) {
+			profileImageUrl = s3UploadService.getFileUrl(userInfo.getProfileImage());
+		}
+
+		return UserInfoResponse.fromEntity(userInfo, profileImageUrl);  // S3 URL을 반환
 	}
 
 	/**
@@ -65,16 +75,36 @@ public class MyPageService {
 	}
 
 	//프로필 사진 수정
+	// @Transactional
+	// public UserInfoResponse updateProfileImage(Long userId, MultipartFile profileImage) throws IOException {
+	// 	UserInfo userInfo = userInfoRepository.findById(userId)
+	// 		.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+	//
+	// 	// S3에 업로드 (새로운 public 메서드 사용)
+	// 	UploadFile uploadedFile = s3UploadService.uploadSingleFile(profileImage);
+	// 	userInfo.setProfileImage(uploadedFile.getFileKey());
+	//
+	// 	return UserInfoResponse.fromEntity(userInfo);
+	// }
 	@Transactional
-	public UserInfoResponse updateProfileImage(Long userId, MultipartFile profileImage) throws IOException {
+	public UserInfoResponse updateProfileImage(Long userId, MultipartFile profileImage) throws IOException,
+		IOException {
 		UserInfo userInfo = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-		// S3에 업로드 (새로운 public 메서드 사용)
+		// 기존 프로필 이미지 삭제 (기본 이미지가 아니라면)
+		if (userInfo.getProfileImage() != null) {
+			s3UploadService.deleteFile(userInfo.getProfileImage());
+		}
+
+		// 새 이미지 업로드
 		UploadFile uploadedFile = s3UploadService.uploadSingleFile(profileImage);
 		userInfo.setProfileImage(uploadedFile.getFileKey());
 
-		return UserInfoResponse.fromEntity(userInfo);
+		// 업로드된 이미지의 URL 가져오기
+		String imageUrl = s3UploadService.getFileUrl(uploadedFile.getFileKey());
+
+		return UserInfoResponse.fromEntity(userInfo, imageUrl);
 	}
 
 	//프로필 사진 삭제 (기본이미지로 변경)
@@ -83,12 +113,17 @@ public class MyPageService {
 		UserInfo userInfo = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-		// 프로필 사진을 null로 설정
-		userInfo.setProfileImage(null);
+		// 기존 프로필 이미지가 존재하면 S3에서 삭제
+		if (userInfo.getProfileImage() != null && !userInfo.getProfileImage().isEmpty()) {
+			s3UploadService.deleteFile(userInfo.getProfileImage());
+		}
+
+		// 프로필 이미지를 빈 문자열("")로 설정 (기본 이미지로 변경)
+		userInfo.setProfileImage("");
 
 		return UserInfoResponse.fromEntity(userInfo);
 	}
-	
+
 	/**
 	 * 회원 탈퇴 (UserInfo 소프트 딜리트, Auth 삭제)
 	 */
@@ -149,12 +184,54 @@ public class MyPageService {
 	}
 
 	// 📌 관심 종목
+	/*
+	/* 관심 종목 찜하기
+	 */
+	@Transactional
+	public boolean addFavoriteStock(Long userId, String stockCode) {
+		UserInfo user = userInfoRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("User not found for ID: " + userId));
+
+		StockCode stockCodeEntity = stockCodeRepository.findByStockCode(stockCode);
+		if (stockCodeEntity == null) {
+			throw new IllegalArgumentException("Stock code not found for: " + stockCode);
+		}
+
+		FavoriteStock favoriteStock = FavoriteStock.builder()
+			.user(user)
+			.stockCode(stockCodeEntity)
+			.build();
+
+		favoriteStockRepository.save(favoriteStock);
+
+		// 찜 유무 반환
+		return favoriteStockRepository.existsByUser_UserIdAndStockCode_StockCode(userId, stockCode);
+	}
+
+	private UserInfo getUserById(Long userId) {
+		// UserInfo를 userId로 조회하는 로직 구현
+		return new UserInfo(); // 예시로 새로운 UserInfo 객체 리턴 (실제 구현 필요)
+	}
 
 	/**
 	 * 관심 종목 조회
 	 */
-	public List<FavoriteStock> getFavoriteStocks(Long userId) {
-		return favoriteStockRepository.findByUser_UserId(userId);
+	public List<FavoriteStockResponse> getFavoriteStocks(Long userId) {
+		List<FavoriteStock> favoriteStocks = favoriteStockRepository.findByUser_UserId(userId);
+
+		return favoriteStocks.stream()
+			.map(favoriteStock -> {
+				boolean isLiked = favoriteStockRepository.existsByUser_UserIdAndStockCode_StockCode(
+					userId, favoriteStock.getStockCode().getStockCode()
+				);
+				return FavoriteStockResponse.fromEntity(favoriteStock, isLiked);
+			})
+			.collect(Collectors.toList());
+	}
+
+	// 종목 상세 좋아요 유무 조회
+	public boolean isFavoriteStock(Long userId, String stockCode) {
+		return favoriteStockRepository.existsByUser_UserIdAndStockCode_StockCode(userId, stockCode);
 	}
 
 	/**

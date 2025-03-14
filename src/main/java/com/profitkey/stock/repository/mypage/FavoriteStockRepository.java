@@ -14,6 +14,14 @@ import com.profitkey.stock.entity.StockCode;
 
 @Repository
 public interface FavoriteStockRepository extends JpaRepository<FavoriteStock, Long> {
+
+	/** 사용자의 관심 종목 조회 */
+	@Query("SELECT f FROM FavoriteStock f " +
+		"JOIN FETCH f.stockCode s " +
+		"LEFT JOIN FETCH s.stockInfos " +
+		"WHERE f.user.userId = :userId")
+	List<FavoriteStock> findByUserIdWithStockInfo(@Param("userId") Long userId);
+
 	/** 사용자의 관심 종목 조회 */
 	// UserInfo의 userId를 기준으로 FavoriteStock을 찾도록 수정
 	List<FavoriteStock> findByUser_UserId(Long userId);
@@ -27,5 +35,7 @@ public interface FavoriteStockRepository extends JpaRepository<FavoriteStock, Lo
 	// stockCode 문자열을 이용해 StockCode 객체를 조회
 	@Query("SELECT s FROM StockCode s WHERE s.stockCode = :stockCode")
 	StockCode findStockCodeByStockCode(@Param("stockCode") String stockCode);
+
+	boolean existsByUser_UserIdAndStockCode_StockCode(Long userId, String stockCode);
 
 }

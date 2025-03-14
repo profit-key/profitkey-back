@@ -1,10 +1,10 @@
 package com.profitkey.stock.service;
 
+import com.profitkey.stock.annotation.AuthCheck;
 import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
 import com.profitkey.stock.dto.request.community.LikeRequest;
 import com.profitkey.stock.dto.response.community.CommunityResponse;
-import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.entity.Likes;
 import com.profitkey.stock.entity.UserInfo;
@@ -12,7 +12,6 @@ import com.profitkey.stock.exception.testexception.mypage.UnauthorizedException;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.community.LikesRepository;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
-import com.profitkey.stock.util.SecurityUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -105,39 +104,14 @@ public class CommunityService {
 		communityRepository.deleteById(longId);
 	}
 
-	// public void likeComment(LikeRequest request) {
-	// 	Auth auth = SecurityUtil.getUser();
-	// 	log.info(" id : {} ", auth.getId());
-	// 	log.info(" email : {} ", auth.getEmail());
-	// 	log.info(" provider : {} ", auth.getProvider());
-	// 	log.info(" nickname : {} ", auth.getNickname());
-	// 	Likes likes = Likes.builder()
-	// 		.commentId(request.getCommentId())
-	// 		.writerId(request.getUserId())
-	// 		.createdAt(LocalDateTime.now())
-	// 		.build();
-	//
-	// 	likesRepository.save(likes);
-	// }
-
 	@Transactional
+	@AuthCheck
 	public void likeComment(LikeRequest request) {
-		Auth auth = SecurityUtil.getUser();
-
-		log.info("id : {} ", auth.getId());
-		log.info("provider : {} ", auth.getProvider());
-
-		UserInfo userInfo = userInfoRepository.findById(auth.getId())
-			.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다. ID: " + auth.getId()));
-
-		log.info("nickname : {} ", userInfo.getNickname());
-
 		Likes likes = Likes.builder()
 			.commentId(request.getCommentId())
 			.writerId(request.getUserId())
 			.createdAt(LocalDateTime.now())
 			.build();
-
 		likesRepository.save(likes);
 	}
 

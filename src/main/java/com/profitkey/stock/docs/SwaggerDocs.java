@@ -83,6 +83,8 @@ public class SwaggerDocs {
 		isLike(true) : 좋아요<br/>
 		isLike(false) : 좋아요 취소
 		""";
+	public static final String SUMMARY_COMMUNITY_SORT = "최신순/인기순 정렬";
+	public static final String DESCRIPTION_COMMUNITY_SORT = "'최신순' 또는 '인기순'으로 댓글을 정렬합니다.";
 	/**
 	 * ****************************************
 	 * Stock Swagger Docs 모음
@@ -92,6 +94,12 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_STOCK_TOKEN = """
 		한국투자증권 OEPN API에서 사용할 토큰을 가져옵니다.<br/>
 		모의서버에서는 1분에 한번으로 제한됩니다.""";
+	public static final String SUMMARY_STOCK_SEARCH = "주식종목명 검색";
+	public static final String DESCRIPTION_STOCK_SEARCH = """
+		입력한 종목코드로 종목명을 조회합니다.""";
+	public static final String SUMMARY_STOCK_SEARCH_LIKE = "주식종목명 Like 다건 검색";
+	public static final String DESCRIPTION_STOCK_SEARCH_LIKE = """
+		입력한 종목코드 앞자리로 시작하는 종목 목록을 조회합니다.""";
 	public static final String SUMMARY_STOCK_INQUIRE_PRICE = "주식 현재 시세 GET";
 	public static final String DESCRIPTION_STOCK_INQUIRE_PRICE = """
 		종목 코드에 따라 국내 주식 시세를 불러옵니다.
@@ -112,7 +120,10 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_STOCK_MARKET_CAP = """
 		조건별 시가총액이 높은 종목을 불러옵니다.
 		""";
-
+	public static final String SUMMARY_STOCK_HTS_TOP_VIEW = "국내주식 HTS 상위20 GET";
+	public static final String DESCRIPTION_STOCK_HTS_TOP_VIEW = """
+		HTS조회상위20종목 API입니다.
+		""";
 	public static final String SUMMARY_STOCK_INVEST_OPINION = "국내주식 종목투자의견 GET";
 	public static final String DESCRIPTION_STOCK_INVEST_OPINION = """
 		 회원사별로 종목에 대한 투자 가치를 제시합니다.<br/>
@@ -153,6 +164,14 @@ public class SwaggerDocs {
 	public static final String DESCRIPTION_STOCK_DIVIDEND = """
 		 해당 종목의 기간별 배당내역을 가져옵니다.
 		""";
+	public static final String SUMMARY_STOCK_DAILY_RANK = "주식메인 순위";
+	public static final String DESCRIPTION_STOCK_DAILY_RANK = """
+		 		*division
+				 BASIC : 기본
+				 MARKET_CAP : 시가총액
+				 HTS_TOP : HTS TOP 20
+		""";
+
 	/**
 	 * ****************************************
 	 * Login/Token Docs 모음
@@ -181,47 +200,62 @@ public class SwaggerDocs {
 		토큰을 빈값으로 갱신합니다.
 		""";
 
+	public static final String SUMMARY_TOKEN_ME = "access token으로 내 정보 조회";
+	public static final String DESCRIPTION_TOKEN_ME = """
+		access token으로 내 정보를 불러오는 API입니다.
+		""";
+
 	/**
 	 * ****************************************
 	 * Mypage Swagger Docs 모음
 	 * ****************************************
 	 */
-	public static final String SUMMARY_FAVORITE_STOCKS = "관심 종목 조회 GET";
+	public static final String SUMMARY_POST_FAVORITE_STOCKS = "관심 종목 등록";
+	public static final String DESCRIPTION_POST_FAVORITE_STOCKS = """
+		    사용자가 관심 종목을 추가합니다.
+		""";
+
+	public static final String SUMMARY_GET_FAVORITE_STOCKS = "종목 상세 like 유무 조회";
+	public static final String DESCRIPTION_GET_FAVORITE_STOCKS = """
+		    종목 상세 페이지 내 like 여부를 체크합니다.
+		""";
+
+	public static final String SUMMARY_FAVORITE_STOCKS = "관심 종목 조회";
 	public static final String DESCRIPTION_FAVORITE_STOCKS = """
 		    사용자가 설정한 관심 종목 목록을 조회합니다.
 		""";
 
-	public static final String SUMMARY_DELETE_FAVORITE_STOCK = "관심 종목 삭제 DELETE";
+	public static final String SUMMARY_DELETE_FAVORITE_STOCK = "관심 종목 삭제";
 	public static final String DESCRIPTION_DELETE_FAVORITE_STOCK = """
 		    사용자가 설정한 관심 종목을 삭제합니다.
 		""";
 
-	public static final String SUMMARY_USER_COMMENTS = "사용자 댓글 조회 GET";
+	public static final String SUMMARY_USER_COMMENTS = "사용자 댓글 조회";
 	public static final String DESCRIPTION_USER_COMMENTS = """
 		    사용자가 작성한 댓글 목록을 조회합니다.
 		""";
 
-	public static final String SUMMARY_USER_INFO = "내 정보 조회 GET";
+	public static final String SUMMARY_USER_INFO = "내 정보 조회";
 	public static final String DESCRIPTION_USER_INFO = """
 		    사용자의 정보를 조회합니다 (닉네임, 프로필 이미지 등).
 		""";
 
-	public static final String SUMMARY_UPDATE_NICKNAME = "회원 닉네임 수정 PUT";
+	public static final String SUMMARY_UPDATE_NICKNAME = "회원 닉네임 수정";
 	public static final String DESCRIPTION_UPDATE_NICKNAME = """
 		    사용자의 닉네임을 수정합니다.
 		""";
 
-	public static final String SUMMARY_UPDATE_PROFILE_IMAGE = "회원 프로필 사진 수정 PUT";
+	public static final String SUMMARY_UPDATE_PROFILE_IMAGE = "회원 프로필 사진 수정";
 	public static final String DESCRIPTION_UPDATE_PROFILE_IMAGE = """
 		    사용자의 프로필 사진을 수정합니다.
 		""";
 
-	public static final String SUMMARY_DELETE_PROFILE_IMAGE = "회원 프로필 사진 삭제 DELETE";
+	public static final String SUMMARY_DELETE_PROFILE_IMAGE = "회원 프로필 사진 삭제";
 	public static final String DESCRIPTION_DELETE_PROFILE_IMAGE = """
 		    사용자의 프로필 사진을 삭제합니다.
 		""";
 
-	public static final String SUMMARY_DELETE_USER = "회원 탈퇴 DELETE";
+	public static final String SUMMARY_DELETE_USER = "회원 탈퇴";
 	public static final String DESCRIPTION_DELETE_USER = """
 		    사용자를 탈퇴시키고 관련된 정보들을 소프트 딜리트합니다.
 		""";

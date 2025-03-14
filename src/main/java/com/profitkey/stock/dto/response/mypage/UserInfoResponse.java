@@ -35,4 +35,13 @@ public class UserInfoResponse {
 			.profileImageUrl(userInfo.getProfileImage())
 			.build();
 	}
+
+	// S3 URL을 포함한 변환 메서드 추가
+	public static UserInfoResponse fromEntity(UserInfo userInfo, String imageUrl) {
+		return UserInfoResponse.builder()
+			.email(userInfo.getAuth().getEmail())
+			.nickname(userInfo.getNickname())
+			.profileImageUrl(imageUrl) // S3에서 생성된 실제 URL 반환
+			.build();
+	}
 }

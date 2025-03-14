@@ -2,13 +2,16 @@ package com.profitkey.stock.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -16,23 +19,30 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.profitkey.stock.docs.SwaggerDocs;
+import com.profitkey.stock.dto.request.mypage.FavoriteStockRequest;
+import com.profitkey.stock.dto.response.mypage.FavoriteStockResponse;
 import com.profitkey.stock.dto.response.mypage.MyPageCommunityResponse;
 import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
-import com.profitkey.stock.entity.FavoriteStock;
+import com.profitkey.stock.repository.mypage.FavoriteStockRepository;
+import com.profitkey.stock.service.AuthService;
 import com.profitkey.stock.service.MyPageService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/my-page")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class MyPageController {
 
 	private final MyPageService myPageService;
+	private final AuthService authService;
+	private final FavoriteStockRepository favoriteStockRepository;
 
 	/*
 	 * 내 정보
@@ -93,6 +103,14 @@ public class MyPageController {
 		return myPageService.deleteProfileImage(userId);
 	}
 
+	// /me 엔드포인트 추가
+	@Operation(summary = SwaggerDocs.SUMMARY_TOKEN_ME, description = SwaggerDocs.DESCRIPTION_TOKEN_ME)
+	@GetMapping("/me")
+	public ResponseEntity<Map<String, Object>> getUserInfo(HttpServletRequest request) {
+		Map<String, Object> userInfo = authService.getUserInfoFromToken(request);
+		return ResponseEntity.ok(userInfo);
+	}
+
 	//회원 탈퇴
 	@DeleteMapping("/user/{userId}")
 	@Operation(summary = SwaggerDocs.SUMMARY_DELETE_USER, description = SwaggerDocs.DESCRIPTION_DELETE_USER)
@@ -114,17 +132,40 @@ public class MyPageController {
 	/*
 	 * 관심 종목
 	 */
-	@GetMapping("/favorite-stocks/{userId}")
-	@Operation(summary = SwaggerDocs.SUMMARY_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_FAVORITE_STOCKS)
-	public ResponseEntity<List<FavoriteStock>> getFavoriteStocks(@PathVariable Long userId) {
-		List<FavoriteStock> favoriteStocks = myPageService.getFavoriteStocks(userId);
-		return ResponseEntity.ok(favoriteStocks);
+	//관심 종목 추가
+	@PostMapping("/{userId}/favorite-stocks")
+	@Operation(summary = SwaggerDocs.SUMMARY_POST_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_POST_FAVORITE_STOCKS)
+	public ResponseEntity<Boolean> addFavoriteStock(@PathVariable Long userId,
+		@RequestBody FavoriteStockRequest request) {
+		boolean isLiked = myPageService.addFavoriteStock(userId, request.getStockCode());
+		return ResponseEntity.ok(isLiked); // 찜 유무 반환
 	}
 
+	//관심 종목 상세 좋아요 유무 조회
+	@GetMapping("/{userId}/favorite-stocks/{stockCode}")
+	@Operation(summary = SwaggerDocs.SUMMARY_GET_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_GET_FAVORITE_STOCKS)
+	public ResponseEntity<Boolean> isFavoriteStock(
+		@PathVariable @Parameter(description = "사용자 ID") Long userId,
+		@PathVariable @Parameter(description = "찜 여부를 확인할 종목 코드") String stockCode
+	) {
+		boolean isLiked = myPageService.isFavoriteStock(userId, stockCode);
+		return ResponseEntity.ok(isLiked);
+	}
+
+	//관심 종목 조회
+	@GetMapping("/favorite-stocks/{userId}")
+	@Operation(summary = SwaggerDocs.SUMMARY_FAVORITE_STOCKS, description = SwaggerDocs.DESCRIPTION_FAVORITE_STOCKS)
+	public ResponseEntity<List<FavoriteStockResponse>> getFavoriteStocks(@PathVariable Long userId) {
+		List<FavoriteStockResponse> response = myPageService.getFavoriteStocks(userId);
+		return ResponseEntity.ok(response);
+	}
+
+	//관심 종목 삭제
 	@DeleteMapping("/favorite-stocks/{userId}/{stockCode}")
 	@Operation(summary = SwaggerDocs.SUMMARY_DELETE_FAVORITE_STOCK, description = SwaggerDocs.DESCRIPTION_DELETE_FAVORITE_STOCK)
 	public ResponseEntity<Void> deleteFavoriteStock(@PathVariable Long userId, @PathVariable String stockCode) {
 		myPageService.deleteFavoriteStock(userId, stockCode);
 		return ResponseEntity.noContent().build();
 	}
+
 }

@@ -55,3 +55,9 @@ cloud:
       static: ${STOCK_AWS_S3_REGION}
     stack:
       auto: false
+
+openai:
+  api:
+    key: ${STOCK_OPENAI_API_KEY}
+    url: ${STOCK_OPENAI_URL}
+  model: ${STOCK_OPENAI_MODEL}

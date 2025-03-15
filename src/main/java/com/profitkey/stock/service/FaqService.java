@@ -13,6 +13,7 @@ import com.profitkey.stock.dto.response.faq.FaqResponse;
 import com.profitkey.stock.entity.Faq;
 import com.profitkey.stock.handler.PagenationHandler;
 import com.profitkey.stock.repository.FaqRepository;
+import com.profitkey.stock.service.stock.StockRankService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

@@ -42,11 +42,18 @@ public class CommunityService {
 
 		Page<Object[]> results = communityRepository.findByStockCodeWithCounts(stockCode, pageable);
 
-		return results.map(row -> CommunityResponse.fromEntity(
-			(Community)row[0],
-			((Number)row[1]).longValue(),
-			((Number)row[2]).longValue()
-		));
+		return results.map(row -> {
+			Community community = (Community)row[0];
+			long likeCount = ((Number)row[1]).longValue();
+			long replieCount = ((Number)row[2]).longValue();
+
+			// writerId를 기준으로 UserInfo를 조회
+			UserInfo writer = userInfoRepository.findById(community.getWriterId())
+				.orElseThrow(() -> new RuntimeException("Writer not found"));
+
+			// CommunityResponse 객체 생성
+			return CommunityResponse.fromEntity(community, writer, likeCount, replieCount);
+		});
 	}
 
 	@Transactional(readOnly = true)
@@ -59,7 +66,12 @@ public class CommunityService {
 			Community community = (Community)row[0];
 			long likeCount = ((Number)row[1]).longValue();
 
-			return CommunityResponse.fromEntity(community, likeCount, 0);
+			// writerId로 UserInfo 객체를 조회
+			UserInfo writer = userInfoRepository.findById(community.getWriterId())
+				.orElseThrow(() -> new RuntimeException("Writer not found"));
+
+			// CommunityResponse 객체 생성
+			return CommunityResponse.fromEntity(community, writer, likeCount, 0);
 		});
 	}
 
@@ -72,6 +84,7 @@ public class CommunityService {
 		if (userInfo.getIsDeleted()) {
 			throw new UnauthorizedException("로그인하지 않았거나 삭제된 유저는 댓글을 달 수 없습니다.");
 		}
+
 		String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String stockCode = request.getStockCode();
 		int sequence = communityRepository.getNextSequence(today, stockCode);
@@ -84,7 +97,9 @@ public class CommunityService {
 			.content(request.getContent())
 			.build();
 		communityRepository.save(community);
-		return CommunityResponse.fromEntity(community, 0, 0);
+
+		// writerId로 UserInfo 객체를 조회
+		return CommunityResponse.fromEntity(community, userInfo, 0, 0);
 	}
 
 	@Transactional
@@ -94,7 +109,12 @@ public class CommunityService {
 
 		community.setContent(request.getContent());
 		communityRepository.save(community);
-		return CommunityResponse.fromEntity(community, 0, 0);
+
+		// writerId로 UserInfo 객체를 조회
+		UserInfo writer = userInfoRepository.findById(community.getWriterId())
+			.orElseThrow(() -> new RuntimeException("Writer not found"));
+
+		return CommunityResponse.fromEntity(community, writer, 0, 0);
 	}
 
 	@Transactional

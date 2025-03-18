@@ -4,12 +4,12 @@ spring:
       on-profile: local
   profiles:
     url: http://localhost/
-
+  
   datasource:
     url: ${STOCK_DATASOURCE_LOCAL_URL}
     username: ${STOCK_DATASOURCE_LOCAL_USERNAME}
     password: ${STOCK_DATASOURCE_LOCAL_PASSWORD}
-
+  
   jpa:
     hibernate:
       ddl-auto: ${STOCK_JPA_OPTION_AUTO}
@@ -70,11 +70,5 @@ springdoc:
   api-docs:
     groups:
       enabled: ${STOCK_SWAGGER_ISGROUPS}
-
 server:
   port: 80
-
-property:
-  exchange:
-    authKey: ${STOCK_EXCHANGE_AUTH_KEY}
-    data: ${STOCK_EXCHANGE_DATA}

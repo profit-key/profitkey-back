@@ -10,6 +10,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,8 @@ public class Community {
 	@Column(name = "PARENT_ID")
 	private String parentId;
 
-	@Column(name = "CONTENT")
+	@Lob
+	@Column(name = "CONTENT", columnDefinition = "TEXT")
 	private String content;
 
 	@CreatedDate

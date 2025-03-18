@@ -2,6 +2,7 @@ package com.profitkey.stock.dto.response.community;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.profitkey.stock.entity.Community;
 
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommunityResponse {
 	private final String id;
 	private final Long writerId;

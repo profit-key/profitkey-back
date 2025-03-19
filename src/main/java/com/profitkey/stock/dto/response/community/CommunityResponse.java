@@ -27,6 +27,7 @@ public class CommunityResponse {
 	public static CommunityResponse fromEntity(Community community, UserInfo writer, long likeCount, long replieCount) {
 		return CommunityResponse.builder()
 			.id(community.getId())
+			.parentId(community.getParentId())
 			.content(community.getContent())
 			.writerNickname(writer.getNickname()) // nickname
 			.writerImageUrl(writer.getProfileImage()) // profileImage

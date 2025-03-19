@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.profitkey.stock.annotation.AuthCheck;
 import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
@@ -70,6 +71,7 @@ public class CommunityController {
 	 * @return 등록된 데이터
 	 */
 	@PostMapping
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_CREATE, description = SwaggerDocs.DESCRIPTION_COMMUNITY_CREATE)
 	public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityRequest request) {
 		return ResponseEntity.ok(communityService.createCommunity(request));
@@ -81,6 +83,7 @@ public class CommunityController {
 	 * @return 수정된 데이터
 	 */
 	@PutMapping("")
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_UPDATE, description = SwaggerDocs.DESCRIPTION_COMMUNITY_UPDATE)
 	public ResponseEntity<CommunityResponse> updateCommunity(@RequestBody CommunityUpdateRequest request) {
 		CommunityResponse response = communityService.updateCommunity(request);
@@ -93,6 +96,7 @@ public class CommunityController {
 	 * @return 성공여부
 	 */
 	@DeleteMapping("/{id}")
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_DELETE, description = SwaggerDocs.DESCRIPTION_COMMUNITY_DELETE)
 	public ResponseEntity<Void> deleteCommunity(@PathVariable String id) {
 		communityService.deleteCommunity(id);
@@ -100,6 +104,7 @@ public class CommunityController {
 	}
 
 	@PostMapping("/like")
+	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LIKE, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LIKE)
 	public ResponseEntity<Void> likeComment(@RequestBody LikeRequest request) {
 		if (request.isLiked()) {

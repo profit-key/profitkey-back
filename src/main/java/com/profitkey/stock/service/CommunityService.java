@@ -34,6 +34,7 @@ public class CommunityService {
 	private final CommunityRepository communityRepository;
 	private final LikesRepository likesRepository;
 	private final UserInfoRepository userInfoRepository;
+	private final S3UploadService s3UploadService;
 	private final int SIZE = 10;
 
 	@Transactional(readOnly = true)
@@ -52,7 +53,7 @@ public class CommunityService {
 				.orElseThrow(() -> new RuntimeException("Writer not found"));
 
 			// CommunityResponse 객체 생성
-			return CommunityResponse.fromEntity(community, writer, likeCount, replieCount);
+			return CommunityResponse.fromEntity(community, writer, likeCount, replieCount, s3UploadService);
 		});
 	}
 
@@ -71,7 +72,7 @@ public class CommunityService {
 				.orElseThrow(() -> new RuntimeException("Writer not found"));
 
 			// CommunityResponse 객체 생성
-			return CommunityResponse.fromEntity(community, writer, likeCount, 0);
+			return CommunityResponse.fromEntity(community, writer, likeCount, 0, s3UploadService);
 		});
 	}
 
@@ -99,7 +100,7 @@ public class CommunityService {
 		communityRepository.save(community);
 
 		// writerId로 UserInfo 객체를 조회
-		return CommunityResponse.fromEntity(community, userInfo, 0, 0);
+		return CommunityResponse.fromEntity(community, userInfo, 0, 0, s3UploadService);
 	}
 
 	@Transactional
@@ -114,7 +115,7 @@ public class CommunityService {
 		UserInfo writer = userInfoRepository.findById(community.getWriterId())
 			.orElseThrow(() -> new RuntimeException("Writer not found"));
 
-		return CommunityResponse.fromEntity(community, writer, 0, 0);
+		return CommunityResponse.fromEntity(community, writer, 0, 0, s3UploadService);
 	}
 
 	@Transactional

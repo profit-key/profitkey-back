@@ -133,6 +133,9 @@ public class AuthService {
 
 		// JWT 토큰 무효화
 		auth.setAccessToken(null);
+		// 카카오 액세스 토큰도 null로 설정하여 제거
+		auth.setKakaoAccessToken(null);
+		
 		authRepository.save(auth);
 		log.info("토큰 무효화 완료: 이메일 = {}", email);
 	}

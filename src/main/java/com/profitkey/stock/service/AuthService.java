@@ -115,23 +115,26 @@ public class AuthService {
 
 	//  JWT 폐기 (로그아웃)
 	public void disposeToken(String token) {
-		// JWT 토큰에서 "Bearer "를 제거하고 실제 토큰 추출
 		String jwtToken = token.replace("Bearer ", "");
 
-		// 토큰을 이용해 이메일을 추출
-		String email = jwtUtil.extractClaims(jwtToken).get("email").toString();
-
+		// 토큰 검증
 		if (!jwtUtil.validateToken(jwtToken)) {
+			log.error("JWT 토큰 검증 실패: {}", jwtToken);
 			throw new RuntimeException("토큰 검증에 실패하였습니다.");
 		}
 
-		// 이메일에 해당하는 사용자 정보 조회
+		// JWT에서 이메일 추출
+		String email = jwtUtil.extractClaims(jwtToken).get("email").toString();
+		log.info("로그아웃 요청된 이메일: {}", email);
+
+		// 이메일로 사용자 조회
 		Auth auth = authRepository.findByEmail(email)
 			.orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
 
-		// 사용자의 JWT 토큰을 null로 설정하여 무효화
+		// JWT 토큰 무효화
 		auth.setAccessToken(null);
-		authRepository.save(auth); // 변경된 Auth 객체 저장
+		authRepository.save(auth);
+		log.info("토큰 무효화 완료: 이메일 = {}", email);
 	}
 
 	// ✅ Auth 객체로부터 닉네임 조회하는 메서드 추가

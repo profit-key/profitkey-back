@@ -83,16 +83,22 @@ public class AuthController {
 		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 			String token = authorizationHeader.substring(7); // Bearer 제거
 
-			// JWT 토큰을 검증하고 필요한 처리를 합니다
-			boolean isTokenValid = jwtUtil.validateToken(token);
-			if (isTokenValid) {
-				// JWT를 무효화 처리 (예: 블랙리스트에 추가 등)
-				authService.disposeToken(token);
-				return ResponseEntity.ok("Logged out successfully");
-			} else {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+			try {
+				// JWT 토큰을 검증하고 필요한 처리를 합니다
+				boolean isTokenValid = jwtUtil.validateToken(token);
+				if (isTokenValid) {
+					// JWT를 무효화 처리 (예: 블랙리스트에 추가 등)
+					authService.disposeToken(token);
+					return ResponseEntity.ok("Logged out successfully");
+				} else {
+					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+				}
+			} catch (Exception e) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Error during logout: " + e.getMessage());
 			}
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Authorization Token");
 	}
+
 }

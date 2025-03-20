@@ -35,15 +35,15 @@ public class Auth {
 	@Column(name = "ACCESS_TOKEN", columnDefinition = "TEXT")
 	private String accessToken;
 
-	// @OneToOne(mappedBy = "auth", cascade = CascadeType.ALL)
-	// @JsonBackReference  // UserInfo에서 참조할 때 무한 참조 방지
-	// private UserInfo userInfo;
+	@Column(name = "KAKAO_ACCESS_TOKEN", columnDefinition = "TEXT")
+	private String kakaoAccessToken;  // 카카오 액세스 토큰 추가
 
 	@Builder
-	public Auth(Long id, String email, AuthProvider provider, String accessToken) {
+	public Auth(Long id, String email, AuthProvider provider, String accessToken, String kakaoAccessToken) {
 		this.id = id;
 		this.email = email;
 		this.provider = provider;
 		this.accessToken = accessToken;
+		this.kakaoAccessToken = kakaoAccessToken;
 	}
 }

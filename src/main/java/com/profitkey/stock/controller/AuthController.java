@@ -2,6 +2,7 @@ package com.profitkey.stock.controller;
 
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import com.profitkey.stock.service.AuthService;
 import com.profitkey.stock.util.JwtUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,5 +73,26 @@ public class AuthController {
 	public ResponseEntity<?> dispose(@RequestHeader("Authorization") String token) {
 		authService.disposeToken(token);
 		return ResponseEntity.ok("정상처리되었습니다.");
+	}
+
+	@Operation(summary = SwaggerDocs.SUMMARY_LOGOUT,
+		description = SwaggerDocs.DESCRIPTION_LOGOUT)
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout(HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
+		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+			String token = authorizationHeader.substring(7); // Bearer 제거
+
+			// JWT 토큰을 검증하고 필요한 처리를 합니다
+			boolean isTokenValid = jwtUtil.validateToken(token);
+			if (isTokenValid) {
+				// JWT를 무효화 처리 (예: 블랙리스트에 추가 등)
+				authService.disposeToken(token);
+				return ResponseEntity.ok("Logged out successfully");
+			} else {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+			}
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Authorization Token");
 	}
 }

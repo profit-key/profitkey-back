@@ -1,8 +1,16 @@
 package com.profitkey.stock.controller;
 
+import com.profitkey.stock.docs.SwaggerDocs;
+import com.profitkey.stock.entity.Auth;
+import com.profitkey.stock.service.AuthService;
+import com.profitkey.stock.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
-
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,17 +18,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.profitkey.stock.docs.SwaggerDocs;
-import com.profitkey.stock.entity.Auth;
-import com.profitkey.stock.service.AuthService;
-import com.profitkey.stock.util.JwtUtil;
-
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/oauth2")
@@ -77,28 +74,46 @@ public class AuthController {
 
 	@Operation(summary = SwaggerDocs.SUMMARY_LOGOUT,
 		description = SwaggerDocs.DESCRIPTION_LOGOUT)
-	@PostMapping("/logout")
-	public ResponseEntity<?> logout(HttpServletRequest request) {
-		String authorizationHeader = request.getHeader("Authorization");
-		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-			String token = authorizationHeader.substring(7); // Bearer 제거
+	@GetMapping("/logout")
+	public ResponseEntity<?> kakaoLogout() {
+		String kakaoLogoutUrl =
+			"https://kauth.kakao.com/oauth/logout?client_id=4b8c85fbc34e8a2b177562e4cb240fe2&logout_redirect_uri=http://localhost/api/oauth2/logout/callback";
 
-			try {
-				// JWT 토큰을 검증하고 필요한 처리를 합니다
-				boolean isTokenValid = jwtUtil.validateToken(token);
-				if (isTokenValid) {
-					// JWT를 무효화 처리 (예: 블랙리스트에 추가 등)
-					authService.disposeToken(token);
-					return ResponseEntity.ok("Logged out successfully");
-				} else {
-					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
-				}
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("Error during logout: " + e.getMessage());
-			}
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Authorization Token");
+		return ResponseEntity.ok(kakaoLogoutUrl);
 	}
+
+	@GetMapping("/logout/callback")
+	public ResponseEntity<?> logoutCallback(HttpServletRequest request, HttpServletResponse response) {
+		// 클라이언트 쿠키에서 JWT 토큰 제거 (예제에서는 간단하게 처리)
+		Cookie cookie = new Cookie("Authorization", null);
+		cookie.setMaxAge(0);
+		cookie.setPath("/");
+		response.addCookie(cookie);
+
+		return ResponseEntity.ok("카카오 로그아웃 완료!");
+	}
+
+	// public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+	// 	String authorizationHeader = request.getHeader("Authorization");
+	// 	if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	// 		String token = authorizationHeader.substring(7); // Bearer 제거
+	//
+	// 		try {
+	// 			// JWT 토큰을 검증하고 필요한 처리를 합니다
+	// 			boolean isTokenValid = jwtUtil.validateToken(token);
+	// 			if (isTokenValid) {
+	// 				authService.logout(request, response);
+	// 				authService.disposeToken(token);
+	// 				return ResponseEntity.ok("Logged out successfully");
+	// 			} else {
+	// 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+	// 			}
+	// 		} catch (Exception e) {
+	// 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	// 				.body("Error during logout: " + e.getMessage());
+	// 		}
+	// 	}
+	// 	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Authorization Token");
+	// }
 
 }

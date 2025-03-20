@@ -1,22 +1,20 @@
 package com.profitkey.stock.service;
 
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
 import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.AuthProvider;
 import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
 import com.profitkey.stock.util.JwtUtil;
-
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class AuthService {
 
 	public Auth oAuthLogin(String code, HttpServletResponse response) {
 		String accessToken = kakaoOAuth2Service.getAccessToken(code);
-		log.info("📌 카카오 액세스 토큰: {}", accessToken); // 카카오 액세스 토큰 로그 출력
+		log.info("카카오 액세스 토큰: {}", accessToken); // 카카오 액세스 토큰 로그 출력
 
 		Map<String, Object> userInfo = kakaoOAuth2Service.getUserInfo(accessToken);
 
@@ -64,7 +62,7 @@ public class AuthService {
 			return savedAuth;
 		});
 
-		// ✅ UserInfo에서 닉네임 조회 추가
+		// UserInfo에서 닉네임 조회 추가
 		String storedNickname = userInfoRepository.findByAuth(auth)
 			.map(UserInfo::getNickname)
 			.orElse(nickname); // 기존 닉네임이 없으면 카카오에서 가져온 닉네임 사용
@@ -135,9 +133,13 @@ public class AuthService {
 		auth.setAccessToken(null);
 		// 카카오 액세스 토큰도 null로 설정하여 제거
 		auth.setKakaoAccessToken(null);
-		
+
 		authRepository.save(auth);
 		log.info("토큰 무효화 완료: 이메일 = {}", email);
+		// 디비업데이트만
+
+		// 임시추가 -> 위치나 방식 변경필요
+		SecurityContextHolder.clearContext();
 	}
 
 	// ✅ Auth 객체로부터 닉네임 조회하는 메서드 추가
@@ -205,7 +207,8 @@ public class AuthService {
 			.orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
 
 		// 4. 카카오 로그아웃 처리 (카카오 액세스 토큰 만료)
-		kakaoOAuth2Service.logout(auth.getAccessToken());
+		// kakaoOAuth2Service.logout(auth.getAccessToken());
+		kakaoOAuth2Service.logout(auth.getKakaoAccessToken());
 
 		// 5. JWT 토큰 폐기
 		disposeToken(token);

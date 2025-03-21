@@ -87,16 +87,16 @@ public class AuthController {
 
 	@GetMapping("/logout/callback")
 	public ResponseEntity<?> logoutCallback(HttpServletRequest request, HttpServletResponse response) {
-		// 1️⃣ JWT 토큰 가져오기
+		// JWT 토큰 가져오기
 		String jwtToken = authService.extractTokenFromRequest(request);
 
-		// 2️⃣ DB에서 JWT & 카카오 액세스 토큰 제거
+		// DB에서 JWT & 카카오 액세스 토큰 제거
 		authService.disposeToken(jwtToken);
 
-		// 3️⃣ 클라이언트 쿠키에서 JWT 삭제
+		// 클라이언트 쿠키에서 JWT 삭제
 		authService.clearJwtCookie(response);
 
-		// 4️⃣ SecurityContext 초기화 (여기서 처리하는 게 적절함)
+		// SecurityContext 초기화
 		SecurityContextHolder.clearContext();
 
 		return ResponseEntity.ok("카카오 로그아웃 완료!");

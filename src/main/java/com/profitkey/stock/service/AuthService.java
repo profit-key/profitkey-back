@@ -1,20 +1,23 @@
 package com.profitkey.stock.service;
 
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.AuthProvider;
 import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
 import com.profitkey.stock.util.JwtUtil;
+
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -139,7 +142,7 @@ public class AuthService {
 		// 디비업데이트만
 
 		// 임시추가 -> 위치나 방식 변경필요
-		SecurityContextHolder.clearContext();
+		// SecurityContextHolder.clearContext();
 	}
 
 	// ✅ Auth 객체로부터 닉네임 조회하는 메서드 추가
@@ -178,7 +181,7 @@ public class AuthService {
 	}
 
 	// HTTP 요청에서 토큰 추출
-	private String extractTokenFromRequest(HttpServletRequest request) {
+	public String extractTokenFromRequest(HttpServletRequest request) {
 		String token = request.getHeader("Authorization");
 		if (token != null && token.startsWith("Bearer ")) {
 			return token.substring(7);  // "Bearer "를 제외한 실제 토큰 반환
@@ -215,6 +218,14 @@ public class AuthService {
 
 		// 6. 로그아웃 성공 응답 반환
 		response.setStatus(HttpServletResponse.SC_OK); // 200 OK 응답
+	}
+
+	//쿠키 삭제
+	public void clearJwtCookie(HttpServletResponse response) {
+		Cookie cookie = new Cookie("Authorization", null);
+		cookie.setMaxAge(0);
+		cookie.setPath("/");
+		response.addCookie(cookie);
 	}
 
 }

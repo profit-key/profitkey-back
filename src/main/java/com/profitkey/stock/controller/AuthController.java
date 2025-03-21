@@ -1,23 +1,26 @@
 package com.profitkey.stock.controller;
 
-import com.profitkey.stock.docs.SwaggerDocs;
-import com.profitkey.stock.entity.Auth;
-import com.profitkey.stock.service.AuthService;
-import com.profitkey.stock.util.JwtUtil;
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.profitkey.stock.docs.SwaggerDocs;
+import com.profitkey.stock.entity.Auth;
+import com.profitkey.stock.service.AuthService;
+import com.profitkey.stock.util.JwtUtil;
+
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/oauth2")
@@ -84,36 +87,19 @@ public class AuthController {
 
 	@GetMapping("/logout/callback")
 	public ResponseEntity<?> logoutCallback(HttpServletRequest request, HttpServletResponse response) {
-		// 클라이언트 쿠키에서 JWT 토큰 제거 (예제에서는 간단하게 처리)
-		Cookie cookie = new Cookie("Authorization", null);
-		cookie.setMaxAge(0);
-		cookie.setPath("/");
-		response.addCookie(cookie);
+		// 1️⃣ JWT 토큰 가져오기
+		String jwtToken = authService.extractTokenFromRequest(request);
+
+		// 2️⃣ DB에서 JWT & 카카오 액세스 토큰 제거
+		authService.disposeToken(jwtToken);
+
+		// 3️⃣ 클라이언트 쿠키에서 JWT 삭제
+		authService.clearJwtCookie(response);
+
+		// 4️⃣ SecurityContext 초기화 (여기서 처리하는 게 적절함)
+		SecurityContextHolder.clearContext();
 
 		return ResponseEntity.ok("카카오 로그아웃 완료!");
 	}
-
-	// public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-	// 	String authorizationHeader = request.getHeader("Authorization");
-	// 	if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	// 		String token = authorizationHeader.substring(7); // Bearer 제거
-	//
-	// 		try {
-	// 			// JWT 토큰을 검증하고 필요한 처리를 합니다
-	// 			boolean isTokenValid = jwtUtil.validateToken(token);
-	// 			if (isTokenValid) {
-	// 				authService.logout(request, response);
-	// 				authService.disposeToken(token);
-	// 				return ResponseEntity.ok("Logged out successfully");
-	// 			} else {
-	// 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
-	// 			}
-	// 		} catch (Exception e) {
-	// 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	// 				.body("Error during logout: " + e.getMessage());
-	// 		}
-	// 	}
-	// 	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Authorization Token");
-	// }
 
 }

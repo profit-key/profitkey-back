@@ -1,12 +1,16 @@
 package com.profitkey.stock.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.profitkey.stock.util.NicknameUtil;
 import java.util.HashMap;
 import java.util.Map;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,12 +18,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.profitkey.stock.util.NicknameUtil;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -38,7 +36,7 @@ public class KakaoOAuth2Service {
 	private String kakaoRedirectUri;
 
 	public String getAccessToken(String code) {
-		log.info("📌 받은 인가 코드: {}", code);
+		log.info("받은 인가 코드: {}", code);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -53,20 +51,24 @@ public class KakaoOAuth2Service {
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
 		try {
-			log.info("📌 카카오 토큰 요청 데이터: {}", params);
-			log.info("📌 요청 URL: {}", kakaoTokenUrl);
+			log.info("카카오 토큰 요청 데이터: {}", params);
+			log.info("요청 URL: {}", kakaoTokenUrl);
 
 			ResponseEntity<String> response = restTemplate.postForEntity(kakaoTokenUrl, request, String.class);
 
-			log.info("✅ 카카오 응답 코드: {}", response.getStatusCode());
-			log.info("✅ 카카오 응답 바디: {}", response.getBody());
+			log.info("카카오 응답 코드: {}", response.getStatusCode());
+			log.info("카카오 응답 바디: {}", response.getBody());
 
 			ObjectMapper objectMapper = new ObjectMapper();
 			JsonNode jsonNode = objectMapper.readTree(response.getBody());
-			return jsonNode.get("access_token").asText();
+
+			String accessToken = jsonNode.get("access_token").asText();
+			log.info("발급된 카카오 액세스 토큰: {}", accessToken); // 액세스 토큰 출력
+
+			return jsonNode.get("access_token").asText();  // 이 부분이 카카오 액세스 토큰
 		} catch (HttpClientErrorException e) {
-			log.error("❌ 카카오 요청 오류: {}", e.getStatusCode());
-			log.error("❌ 응답 바디: {}", e.getResponseBodyAsString());
+			log.error("카카오 요청 오류: {}", e.getStatusCode());
+			log.error("응답 바디: {}", e.getResponseBodyAsString());
 			throw new RuntimeException("Failed to get Kakao Access Token", e);
 		} catch (Exception e) {
 			log.error("카카오 토큰 요청 실패", e);
@@ -104,9 +106,9 @@ public class KakaoOAuth2Service {
 
 			// 이메일이 없을 때 랜덤 닉네임을 유지
 			if (email == null || email.isEmpty()) {
-				log.info("📌 이메일 없음 → 랜덤 닉네임 사용: {}", nickname);
+				log.info("이메일 없음 → 랜덤 닉네임 사용: {}", nickname);
 			} else {
-				log.info("📌 이메일 존재 → 카카오 닉네임 사용: {}", nickname);
+				log.info("이메일 존재 → 카카오 닉네임 사용: {}", nickname);
 			}
 
 			Map<String, Object> userInfo = new HashMap<>();
@@ -118,6 +120,65 @@ public class KakaoOAuth2Service {
 		} catch (Exception e) {
 			log.error("카카오 사용자 정보 요청 실패", e);
 			throw new RuntimeException("Failed to get Kakao User Info");
+		}
+	}
+
+	private void checkTokenValidity(String kakaoAccessToken) {
+		String url = "https://kapi.kakao.com/v1/user/access_token_info";
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth(kakaoAccessToken);  // 여기서 kakaoAccessToken 사용
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		try {
+			ResponseEntity<String> response = restTemplate.exchange(
+				url, HttpMethod.GET, entity, String.class
+			);
+
+			log.info("카카오 토큰 유효성 검사 응답: {}", response.getBody());
+		} catch (HttpClientErrorException e) {
+			log.error("카카오 토큰이 유효하지 않음: {}", e.getResponseBodyAsString());
+		}
+	}
+
+	public void logout(String kakaoAccessToken) {
+		log.info("카카오 로그아웃 요청 시작");
+		log.info("사용된 카카오 accessToken: {}", kakaoAccessToken);
+		checkTokenValidity(kakaoAccessToken);  // 카카오 액세스 토큰 유효성 검사
+
+		// 헤더 설정: Authorization에 Bearer token을 넣음
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth(kakaoAccessToken);  // 여기서 kakaoAccessToken 사용
+
+		// 요청을 담을 엔티티
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		// 로그아웃 API 호출
+		try {
+			ResponseEntity<String> response = restTemplate.exchange(
+				// "https://kapi.kakao.com/v1/user/logout",
+				// HttpMethod.POST,
+				"https://kauth.kakao.com/oauth/logout",
+				HttpMethod.GET,
+				entity,
+				String.class
+			);
+
+			log.info("카카오 로그아웃 응답 코드: {}", response.getStatusCode());
+			log.info("카카오 로그아웃 응답 바디: {}", response.getBody());
+
+			// 카카오 로그아웃 응답 상태 코드 확인
+			if (response.getStatusCode() != HttpStatus.OK) {
+				log.error("카카오 로그아웃 실패: 응답 상태 코드 {}", response.getStatusCode());
+				throw new RuntimeException("Failed to logout from Kakao: " + response.getStatusCode());
+			}
+		} catch (HttpClientErrorException e) {
+			log.error("카카오 로그아웃 오류: {}", e.getStatusCode());
+			log.error("응답 바디: {}", e.getResponseBodyAsString());
+			throw new RuntimeException("Failed to logout from Kakao", e);
+		} catch (Exception e) {
+			log.error("카카오 로그아웃 실패", e);
+			throw new RuntimeException("Failed to logout from Kakao", e);
 		}
 	}
 

@@ -1,15 +1,18 @@
 package com.profitkey.stock.util;
 
-import com.profitkey.stock.entity.AuthProvider;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.profitkey.stock.entity.AuthProvider;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -28,7 +31,7 @@ public class JwtUtil {
 		claims.put("provider", provider);
 
 		return Jwts.builder()
-			.setClaims(new HashMap<>())
+			.setClaims(claims)
 			.setSubject(String.valueOf(id))
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
@@ -36,7 +39,7 @@ public class JwtUtil {
 			.compact();
 	}
 
-	public Map<String, Object> extractClaims(String token) {
+	public Claims extractClaims(String token) {
 		return Jwts.parserBuilder()
 			.setSigningKey(secretKey)
 			.build()
@@ -68,8 +71,9 @@ public class JwtUtil {
 	}
 
 	private Claims getClaims(String token) {
-		return Jwts.parser()
+		return Jwts.parserBuilder()
 			.setSigningKey(secretKey)
+			.build()
 			.parseClaimsJws(token)
 			.getBody();
 	}

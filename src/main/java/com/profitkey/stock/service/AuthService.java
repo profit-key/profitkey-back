@@ -12,6 +12,8 @@ import com.profitkey.stock.repository.mypage.UserInfoRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
 import com.profitkey.stock.util.JwtUtil;
 
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,8 @@ public class AuthService {
 
 	public Auth oAuthLogin(String code, HttpServletResponse response) {
 		String accessToken = kakaoOAuth2Service.getAccessToken(code);
+		log.info("카카오 액세스 토큰: {}", accessToken); // 카카오 액세스 토큰 로그 출력
+
 		Map<String, Object> userInfo = kakaoOAuth2Service.getUserInfo(accessToken);
 
 		String email = (String)userInfo.get("email");
@@ -46,6 +50,7 @@ public class AuthService {
 				.email(email)
 				.provider(AuthProvider.KAKAO)
 				.accessToken(accessToken)
+				.kakaoAccessToken(accessToken)  // 카카오 액세스 토큰 저장
 				.build();
 
 			Auth savedAuth = authRepository.save(newAuth);
@@ -60,7 +65,7 @@ public class AuthService {
 			return savedAuth;
 		});
 
-		// ✅ UserInfo에서 닉네임 조회 추가
+		// UserInfo에서 닉네임 조회 추가
 		String storedNickname = userInfoRepository.findByAuth(auth)
 			.map(UserInfo::getNickname)
 			.orElse(nickname); // 기존 닉네임이 없으면 카카오에서 가져온 닉네임 사용
@@ -71,6 +76,8 @@ public class AuthService {
 
 		//(추가) Auth 객체에 JWT토큰 저장
 		auth.setAccessToken(jwtToken);
+		// Auth에 액세스 토큰 추가
+		auth.setKakaoAccessToken(accessToken);
 		authRepository.save(auth);
 		log.info("Auth 엔티티에 JWT 저장 완료: email={}, token={}", auth.getEmail(), jwtToken);
 
@@ -110,13 +117,32 @@ public class AuthService {
 	//  JWT 폐기 (로그아웃)
 	public void disposeToken(String token) {
 		String jwtToken = token.replace("Bearer ", "");
-		String email = jwtUtil.extractClaims(jwtToken).get("email").toString();
 
+		// 토큰 검증
+		if (!jwtUtil.validateToken(jwtToken)) {
+			log.error("JWT 토큰 검증 실패: {}", jwtToken);
+			throw new RuntimeException("토큰 검증에 실패하였습니다.");
+		}
+
+		// JWT에서 이메일 추출
+		String email = jwtUtil.extractClaims(jwtToken).get("email").toString();
+		log.info("로그아웃 요청된 이메일: {}", email);
+
+		// 이메일로 사용자 조회
 		Auth auth = authRepository.findByEmail(email)
 			.orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
 
+		// JWT 토큰 무효화
 		auth.setAccessToken(null);
+		// 카카오 액세스 토큰도 null로 설정하여 제거
+		auth.setKakaoAccessToken(null);
+
 		authRepository.save(auth);
+		log.info("토큰 무효화 완료: 이메일 = {}", email);
+		// 디비업데이트만
+
+		// 임시추가 -> 위치나 방식 변경필요
+		// SecurityContextHolder.clearContext();
 	}
 
 	// ✅ Auth 객체로부터 닉네임 조회하는 메서드 추가
@@ -155,12 +181,51 @@ public class AuthService {
 	}
 
 	// HTTP 요청에서 토큰 추출
-	private String extractTokenFromRequest(HttpServletRequest request) {
+	public String extractTokenFromRequest(HttpServletRequest request) {
 		String token = request.getHeader("Authorization");
 		if (token != null && token.startsWith("Bearer ")) {
 			return token.substring(7);  // "Bearer "를 제외한 실제 토큰 반환
 		}
 		throw new RuntimeException("Authorization 헤더가 없습니다.");
+	}
+
+	public void logout(HttpServletRequest request, HttpServletResponse response) {
+		// 1. 요청에서 JWT 토큰 추출
+		String token = extractTokenFromRequest(request);
+		if (token == null || token.isEmpty()) {
+			throw new RuntimeException("JWT 토큰이 제공되지 않았습니다.");
+		}
+
+		String email = null;
+		try {
+			// 2. 토큰에서 이메일 추출
+			Claims claims = jwtUtil.extractClaims(token);  // Claims 객체 반환
+			email = claims.get("email").toString();  // 이메일 필드 추출
+		} catch (Exception e) {
+			throw new RuntimeException("토큰에서 이메일을 추출하는 데 실패했습니다.", e);
+		}
+
+		// 3. 이메일을 기반으로 사용자 정보 찾기
+		Auth auth = authRepository.findByEmail(email)
+			.orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
+
+		// 4. 카카오 로그아웃 처리 (카카오 액세스 토큰 만료)
+		// kakaoOAuth2Service.logout(auth.getAccessToken());
+		kakaoOAuth2Service.logout(auth.getKakaoAccessToken());
+
+		// 5. JWT 토큰 폐기
+		disposeToken(token);
+
+		// 6. 로그아웃 성공 응답 반환
+		response.setStatus(HttpServletResponse.SC_OK); // 200 OK 응답
+	}
+
+	//쿠키 삭제
+	public void clearJwtCookie(HttpServletResponse response) {
+		Cookie cookie = new Cookie("Authorization", null);
+		cookie.setMaxAge(0);
+		cookie.setPath("/");
+		response.addCookie(cookie);
 	}
 
 }

@@ -39,7 +39,7 @@ public class CommunityResponse {
 			.parentId(community.getParentId())
 			.content(community.getContent())
 			.writerNickname(writer.getNickname()) // nickname
-			.writerImageUrl(profileImageUrl) // ✅ 여기 수정 (S3 URL 적용)
+			.writerImageUrl(profileImageUrl) // 여기 수정 (S3 URL 적용)
 			.writerId(writer.getUserId()) // userId
 			.likeCount(likeCount) // likeCount
 			.replieCount(replieCount) // replieCount

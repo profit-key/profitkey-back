@@ -1,7 +1,8 @@
 package com.profitkey.stock.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.profitkey.stock.annotation.AuthCheck;
 import com.profitkey.stock.docs.SwaggerDocs;
+import com.profitkey.stock.dto.community.CommentPopularityDto;
 import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
 import com.profitkey.stock.dto.request.community.LikeRequest;
@@ -116,23 +118,20 @@ public class CommunityController {
 		return ResponseEntity.ok().build();
 	}
 
-	// 최신순 정렬 API
-	// @GetMapping("/latest")
-	// @Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LATEST, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LATEST)
-	// public ResponseEntity<Page<CommunityResponse>> getLatestComments(
-	// 	@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-	//
-	// 	Page<Object[]> result = communityService.getLatestComments(pageable);
-	// 	Page<CommunityResponse> response = result.map(obj ->
-	// 		CommunityResponse.fromEntity((Community)obj[0], (long)obj[1], 0L)
-	// 	);
-	// 	return ResponseEntity.ok(response);
-	// }
+	// 댓글 목록 조회 (정렬 방식 선택)
+	@GetMapping("/{stockCode}/comments")
+	public ResponseEntity<List<CommentPopularityDto>> getComments(
+		@PathVariable String stockCode,
+		@RequestParam(defaultValue = "popular") String sort) { // 기본값은 인기순
+		List<CommentPopularityDto> sortedComments;
 
-	// 인기순 정렬 API
-	@GetMapping("/popular")
-	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_LIKES, description = SwaggerDocs.DESCRIPTION_COMMUNITY_LIKES)
-	public Page<Object[]> getPopularComments(Pageable pageable) {
-		return communityService.getPopularComments(pageable);
+		if ("latest".equalsIgnoreCase(sort)) {
+			sortedComments = communityService.getLatestComments(stockCode); // 최신순 정렬
+		} else {
+			sortedComments = communityService.getMostLikedComments(stockCode); // 인기순 정렬
+		}
+
+		return ResponseEntity.ok(sortedComments);
 	}
+
 }

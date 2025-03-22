@@ -120,6 +120,7 @@ public class CommunityController {
 
 	// 댓글 목록 조회 (정렬 방식 선택)
 	@GetMapping("/{stockCode}/comments")
+	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_SORT, description = SwaggerDocs.DESCRIPTION_COMMUNITY_SORT)
 	public ResponseEntity<List<CommentPopularityDto>> getComments(
 		@PathVariable String stockCode,
 		@RequestParam(defaultValue = "popular") String sort) { // 기본값은 인기순

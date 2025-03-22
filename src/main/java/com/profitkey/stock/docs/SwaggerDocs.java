@@ -83,10 +83,8 @@ public class SwaggerDocs {
 		isLike(true) : 좋아요<br/>
 		isLike(false) : 좋아요 취소
 		""";
-	public static final String SUMMARY_COMMUNITY_LATEST = "최신순 정렬";
-	public static final String DESCRIPTION_COMMUNITY_LATEST = "'최신순'으로 댓글을 정렬합니다.";
-	public static final String SUMMARY_COMMUNITY_LIKES = "인기순 정렬";
-	public static final String DESCRIPTION_COMMUNITY_LIKES = "'인기순'으로 댓글을 정렬합니다.";
+	public static final String SUMMARY_COMMUNITY_SORT = "최신순/인기순 댓글 정렬";
+	public static final String DESCRIPTION_COMMUNITY_SORT = "popular: 인기순 / latest: 최신순";
 	/**
 	 * ****************************************
 	 * Stock Swagger Docs 모음

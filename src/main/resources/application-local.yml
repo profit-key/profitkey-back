@@ -70,5 +70,10 @@ springdoc:
   api-docs:
     groups:
       enabled: ${STOCK_SWAGGER_ISGROUPS}
+
 server:
   port: 80
+
+custom:
+  logout-redirect-uri: ${STOCK_KAKAO_LOCAL_LOGOUT_REDIRECT_URI}
+

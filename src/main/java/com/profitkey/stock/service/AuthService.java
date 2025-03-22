@@ -3,6 +3,7 @@ package com.profitkey.stock.service;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.profitkey.stock.entity.Auth;
@@ -30,6 +31,21 @@ public class AuthService {
 	private final JwtUtil jwtUtil;
 	private final MyPageService myPageService;
 	private final S3UploadService s3UploadService;
+
+	// @Value("${custom.logout-redirect-uri-local}")
+	// private String kakaoLogoutRedirectUriLocal;
+	//
+	// @Value("${custom.logout-redirect-uri-dev}")
+	// private String kakaoLogoutRedirectUriDev;
+
+	@Value("${custom.logout-redirect-uri}")
+	private String kakaoLogoutRedirectUri;
+
+	// @EventListener
+	// public void handleContextRefresh(ContextRefreshedEvent event) {
+	// 	log.info("Local Logout URI: {}", kakaoLogoutRedirectUriLocal);
+	// 	log.info("Dev Logout URI: {}", kakaoLogoutRedirectUriDev);
+	// }
 
 	public Auth oAuthLogin(String code, HttpServletResponse response) {
 		String accessToken = kakaoOAuth2Service.getAccessToken(code);
@@ -226,6 +242,12 @@ public class AuthService {
 		cookie.setMaxAge(0);
 		cookie.setPath("/");
 		response.addCookie(cookie);
+	}
+
+	public String getKakaoLogoutUrl() {
+		// 로그아웃 URL을 환경에 맞게 생성
+		return "https://kauth.kakao.com/oauth/logout?client_id=4b8c85fbc34e8a2b177562e4cb240fe2&logout_redirect_uri="
+			+ kakaoLogoutRedirectUri;
 	}
 
 }

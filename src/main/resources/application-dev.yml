@@ -54,3 +54,6 @@ springdoc:
   api-docs:
     groups:
       enabled: ${STOCK_SWAGGER_ISGROUPS}
+
+custom:
+  logout-redirect-uri: ${STOCK_KAKAO_DEV_LOGOUT_REDIRECT_URI}

@@ -75,13 +75,11 @@ public class AuthController {
 		return ResponseEntity.ok("정상처리되었습니다.");
 	}
 
-	@Operation(summary = SwaggerDocs.SUMMARY_LOGOUT,
-		description = SwaggerDocs.DESCRIPTION_LOGOUT)
+	@Operation(summary = SwaggerDocs.SUMMARY_LOGOUT, description = SwaggerDocs.DESCRIPTION_LOGOUT)
 	@GetMapping("/logout")
 	public ResponseEntity<?> kakaoLogout() {
-		String kakaoLogoutUrl =
-			"https://kauth.kakao.com/oauth/logout?client_id=4b8c85fbc34e8a2b177562e4cb240fe2&logout_redirect_uri=http://localhost/api/oauth2/logout/callback";
-
+		// 서비스에서 로그아웃 URL을 가져옴
+		String kakaoLogoutUrl = authService.getKakaoLogoutUrl();
 		return ResponseEntity.ok(kakaoLogoutUrl);
 	}
 

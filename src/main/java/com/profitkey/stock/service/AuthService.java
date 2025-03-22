@@ -1,21 +1,24 @@
 package com.profitkey.stock.service;
 
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.AuthProvider;
 import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
 import com.profitkey.stock.util.JwtUtil;
+
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -239,6 +242,12 @@ public class AuthService {
 		cookie.setMaxAge(0);
 		cookie.setPath("/");
 		response.addCookie(cookie);
+	}
+
+	public String getKakaoLogoutUrl() {
+		// 로그아웃 URL을 환경에 맞게 생성
+		return "https://kauth.kakao.com/oauth/logout?client_id=4b8c85fbc34e8a2b177562e4cb240fe2&logout_redirect_uri="
+			+ kakaoLogoutRedirectUri;
 	}
 
 }

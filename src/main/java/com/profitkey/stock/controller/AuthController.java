@@ -76,7 +76,7 @@ public class AuthController {
 	}
 
 	@Operation(summary = SwaggerDocs.SUMMARY_LOGOUT, description = SwaggerDocs.DESCRIPTION_LOGOUT)
-	@GetMapping("/logout")
+	@GetMapping("/logout/kakao")
 	public ResponseEntity<?> kakaoLogout() {
 		// 서비스에서 로그아웃 URL을 가져옴
 		String kakaoLogoutUrl = authService.getKakaoLogoutUrl();
@@ -91,7 +91,7 @@ public class AuthController {
 		// DB에서 JWT & 카카오 액세스 토큰 제거
 		authService.disposeToken(jwtToken);
 
-		// 클라이언트 쿠키에서 JWT 삭제
+		// 클라이언트 쿠키에서 JWT 삭제ㅁ
 		authService.clearJwtCookie(response);
 
 		// SecurityContext 초기화

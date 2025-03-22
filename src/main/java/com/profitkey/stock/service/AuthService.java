@@ -3,6 +3,9 @@ package com.profitkey.stock.service;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import com.profitkey.stock.entity.Auth;
@@ -30,6 +33,18 @@ public class AuthService {
 	private final JwtUtil jwtUtil;
 	private final MyPageService myPageService;
 	private final S3UploadService s3UploadService;
+
+	@Value("${custom.logout-redirect-uri-local}")
+	private String kakaoLogoutRedirectUriLocal;
+
+	@Value("${custom.logout-redirect-uri-dev}")
+	private String kakaoLogoutRedirectUriDev;
+
+	@EventListener
+	public void handleContextRefresh(ContextRefreshedEvent event) {
+		log.info("Local Logout URI: {}", kakaoLogoutRedirectUriLocal);
+		log.info("Dev Logout URI: {}", kakaoLogoutRedirectUriDev);
+	}
 
 	public Auth oAuthLogin(String code, HttpServletResponse response) {
 		String accessToken = kakaoOAuth2Service.getAccessToken(code);

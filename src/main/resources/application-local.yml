@@ -28,6 +28,7 @@ spring:
             client-id: ${STOCK_KAKAO_LOCAL_CLIENT_ID}
             client-secret: ${STOCK_KAKAO_LOCAL_CLIENT_SECRET}
             redirect-uri: ${STOCK_KAKAO_LOCAL_REDIRECT_URI}
+            logout-redirect-uri: ${STOCK_KAKAO_LOCAL_LOGOUT_REDIRECT_URI}
             authorization-grant-type: authorization_code
             client-name: kakao
             scope:
@@ -70,5 +71,11 @@ springdoc:
   api-docs:
     groups:
       enabled: ${STOCK_SWAGGER_ISGROUPS}
+
 server:
   port: 80
+
+## 커스텀 로그아웃 리다이렉트 URI 설정 (spring 설정 밖에 위치해야 합니다)
+custom:
+  logout-redirect-uri-local: ${STOCK_KAKAO_LOCAL_LOGOUT_REDIRECT_URI}
+

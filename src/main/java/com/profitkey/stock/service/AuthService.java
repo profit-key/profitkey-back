@@ -1,26 +1,21 @@
 package com.profitkey.stock.service;
 
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
 import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.AuthProvider;
 import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
 import com.profitkey.stock.util.JwtUtil;
-
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -34,17 +29,20 @@ public class AuthService {
 	private final MyPageService myPageService;
 	private final S3UploadService s3UploadService;
 
-	@Value("${custom.logout-redirect-uri-local}")
-	private String kakaoLogoutRedirectUriLocal;
+	// @Value("${custom.logout-redirect-uri-local}")
+	// private String kakaoLogoutRedirectUriLocal;
+	//
+	// @Value("${custom.logout-redirect-uri-dev}")
+	// private String kakaoLogoutRedirectUriDev;
 
-	@Value("${custom.logout-redirect-uri-dev}")
-	private String kakaoLogoutRedirectUriDev;
+	@Value("${custom.logout-redirect-uri}")
+	private String kakaoLogoutRedirectUri;
 
-	@EventListener
-	public void handleContextRefresh(ContextRefreshedEvent event) {
-		log.info("Local Logout URI: {}", kakaoLogoutRedirectUriLocal);
-		log.info("Dev Logout URI: {}", kakaoLogoutRedirectUriDev);
-	}
+	// @EventListener
+	// public void handleContextRefresh(ContextRefreshedEvent event) {
+	// 	log.info("Local Logout URI: {}", kakaoLogoutRedirectUriLocal);
+	// 	log.info("Dev Logout URI: {}", kakaoLogoutRedirectUriDev);
+	// }
 
 	public Auth oAuthLogin(String code, HttpServletResponse response) {
 		String accessToken = kakaoOAuth2Service.getAccessToken(code);

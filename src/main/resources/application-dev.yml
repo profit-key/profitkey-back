@@ -55,6 +55,5 @@ springdoc:
     groups:
       enabled: ${STOCK_SWAGGER_ISGROUPS}
 
-# 커스텀 로그아웃 리다이렉트 URI 설정 (spring 설정 밖에 위치해야 합니다)
 custom:
-  logout-redirect-uri-dev: ${STOCK_KAKAO_DEV_LOGOUT_REDIRECT_URI}
+  logout-redirect-uri: ${STOCK_KAKAO_DEV_LOGOUT_REDIRECT_URI}

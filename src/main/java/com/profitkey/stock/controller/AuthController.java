@@ -1,7 +1,15 @@
 package com.profitkey.stock.controller;
 
+import com.profitkey.stock.docs.SwaggerDocs;
+import com.profitkey.stock.entity.Auth;
+import com.profitkey.stock.service.AuthService;
+import com.profitkey.stock.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,17 +18,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.profitkey.stock.docs.SwaggerDocs;
-import com.profitkey.stock.entity.Auth;
-import com.profitkey.stock.service.AuthService;
-import com.profitkey.stock.util.JwtUtil;
-
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/oauth2")
@@ -36,13 +33,9 @@ public class AuthController {
 	public ResponseEntity<?> kakaoLogin(@RequestParam("code") String accessCode,
 		HttpServletResponse httpServletResponse) {
 		Auth auth = authService.oAuthLogin(accessCode, httpServletResponse);
-		// (추가) Auth에 저장된 JWT 토큰 가져오기
 		String jwtToken = jwtUtil.generateToken(auth.getId(), auth.getEmail(), auth.getProvider());
 		log.info("Generated JWT Token: {}", jwtToken);
 
-		// return ResponseEntity.ok(auth);
-
-		// (추가) JWT 응답 객체에 담아서 반환
 		auth.setAccessToken(jwtToken);
 
 		return ResponseEntity.ok(Map.of(
@@ -77,27 +70,30 @@ public class AuthController {
 
 	@Operation(summary = SwaggerDocs.SUMMARY_LOGOUT, description = SwaggerDocs.DESCRIPTION_LOGOUT)
 	@GetMapping("/logout/kakao")
-	public ResponseEntity<?> kakaoLogout() {
-		// 서비스에서 로그아웃 URL을 가져옴
-		String kakaoLogoutUrl = authService.getKakaoLogoutUrl();
-		return ResponseEntity.ok(kakaoLogoutUrl);
-	}
-
-	@GetMapping("/logout/callback")
-	public ResponseEntity<?> logoutCallback(HttpServletRequest request, HttpServletResponse response) {
-		// JWT 토큰 가져오기
+	public ResponseEntity<?> kakaoLogout(HttpServletRequest request, HttpServletResponse response) {
 		String jwtToken = authService.extractTokenFromRequest(request);
-
-		// DB에서 JWT & 카카오 액세스 토큰 제거
-		authService.disposeToken(jwtToken);
-
-		// 클라이언트 쿠키에서 JWT 삭제ㅁ
 		authService.clearJwtCookie(response);
-
-		// SecurityContext 초기화
+		authService.logout(request, response);
+		authService.disposeToken(jwtToken);
 		SecurityContextHolder.clearContext();
-
-		return ResponseEntity.ok("카카오 로그아웃 완료!");
+		return ResponseEntity.ok("정상처리되었습니다.");
 	}
+
+	// @GetMapping("/logout/callback")
+	// public ResponseEntity<?> logoutCallback(HttpServletRequest request, HttpServletResponse response) {
+	// 	// JWT 토큰 가져오기
+	// 	String jwtToken = authService.extractTokenFromRequest(request);
+	//
+	// 	// DB에서 JWT & 카카오 액세스 토큰 제거
+	// 	authService.disposeToken(jwtToken);
+	//
+	// 	// 클라이언트 쿠키에서 JWT 삭제
+	// 	authService.clearJwtCookie(response);
+	//
+	// 	// SecurityContext 초기화
+	// 	SecurityContextHolder.clearContext();
+	//
+	// 	return ResponseEntity.ok("카카오 로그아웃 완료!");
+	// }
 
 }

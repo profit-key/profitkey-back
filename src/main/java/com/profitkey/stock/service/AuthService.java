@@ -1,24 +1,21 @@
 package com.profitkey.stock.service;
 
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.profitkey.stock.entity.Auth;
 import com.profitkey.stock.entity.AuthProvider;
 import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
 import com.profitkey.stock.util.JwtUtil;
-
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -155,20 +152,16 @@ public class AuthService {
 
 		authRepository.save(auth);
 		log.info("토큰 무효화 완료: 이메일 = {}", email);
-		// 디비업데이트만
-
-		// 임시추가 -> 위치나 방식 변경필요
-		// SecurityContextHolder.clearContext();
 	}
 
-	// ✅ Auth 객체로부터 닉네임 조회하는 메서드 추가
+	// Auth 객체로부터 닉네임 조회하는 메서드 추가
 	public String getNickname(Auth auth) {
 		return userInfoRepository.findByAuth(auth)
 			.map(UserInfo::getNickname)
 			.orElse(null); // UserInfo가 없으면 null 반환
 	}
 
-	// (추가) access token 으로 내 정보 불러오기
+	// access token 으로 내 정보 불러오기
 	// AuthService에 사용자 정보 반환 메서드 추가
 	public Map<String, Object> getUserInfoFromToken(HttpServletRequest request) {
 		String token = extractTokenFromRequest(request); // 요청에서 토큰 추출
@@ -224,14 +217,11 @@ public class AuthService {
 		// 3. 이메일을 기반으로 사용자 정보 찾기
 		Auth auth = authRepository.findByEmail(email)
 			.orElseThrow(() -> new RuntimeException("존재하지 않는 이메일입니다."));
-
 		// 4. 카카오 로그아웃 처리 (카카오 액세스 토큰 만료)
 		// kakaoOAuth2Service.logout(auth.getAccessToken());
 		kakaoOAuth2Service.logout(auth.getKakaoAccessToken());
-
 		// 5. JWT 토큰 폐기
 		disposeToken(token);
-
 		// 6. 로그아웃 성공 응답 반환
 		response.setStatus(HttpServletResponse.SC_OK); // 200 OK 응답
 	}
@@ -243,11 +233,4 @@ public class AuthService {
 		cookie.setPath("/");
 		response.addCookie(cookie);
 	}
-
-	public String getKakaoLogoutUrl() {
-		// 로그아웃 URL을 환경에 맞게 생성
-		return "https://kauth.kakao.com/oauth/logout?client_id=4b8c85fbc34e8a2b177562e4cb240fe2&logout_redirect_uri="
-			+ kakaoLogoutRedirectUri;
-	}
-
 }

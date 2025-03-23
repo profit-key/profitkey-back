@@ -144,22 +144,17 @@ public class KakaoOAuth2Service {
 	public void logout(String kakaoAccessToken) {
 		log.info("카카오 로그아웃 요청 시작");
 		log.info("사용된 카카오 accessToken: {}", kakaoAccessToken);
-		checkTokenValidity(kakaoAccessToken);  // 카카오 액세스 토큰 유효성 검사
+		checkTokenValidity(kakaoAccessToken);  // 유효성 검사
 
-		// 헤더 설정: Authorization에 Bearer token을 넣음
 		HttpHeaders headers = new HttpHeaders();
-		headers.setBearerAuth(kakaoAccessToken);  // 여기서 kakaoAccessToken 사용
+		headers.setBearerAuth(kakaoAccessToken);
 
-		// 요청을 담을 엔티티
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 
-		// 로그아웃 API 호출
 		try {
 			ResponseEntity<String> response = restTemplate.exchange(
-				// "https://kapi.kakao.com/v1/user/logout",
-				// HttpMethod.POST,
-				"https://kauth.kakao.com/oauth/logout",
-				HttpMethod.GET,
+				"https://kapi.kakao.com/v1/user/unlink",
+				HttpMethod.POST,  // POST 방식
 				entity,
 				String.class
 			);
@@ -167,7 +162,6 @@ public class KakaoOAuth2Service {
 			log.info("카카오 로그아웃 응답 코드: {}", response.getStatusCode());
 			log.info("카카오 로그아웃 응답 바디: {}", response.getBody());
 
-			// 카카오 로그아웃 응답 상태 코드 확인
 			if (response.getStatusCode() != HttpStatus.OK) {
 				log.error("카카오 로그아웃 실패: 응답 상태 코드 {}", response.getStatusCode());
 				throw new RuntimeException("Failed to logout from Kakao: " + response.getStatusCode());

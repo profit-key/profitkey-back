@@ -13,19 +13,24 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
 	@Query("SELECT c, " +
+		" CASE WHEN (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id AND l.writerId = :userId) > 0 THEN true ELSE false END AS isLike, "
+		+
 		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id) AS likeCount, " +
 		" (SELECT COUNT(*) FROM Community cc WHERE cc.parentId = c.id) AS replieCount " +
 		" FROM Community c " +
 		" WHERE SUBSTRING(c.id, 9, 6) = :stockCode " +
 		"   AND c.parentId = '0'")
-	Page<Object[]> findByStockCodeWithCounts(@Param("stockCode") String stockCode, Pageable pageable);
+	Page<Object[]> findByStockCodeWithCounts(@Param("stockCode") String stockCode, @Param("userId") Long userId,
+		Pageable pageable);
 
 	@Query("SELECT c, " +
+		" CASE WHEN (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id AND l.writerId = :userId) > 0 THEN true ELSE false END AS isLike, "
+		+
 		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id) AS like_count" +
 		"  FROM Community c " +
 		" WHERE c.parentId = :id " +
 		" ORDER BY c.createdAt ASC")
-	Page<Object[]> findByParentId(@Param("id") String id, Pageable pageable);
+	Page<Object[]> findByParentId(@Param("id") String id, @Param("userId") Long userId, Pageable pageable);
 
 	@Query(value = " SELECT COUNT(*) + 1 " +
 		"  FROM Community c " +

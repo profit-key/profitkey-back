@@ -14,6 +14,7 @@ import com.profitkey.stock.exception.testexception.mypage.UnauthorizedException;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.community.LikesRepository;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
+import com.profitkey.stock.util.SecurityUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -40,6 +41,7 @@ public class CommunityService {
 
 	@Transactional(readOnly = true)
 	public Page<CommunityResponse> getCommunityByStockCode(String stockCode, int page, CommSort order) {
+		Long userId = SecurityUtil.getCurrentUserId();
 		Sort sort;
 		if (order == CommSort.POPULAR) {
 			sort = Sort.by(Sort.Direction.DESC, "likeCount"); // 인기순
@@ -51,38 +53,35 @@ public class CommunityService {
 
 		Pageable pageable = PageRequest.of(page - 1, SIZE, sort);
 
-		Page<Object[]> results = communityRepository.findByStockCodeWithCounts(stockCode, pageable);
+		Page<Object[]> results = communityRepository.findByStockCodeWithCounts(stockCode, userId, pageable);
 
 		return results.map(row -> {
 			Community community = (Community)row[0];
-			long likeCount = ((Number)row[1]).longValue();
-			long replieCount = ((Number)row[2]).longValue();
-
-			// writerId를 기준으로 UserInfo를 조회
+			boolean liked = (Boolean)row[1];
+			long likeCount = ((Number)row[2]).longValue();
+			long replieCount = ((Number)row[3]).longValue();
+			
 			UserInfo writer = userInfoRepository.findById(community.getWriterId())
 				.orElseThrow(() -> new RuntimeException("Writer not found"));
-
-			// CommunityResponse 객체 생성
-			return CommunityResponse.fromEntity(community, writer, likeCount, replieCount, s3UploadService);
+			return CommunityResponse.fromEntity(community, writer, liked, likeCount, replieCount, s3UploadService);
 		});
 	}
 
 	@Transactional(readOnly = true)
 	public Page<CommunityResponse> getCommunityById(String id, int page) {
+		Long userId = SecurityUtil.getCurrentUserId();
 		Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "id"));
 
-		Page<Object[]> results = communityRepository.findByParentId(id, pageable);
+		Page<Object[]> results = communityRepository.findByParentId(id, userId, pageable);
 
 		return results.map(row -> {
 			Community community = (Community)row[0];
-			long likeCount = ((Number)row[1]).longValue();
+			boolean liked = (Boolean)row[1];
+			long likeCount = ((Number)row[2]).longValue();
 
-			// writerId로 UserInfo 객체를 조회
 			UserInfo writer = userInfoRepository.findById(community.getWriterId())
 				.orElseThrow(() -> new RuntimeException("Writer not found"));
-
-			// CommunityResponse 객체 생성
-			return CommunityResponse.fromEntity(community, writer, likeCount, 0, s3UploadService);
+			return CommunityResponse.fromEntity(community, writer, liked, likeCount, 0, s3UploadService);
 		});
 	}
 
@@ -110,7 +109,7 @@ public class CommunityService {
 		communityRepository.save(community);
 
 		// writerId로 UserInfo 객체를 조회
-		return CommunityResponse.fromEntity(community, userInfo, 0, 0, s3UploadService);
+		return CommunityResponse.fromEntity(community, userInfo, false, 0, 0, s3UploadService);
 	}
 
 	@Transactional
@@ -125,7 +124,7 @@ public class CommunityService {
 		UserInfo writer = userInfoRepository.findById(community.getWriterId())
 			.orElseThrow(() -> new RuntimeException("Writer not found"));
 
-		return CommunityResponse.fromEntity(community, writer, 0, 0, s3UploadService);
+		return CommunityResponse.fromEntity(community, writer, false, 0, 0, s3UploadService);
 	}
 
 	@Transactional

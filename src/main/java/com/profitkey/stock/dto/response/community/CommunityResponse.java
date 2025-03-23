@@ -1,12 +1,10 @@
 package com.profitkey.stock.dto.response.community;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.entity.UserInfo;
 import com.profitkey.stock.service.S3UploadService;
-
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -22,10 +20,12 @@ public class CommunityResponse {
 	private final String content;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime updatedAt;
+	private boolean liked;
 	private long likeCount;
 	private long replieCount;
 
-	public static CommunityResponse fromEntity(Community community, UserInfo writer, long likeCount, long replieCount,
+	public static CommunityResponse fromEntity(Community community, UserInfo writer, boolean liked, long likeCount,
+		long replieCount,
 		S3UploadService s3UploadService) {
 
 		// S3 URL 변환
@@ -41,6 +41,7 @@ public class CommunityResponse {
 			.writerNickname(writer.getNickname()) // nickname
 			.writerImageUrl(profileImageUrl) // 여기 수정 (S3 URL 적용)
 			.writerId(writer.getUserId()) // userId
+			.liked(liked)    // liked
 			.likeCount(likeCount) // likeCount
 			.replieCount(replieCount) // replieCount
 			.createdAt(community.getCreatedAt())

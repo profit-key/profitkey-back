@@ -3,6 +3,8 @@ package com.profitkey.stock.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.profitkey.stock.annotation.AuthCheck;
+import com.profitkey.stock.dto.community.CommentPopularityDto;
 import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
 import com.profitkey.stock.dto.request.community.LikeRequest;
@@ -144,14 +147,21 @@ public class CommunityService {
 		likesRepository.deleteByCommentIdAndWriterId(request.getCommentId(), request.getUserId());
 	}
 
-	// 최신순 댓글 조회
-	public Page<Object[]> getLatestComments(Pageable pageable) {
-		return communityRepository.findLatest(pageable);
+	// 좋아요 개수를 기준으로 인기순 정렬
+	@Transactional(readOnly = true)
+	public List<CommentPopularityDto> getMostLikedComments(String stockCode) {
+		List<Object[]> results = likesRepository.findMostLikedCommentsByStockCode(stockCode);
+		return results.stream()
+			.map(result -> new CommentPopularityDto((String)result[0], (Long)result[1]))
+			.collect(Collectors.toList());
 	}
 
-	// 인기순 댓글 조회
-	public Page<Object[]> getPopularComments(Pageable pageable) {
-		return communityRepository.findCommentsByPopularity(pageable);
+	// 댓글 생성 시간을 기준으로 최신순 정렬
+	@Transactional(readOnly = true)
+	public List<CommentPopularityDto> getLatestComments(String stockCode) {
+		List<Object[]> results = communityRepository.findLatestCommentsByStockCode(stockCode);
+		return results.stream()
+			.map(result -> new CommentPopularityDto((String)result[0], null)) // 최신순에서는 likeCount는 null 처리
+			.collect(Collectors.toList());
 	}
-
 }

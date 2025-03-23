@@ -43,22 +43,11 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 	//내가 쓴 글 조회
 	List<Community> findByWriterId(Long writerId);
 
-	//최신순 정렬
-	@Query("SELECT c, " +
-		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id) AS like_count " +
-		" FROM Community c " +
-		" WHERE c.parentId = '0' " +
-		" ORDER BY c.createdAt DESC, c.content ASC")
-	// content 또는 다른 유효한 필드로 수정
-	Page<Object[]> findLatest(Pageable pageable);
-
-	//인기순 정렬
-	@Query(value = "SELECT c.*, " +
-		"(SELECT COUNT(*) FROM Likes l WHERE l.COMMENT_ID = c.id) AS like_count " +
-		"FROM community c " +
-		"WHERE c.PARENT_ID = '0' " +
-		"ORDER BY like_count DESC, c.created_at DESC",
-		nativeQuery = true)
-	Page<Object[]> findCommentsByPopularity(Pageable pageable);
+	//최신순 댓글 정렬
+	@Query("SELECT c.id AS commentId, c.createdAt AS createdAt " +
+		"FROM Community c " +
+		"WHERE SUBSTRING(c.id, 9, 6) = :stockCode " + // 종목코드 필터
+		"ORDER BY c.createdAt DESC")
+	List<Object[]> findLatestCommentsByStockCode(@Param("stockCode") String stockCode);
 
 }

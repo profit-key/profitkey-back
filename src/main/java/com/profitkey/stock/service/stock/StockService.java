@@ -157,10 +157,16 @@ public class StockService {
 					BigDecimal per = new BigDecimal(output.get("per").toString());
 					BigDecimal eps = new BigDecimal(output.get("eps").toString());
 
-					// 배당 수익률 = {배당금 / ( eps * per )} * 100 = (배당금 / 현재주가) * 100     (%)
-					BigDecimal totalDiviRate = totalDiviAmt
-						.divide(per.multiply(eps), 10, BigDecimal.ROUND_HALF_UP)
-						.multiply(BigDecimal.valueOf(100));
+					BigDecimal totalDiviRate = BigDecimal.ZERO;
+
+					try {
+						// 배당 수익률 = {배당금 / ( eps * per )} * 100 = (배당금 / 현재주가) * 100     (%)
+						totalDiviAmt
+							.divide(per.multiply(eps), 10, BigDecimal.ROUND_HALF_UP)
+							.multiply(BigDecimal.valueOf(100));
+					} catch (ArithmeticException e) {
+						totalDiviRate = BigDecimal.ZERO;
+					}
 
 					filteredOutput.put("divi_rate", totalDiviRate);
 					filteredOutput.put("divi_amt", totalDiviAmt);

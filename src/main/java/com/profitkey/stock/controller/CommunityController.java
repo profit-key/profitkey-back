@@ -6,6 +6,7 @@ import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
 import com.profitkey.stock.dto.request.community.LikeRequest;
 import com.profitkey.stock.dto.response.community.CommunityResponse;
+import com.profitkey.stock.entity.CommSort;
 import com.profitkey.stock.service.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +42,8 @@ public class CommunityController {
 	public ResponseEntity<Page<CommunityResponse>> getCommunityList(
 		@PathVariable String stockCode,
 		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "latest") String order
+		@RequestParam(defaultValue = "LATEST") CommSort order
 	) {
-
 		Page<CommunityResponse> communityPage = communityService.getCommunityByStockCode(stockCode, page, order);
 		return ResponseEntity.ok(communityPage);
 	}

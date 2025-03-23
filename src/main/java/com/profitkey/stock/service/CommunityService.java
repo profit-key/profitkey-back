@@ -6,6 +6,7 @@ import com.profitkey.stock.dto.request.community.CommunityRequest;
 import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
 import com.profitkey.stock.dto.request.community.LikeRequest;
 import com.profitkey.stock.dto.response.community.CommunityResponse;
+import com.profitkey.stock.entity.CommSort;
 import com.profitkey.stock.entity.Community;
 import com.profitkey.stock.entity.Likes;
 import com.profitkey.stock.entity.UserInfo;
@@ -38,19 +39,19 @@ public class CommunityService {
 	private final int SIZE = 10;
 
 	@Transactional(readOnly = true)
-	public Page<CommunityResponse> getCommunityByStockCode(String stockCode, int page, String order) {
+	public Page<CommunityResponse> getCommunityByStockCode(String stockCode, int page, CommSort order) {
 		Sort sort;
-		if ("popular".equalsIgnoreCase(order)) {
+		if (order == CommSort.POPULAR) {
 			sort = Sort.by(Sort.Direction.DESC, "likeCount"); // 인기순
-		} else if ("latest".equalsIgnoreCase(order)) {
+		} else if (order == CommSort.LATEST) {
 			sort = Sort.by(Sort.Direction.DESC, "createdAt"); // 최신순
 		} else {
 			sort = Sort.by(Sort.Direction.DESC, "createdAt"); // 최신순
 		}
 
-		Pageable pageable = PageRequest.of(page - 1, SIZE);
+		Pageable pageable = PageRequest.of(page - 1, SIZE, sort);
 
-		Page<Object[]> results = communityRepository.findByStockCodeWithCounts(stockCode, order, pageable);
+		Page<Object[]> results = communityRepository.findByStockCodeWithCounts(stockCode, pageable);
 
 		return results.map(row -> {
 			Community community = (Community)row[0];

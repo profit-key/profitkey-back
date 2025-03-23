@@ -12,23 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
-	@Query(
-		value = "SELECT c.*, " +
-			" (SELECT COUNT(*) FROM likes l WHERE l.comment_id = c.id) AS like_count, " +
-			" (SELECT COUNT(*) FROM community cc WHERE cc.parent_id = c.id) AS replie_count " +
-			" FROM community c " +
-			" WHERE SUBSTRING(c.id, 9, 6) = :stockCode " +
-			"   AND c.parent_id = '0' " +
-			" ORDER BY " +
-			"   CASE WHEN :order = 'p' THEN like_count ELSE c.created_at END DESC",
-		countQuery = "SELECT COUNT(*) FROM community c WHERE SUBSTRING(c.id, 9, 6) = :stockCode AND c.parent_id = '0'",
-		nativeQuery = true
-	)
-	Page<Object[]> findByStockCodeWithCounts(
-		@Param("stockCode") String stockCode,
-		@Param("order") String order,
-		Pageable pageable
-	);
+	@Query("SELECT c, " +
+		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id) AS likeCount, " +
+		" (SELECT COUNT(*) FROM Community cc WHERE cc.parentId = c.id) AS replieCount " +
+		" FROM Community c " +
+		" WHERE SUBSTRING(c.id, 9, 6) = :stockCode " +
+		"   AND c.parentId = '0'")
+	Page<Object[]> findByStockCodeWithCounts(@Param("stockCode") String stockCode, Pageable pageable);
 
 	@Query("SELECT c, " +
 		" (SELECT COUNT(*) FROM Likes l WHERE l.commentId = c.id) AS like_count" +

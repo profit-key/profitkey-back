@@ -1,0 +1,15 @@
+INSERT INTO auth (access_token, email, provider, kakao_access_token)
+VALUES ('eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQyNDAyNTkyLCJleHAiOjE3NDI0MDYxOTJ9.s_11Yq-SkfndVuOOpyMpp88gLnbuxOinB5Rf3qfsWT4',
+        'alswn971@nate.com', 'KAKAO', NULL),
+       ('eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyNTcwOTk2LCJleHAiOjE3NDI1NzQ1OTZ9.qkOGttDscp7WsXrStsjxmaM_--dqpdSEpObZsXIJxrQ',
+        'kiss0104040@naver.com', 'KAKAO', NULL),
+       ('eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiaWF0IjoxNzQyMzY4NjY1LCJleHAiOjE3NDIzNzIyNjV9.3RSOFqv9ykZBbAdCuOivxOjFSpnTQW3IYgO8efISouQ',
+        'itissteam@daum.net', 'KAKAO', NULL),
+       ('eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYXljZTg4ODdAZ21haWwuY29tIiwiaWF0IjoxNzQxMTc4MTgwLCJleHAiOjE3NDExODE3ODB9.l1rJmRKmO6GYIBqNECXDMIK8ZefOI-bSubHvkIsquyc',
+        'jayce8887@gmail.com', 'KAKAO', NULL),
+       ('eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1IiwiaWF0IjoxNzQyMTA0MTQ2LCJleHAiOjE3NDIxMDc3NDZ9.zhaPTUuKKK4pXROTQ2L0IXKwkofMDDFWCzcwfdd6t1g',
+        'sujine02@gmail.com', 'KAKAO', NULL),
+       ('eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzQyNDYwODAzLCJleHAiOjE3NDI0NjQ0MDN9.dHRs6FgccQeM9K_E1aLN-1z4HRqJr4pi1kyLVnut61Q',
+        'qkrxodn789@naver.com', 'KAKAO', NULL),
+       ('eyJhbGciOiJIUzI1NiJ9.eyJwcm92aWRlciI6IktBS0FPIiwiaWQiOjcsImVtYWlsIjoia2luODg4N0BuYXZlci5jb20iLCJzdWIiOiI3IiwiaWF0IjoxNzQyNjQzMzM3LCJleHAiOjE3NDI2NDY5Mzd9.h21vwceI1W_6g3UwdjvRWhdQCxlewEQceeedM0HRKN0',
+        'kin8887@naver.com', 'KAKAO', 'vLrtsL68oqj1-YJExZrlWUfPe5Ljy0PRAAAAAQoXEO8AAAGVvaMYQf8D-j8FVvr5');

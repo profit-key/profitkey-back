@@ -1,18 +1,5 @@
 package com.profitkey.stock.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.profitkey.stock.annotation.AuthCheck;
 import com.profitkey.stock.dto.community.CommentPopularityDto;
 import com.profitkey.stock.dto.request.community.CommunityRequest;
@@ -26,9 +13,19 @@ import com.profitkey.stock.exception.testexception.mypage.UnauthorizedException;
 import com.profitkey.stock.repository.community.CommunityRepository;
 import com.profitkey.stock.repository.community.LikesRepository;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,10 +38,19 @@ public class CommunityService {
 	private final int SIZE = 10;
 
 	@Transactional(readOnly = true)
-	public Page<CommunityResponse> getCommunityByStockCode(String stockCode, int page) {
-		Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "id"));
+	public Page<CommunityResponse> getCommunityByStockCode(String stockCode, int page, String order) {
+		Sort sort;
+		if ("popular".equalsIgnoreCase(order)) {
+			sort = Sort.by(Sort.Direction.DESC, "likeCount"); // 인기순
+		} else if ("latest".equalsIgnoreCase(order)) {
+			sort = Sort.by(Sort.Direction.DESC, "createdAt"); // 최신순
+		} else {
+			sort = Sort.by(Sort.Direction.DESC, "createdAt"); // 최신순
+		}
 
-		Page<Object[]> results = communityRepository.findByStockCodeWithCounts(stockCode, pageable);
+		Pageable pageable = PageRequest.of(page - 1, SIZE);
+
+		Page<Object[]> results = communityRepository.findByStockCodeWithCounts(stockCode, order, pageable);
 
 		return results.map(row -> {
 			Community community = (Community)row[0];

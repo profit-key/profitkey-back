@@ -13,6 +13,7 @@ public class StockInfoResponse {
 	private String baseDate;
 	private BigDecimal endingPrice;
 	private BigDecimal openingPrice;
+	private BigDecimal prdyCtrt;
 	private long highPrice;
 	private long lowPrice;
 	private long tradingVolume;
@@ -31,6 +32,7 @@ public class StockInfoResponse {
 		this.baseDate = stockInfo.getBaseDate();
 		this.endingPrice = stockInfo.getEndingPrice();
 		this.openingPrice = stockInfo.getOpeningPrice();
+		this.prdyCtrt = stockInfo.getPrdyCtrt();
 		this.highPrice = stockInfo.getHighPrice();
 		this.lowPrice = stockInfo.getLowPrice();
 		this.tradingVolume = stockInfo.getTradingVolume();

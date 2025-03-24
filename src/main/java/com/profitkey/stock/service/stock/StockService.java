@@ -181,7 +181,7 @@ public class StockService {
 					} catch (ArithmeticException e) {
 						prdyCtrt = BigDecimal.ZERO;
 					}
-
+					filteredOutput.put("stck_prpr", stckPrpr);    // 전일자 종가
 					filteredOutput.put("divi_rate", totalDiviRate);
 					filteredOutput.put("divi_amt", totalDiviAmt);
 					filteredOutput.put("prdy_ctrt", prdyCtrt);

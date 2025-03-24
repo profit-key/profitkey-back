@@ -12,7 +12,7 @@ public class StockInfoResponse {
 	private String stockName;
 	private String baseDate;
 	private BigDecimal endingPrice;
-	private long openingPrice;
+	private BigDecimal openingPrice;
 	private long highPrice;
 	private long lowPrice;
 	private long tradingVolume;

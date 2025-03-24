@@ -44,7 +44,10 @@ public class StockInfo {
 	private BigDecimal endingPrice;
 
 	@Column(name = "OPENING_PRICE", nullable = false)
-	private Integer openingPrice;
+	private BigDecimal openingPrice;
+
+	@Column(name = "PRDY_CTRT", nullable = false)
+	private BigDecimal prdyCtrt;
 
 	@Column(name = "HIGH_PRICE", nullable = false)
 	private Integer highPrice;

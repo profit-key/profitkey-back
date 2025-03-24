@@ -6,6 +6,7 @@ import com.profitkey.stock.dto.KisApiProperties;
 import com.profitkey.stock.dto.request.stock.DividendDefaultRequest;
 import com.profitkey.stock.dto.request.stock.DividendRequest;
 import com.profitkey.stock.dto.request.stock.HtsTopViewRequest;
+import com.profitkey.stock.dto.request.stock.InquireDailyRequest;
 import com.profitkey.stock.dto.request.stock.InquirePriceRequest;
 import com.profitkey.stock.dto.request.stock.MarketCapDefaultRequest;
 import com.profitkey.stock.dto.request.stock.MarketCapRequest;
@@ -20,6 +21,7 @@ import com.profitkey.stock.util.HeaderUtil;
 import com.profitkey.stock.util.HttpClientUtil;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -138,6 +140,8 @@ public class StockService {
 					filteredOutput.put("stock_code", code);
 					filteredOutput.put("w52_hgpr", output.get("w52_hgpr"));
 					filteredOutput.put("w52_lwpr", output.get("w52_lwpr"));
+					filteredOutput.put("stck_prpr", output.get("stck_prpr"));
+					filteredOutput.put("stck_oprc", output.get("stck_oprc"));
 					filteredOutput.put("per", output.get("per"));
 					filteredOutput.put("pbr", output.get("pbr"));
 					filteredOutput.put("eps", output.get("eps"));
@@ -153,11 +157,13 @@ public class StockService {
 							totalDiviAmt = totalDiviAmt.add(new BigDecimal(record.get("divi_rate").toString()));
 						}
 					}
-
+					Thread.sleep(1000);
 					BigDecimal per = new BigDecimal(output.get("per").toString());
 					BigDecimal eps = new BigDecimal(output.get("eps").toString());
-
-					BigDecimal totalDiviRate = BigDecimal.ZERO;
+					BigDecimal stckOprc = new BigDecimal(output.get("stck_oprc").toString());    // 시가
+					BigDecimal stckPrpr = preStckPrpr(code);    // 전일자종가
+					BigDecimal prdyCtrt = BigDecimal.ZERO;    // 전일대비율
+					BigDecimal totalDiviRate = BigDecimal.ZERO;    // 배당수익률
 
 					try {
 						// 배당 수익률 = {배당금 / ( eps * per )} * 100 = (배당금 / 현재주가) * 100     (%)
@@ -167,9 +173,18 @@ public class StockService {
 					} catch (ArithmeticException e) {
 						totalDiviRate = BigDecimal.ZERO;
 					}
+					try {
+						// 전일대비 등락률 = (시가 - 전일 종가)
+						prdyCtrt = stckOprc.subtract(stckPrpr)
+							.divide(stckPrpr, 6, RoundingMode.HALF_UP)
+							.multiply(BigDecimal.valueOf(100));
+					} catch (ArithmeticException e) {
+						prdyCtrt = BigDecimal.ZERO;
+					}
 
 					filteredOutput.put("divi_rate", totalDiviRate);
 					filteredOutput.put("divi_amt", totalDiviAmt);
+					filteredOutput.put("prdy_ctrt", prdyCtrt);
 				}
 				log.info("filteredOutput : {}", filteredOutput);
 				return filteredOutput;
@@ -192,8 +207,9 @@ public class StockService {
 			.stockCode(stockCode)
 			.baseDate(DateTimeUtil.curDate(""))    // 날짜
 			.division(stockSort)    // 구분
-			.endingPrice(DataConversionUtil.toBigDecimal(output.get("stck_prpr")))
-			.openingPrice(DataConversionUtil.toInteger(output.get("stck_oprc")))    // 시가
+			.endingPrice(DataConversionUtil.toBigDecimal(output.get("stck_prpr")))    // 종가
+			.openingPrice(DataConversionUtil.toBigDecimal(output.get("stck_oprc")))    // 시가
+			.prdyCtrt(DataConversionUtil.toBigDecimal(output.get("prdy_ctrt")))
 			.highPrice(DataConversionUtil.toInteger(output.get("stck_hgpr")))    // 주식최고가
 			.lowPrice(DataConversionUtil.toInteger(output.get("stck_lwpr")))    // 주식최저가
 			.tradingVolume(DataConversionUtil.toLong(output.get("acml_vol")))    // 거래량
@@ -274,4 +290,63 @@ public class StockService {
 		}
 		return ResponseEntity.ok(result);
 	}
+
+	// 전일자 종가 불러오기
+	private BigDecimal preStckPrpr(String stockCode) {
+		String fidInputIscd = stockCode;
+		String fidInputDate = DateTimeUtil.adjustDate(DateTimeUtil.curDate(""), 0, 0, -1);
+		InquireDailyRequest requestParam = new InquireDailyRequest(
+			"FHKST03010100", "J", fidInputIscd, fidInputDate, fidInputDate, "D", "0"
+		);
+
+		// 주식기본시세 호출
+		ResponseEntity<Object> responseIp = getInquireDaily(requestParam);
+
+		Map<String, Object> inquirePriceMap =
+			objectMapper.convertValue(responseIp.getBody(), new TypeReference<Map<String, Object>>() {
+			});
+		Map<String, Object> output = (Map<String, Object>)inquirePriceMap.get("output1");
+		BigDecimal stckPrpr = new BigDecimal(output.get("stck_prpr").toString());
+
+		return stckPrpr;
+	}
+
+	private ResponseEntity<Object> getInquireDaily(InquireDailyRequest request) {
+		Object result = null;
+		String urlData = kisApiProperties.getInquireDailyUrl();
+		String trId = request.getTr_id();
+		String fidCondMrktDivCode = request.getFidCondMrktDivCode();
+		String fidInputIscd = request.getFidInputIscd();
+		String fidInputDate1 = request.getFidInputDate1();
+		String fidInputDate2 = request.getFidInputDate2();
+		String fidPeriodDivCode = request.getFidPeriodDivCode();
+		String fidOrgAdjPrc = request.getFidOrgAdjPrc();
+
+		StringBuilder paramDataBuilder = new StringBuilder("?");
+
+		paramDataBuilder.append("fid_cond_mrkt_div_code=").append(fidCondMrktDivCode).append("&");
+		paramDataBuilder.append("fid_input_iscd=").append(fidInputIscd).append("&");
+		paramDataBuilder.append("fid_input_date_1=").append(fidInputDate1).append("&");
+		paramDataBuilder.append("fid_input_date_2=").append(fidInputDate2).append("&");
+		paramDataBuilder.append("fid_period_div_code=").append(fidPeriodDivCode).append("&");
+		paramDataBuilder.append("fid_org_adj_prc=").append(fidOrgAdjPrc);
+		String paramData = paramDataBuilder.toString();
+
+		String fullUrl = urlData + paramData;
+
+		InquireDailyRequest requestParam = new InquireDailyRequest(
+			trId, fidCondMrktDivCode, fidInputIscd, fidInputDate1, fidInputDate2, fidPeriodDivCode, fidOrgAdjPrc
+		);
+
+		try {
+			URL url = new URL(fullUrl);
+			String jsonString = HttpClientUtil.sendGetRequest(url, HeaderUtil.getCommonHeaders(), requestParam);
+			ObjectMapper objectMapper = new ObjectMapper();
+			result = objectMapper.readValue(jsonString, Object.class);
+		} catch (IOException e) {
+			e.getMessage();
+		}
+		return ResponseEntity.ok(result);
+	}
+
 }

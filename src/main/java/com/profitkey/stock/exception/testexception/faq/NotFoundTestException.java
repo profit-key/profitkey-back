@@ -6,7 +6,7 @@ import com.profitkey.stock.exception.errorcode.ProfitCodeException;
 public class NotFoundTestException extends ProfitCodeException {
 	public static final ProfitCodeException EXCEPTION = new NotFoundTestException();
 
-	private NotFoundTestException() {
+	public NotFoundTestException() {
 		super(GlobalErrorCode.NOTFOUND_ID);
 	}
 }

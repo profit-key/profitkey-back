@@ -1,5 +1,6 @@
 package com.profitkey.stock.controller;
 
+import com.profitkey.stock.annotation.ApiErrorExceptions;
 import com.profitkey.stock.annotation.AuthCheck;
 import com.profitkey.stock.docs.SwaggerDocs;
 import com.profitkey.stock.dto.request.community.CommunityRequest;
@@ -7,6 +8,7 @@ import com.profitkey.stock.dto.request.community.CommunityUpdateRequest;
 import com.profitkey.stock.dto.request.community.LikeRequest;
 import com.profitkey.stock.dto.response.community.CommunityResponse;
 import com.profitkey.stock.entity.CommSort;
+import com.profitkey.stock.exception.docs.community.CommunityExceptionDocs;
 import com.profitkey.stock.service.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -70,8 +72,8 @@ public class CommunityController {
 	 * @return 등록된 데이터
 	 */
 	@PostMapping
-	@AuthCheck
 	@Operation(summary = SwaggerDocs.SUMMARY_COMMUNITY_CREATE, description = SwaggerDocs.DESCRIPTION_COMMUNITY_CREATE)
+	@ApiErrorExceptions(CommunityExceptionDocs.class)
 	public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityRequest request) {
 		return ResponseEntity.ok(communityService.createCommunity(request));
 	}

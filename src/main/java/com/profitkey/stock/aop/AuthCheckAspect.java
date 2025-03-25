@@ -1,13 +1,16 @@
 package com.profitkey.stock.aop;
 
+import com.profitkey.stock.exception.testexception.faq.UnAuthorizedException;
 import com.profitkey.stock.util.SecurityUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
+@Order(0)
 public class AuthCheckAspect {
 
 	@Around("@annotation(com.profitkey.stock.annotation.AuthCheck)")
@@ -23,7 +26,7 @@ public class AuthCheckAspect {
 				Long requestUserId = Long.parseLong(request.getUserId());
 
 				if (!authId.equals(requestUserId)) {
-					throw new RuntimeException("사용자 인증 실패: 요청한 사용자 ID가 현재 로그인한 사용자와 일치하지 않습니다.");
+					throw new UnAuthorizedException();
 				}
 				break;
 			}
@@ -32,8 +35,8 @@ public class AuthCheckAspect {
 		// request 없을경우 로그인 정보만 확인
 		if (!hasUserIdProvider) {
 			Long authId = SecurityUtil.getCurrentUserId();
-			if (authId == null) {
-				throw new RuntimeException("로그인이 필요합니다.");
+			if (authId == 0) {
+				throw new UnAuthorizedException();
 			}
 		}
 		return joinPoint.proceed();

@@ -30,7 +30,7 @@ public class CommunityResponse {
 
 		// S3 URL 변환
 		String profileImageUrl = writer.getProfileImage();
-		if (profileImageUrl != null) {
+		if (profileImageUrl != null && !profileImageUrl.trim().isEmpty()) {
 			profileImageUrl = s3UploadService.getFileUrl(profileImageUrl);
 		}
 

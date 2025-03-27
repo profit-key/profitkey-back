@@ -70,13 +70,13 @@ public class StockInfo {
 	@Column(name = "FIFTY_TWO_WEEK_LOW", nullable = false)
 	private Integer fiftyTwoWeekLow;
 
-	@Column(name = "PER", precision = 5, scale = 2, nullable = false)
+	@Column(name = "PER", precision = 7, scale = 2, nullable = false)
 	private BigDecimal per;
 
-	@Column(name = "EPS", nullable = false)
+	@Column(name = "EPS", precision = 7, scale = 2, nullable = false)
 	private BigDecimal eps;
 
-	@Column(name = "PBR", precision = 5, scale = 2, nullable = false)
+	@Column(name = "PBR", precision = 7, scale = 2, nullable = false)
 	private BigDecimal pbr;
 
 	@Column(name = "BPS", nullable = false)

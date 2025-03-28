@@ -20,7 +20,7 @@ public class StockInfoService {
 
 	public List<StockInfoResponse> getDailyRank(StockSort division) {
 		String baseDate = DateTimeUtil.curDate("");
-		List<StockInfo> stockInfos = stockInfoRepository.findByBaseDateAndDivision(baseDate, division);
+		List<StockInfo> stockInfos = stockInfoRepository.findLatestByDivision(division);
 		return stockInfos.stream()
 			.map(StockInfoResponse::new)
 			.collect(Collectors.toList());

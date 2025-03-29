@@ -1,6 +1,8 @@
 package com.profitkey.stock.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.profitkey.stock.dto.openai.ChatGPTRequest;
 import com.profitkey.stock.dto.openai.ChatGPTResponse;
@@ -80,6 +82,8 @@ public class OpenAIService {
 						Thread.currentThread().interrupt();
 					}
 				}
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
 			}
 		}
 		throw new RuntimeException("API 호출 재시도 횟수를 초과했습니다.");
@@ -124,7 +128,7 @@ public class OpenAIService {
 		}
 	}
 
-	public String stockConver(String str) throws InterruptedException {
+	public String stockConver(String str) throws InterruptedException, JsonProcessingException {
 		String[] stockCodes = str
 			.split("\\s*,\\s*|\\s*\\n\\s*"); // 쉼표 또는 줄바꿈 기준으로 나눔
 
@@ -135,7 +139,7 @@ public class OpenAIService {
 		return vertifAi(stockCodes);
 	}
 
-	public String vertifAi(String[] stockCodes) throws InterruptedException {
+	public String vertifAi(String[] stockCodes) throws InterruptedException, JsonProcessingException {
 		String response = "";
 		for (int i = 0; i < stockCodes.length; i++) {
 			response += "\n종목코드 : " + stockCodes[i] + "\n";
@@ -176,28 +180,41 @@ public class OpenAIService {
 				response += output3List.get(0);
 			}
 		}
-		String prom = callOpenAIApi(response + "불필요한 말 제외하고 위 데이터를 기준으로 종목 하나를 선택해서 아래 항목 작성해줘"
-			+ "추천종목 : \n"
-			+ "추천사유 : \n");
+		String prom =
+			callOpenAIApi(response
+				+ "불필요한 문자 제외하고 위 데이터를 기준으로 종목 하나를 선택해서 아래처럼 마크다운 제외하고 파싱가능한 형태로 json 형태로 추천종목코드 맨위에 써주고 아래는 추천사유만 작성해줘"
+				+ " { "
+				+ "    stockcode: ??"
+				+ "    message: ??"
+				+ " }");
+
+		String cleanJson = prom.replaceAll("```json", "")
+			.replaceAll("```", "")
+			.trim();
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode root = objectMapper.readTree(cleanJson);
 
 		Pattern pattern = Pattern.compile("(\\d{6})");
-		Matcher matcher = pattern.matcher(prom);
+		Matcher matcher = pattern.matcher(cleanJson);
 
-		String code = "000000";
+		String code = root.get("stockcode").asText();
+		String message = root.get("message").asText();
+
 		if (matcher.find()) {
 			code = matcher.group(1); // 6자리 종목코드
 		}
 		log.info("stock code : {}", code);
 		StockCode stockCode = stockCodeRepository.findByStockCode(code);
-		prom = prom.replaceAll(code, stockCode.getStockName());
+		message = message.replaceAll(code, stockCode.getStockName());
 
 		AiAnalysisOpinion aiAnalysisOpinion = AiAnalysisOpinion.builder()
 			.aiRequest("Daily")
-			.aiResponse(prom)
+			.aiResponse(message)
 			.stockCode(stockCode)
 			.build();
 		openAIRepositiory.save(aiAnalysisOpinion);
-		return prom;
+		return message;
 	}
 
 	public ResponseEntity<AiAnalysisOpinion> getOpinion() {

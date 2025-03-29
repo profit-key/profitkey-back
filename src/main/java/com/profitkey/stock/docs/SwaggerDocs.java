@@ -3,20 +3,6 @@ package com.profitkey.stock.docs;
 public class SwaggerDocs {
 
 	/**
-	 * Boards
-	 */
-	public static final String SUMMARY_BOARD_LIST = "게시판 목록조회";
-	public static final String DESCRIPTION_BOARD_LIST = "게시판 목록을 조회한다!!";
-	public static final String SUMMARY_BOARD_DETAIL = "게시판 상세조회";
-	public static final String DESCRIPTION_BOARD_DETAIL = "게시판 내용을 조회한다!!";
-	public static final String SUMMARY_BOARD_CRAETE = "게시판 글 작성";
-	public static final String DESCRIPTION_BOARD_CRAETE = "게시판 새글을 작성한다!!";
-	public static final String SUMMARY_BOARD_UPDATE = "게시판 글 수정";
-	public static final String DESCRIPTION_BOARD_UPDATE = "게시판 글을 수정한다!!";
-	public static final String SUMMARY_BOARD_DELETE = "게시판 글 삭제";
-	public static final String DESCRIPTION_BOARD_DELETE = "게시판 글을 삭제한다!!";
-
-	/**
 	 * ****************************************
 	 * FaqCategory Swagger Docs 모음
 	 * ****************************************
@@ -83,8 +69,6 @@ public class SwaggerDocs {
 		isLike(true) : 좋아요<br/>
 		isLike(false) : 좋아요 취소
 		""";
-	public static final String SUMMARY_COMMUNITY_SORT = "최신순/인기순 댓글 정렬";
-	public static final String DESCRIPTION_COMMUNITY_SORT = "popular: 인기순 / latest: 최신순";
 	/**
 	 * ****************************************
 	 * Stock Swagger Docs 모음
@@ -166,9 +150,9 @@ public class SwaggerDocs {
 		""";
 	public static final String SUMMARY_STOCK_DAILY_RANK = "주식메인 순위";
 	public static final String DESCRIPTION_STOCK_DAILY_RANK = """
-		 		*division
-				 BASIC : 기본
-				 MARKET_CAP : 시가총액
+		 		*division<br/>
+				 BASIC : 기본<br/>
+				 MARKET_CAP : 시가총액<br/>
 				 HTS_TOP : HTS TOP 20
 		""";
 
@@ -179,24 +163,24 @@ public class SwaggerDocs {
 	 */
 	public static final String SUMMARY_KAKAO_LOGIN = "카카오 소셜 로그인";
 	public static final String DESCRIPTION_KAKAO_LOGIN = """
-		카카오 소셜 로그인 API입니다.
-		인가 코드를 사용하여 카카오에서 제공하는 사용자 정보를 바탕으로 JWT 토큰을 발급합니다.
+		카카오 소셜 로그인 API입니다.<br/>
+		인가 코드를 사용하여 카카오에서 제공하는 사용자 정보를 바탕으로 JWT 토큰을 발급합니다.<br/>
 		사용자 정보가 존재하지 않으면 새로운 사용자가 생성되고, 그에 맞는 JWT 토큰이 발급됩니다.
 		""";
 
 	public static final String SUMMARY_TOKEN_ISSUANCE = "JWT 토큰 발급";
 	public static final String DESCRIPTION_TOKEN_ISSUANCE = """
-		이메일로 JWT 토큰을 발급하는 API입니다.
+		이메일로 JWT 토큰을 발급하는 API입니다.<br/>
 		발급된 JWT 토큰에는 아이디, 이메일, 닉네임, 공급자 정보를 포함하고 있습니다.
 		""";
 	public static final String SUMMARY_TOKEN_REFRESH = "JWT 토큰 갱신";
 	public static final String DESCRIPTION_TOKEN_REFRESH = """
-		이메일로 JWT 토큰을 갱신하는 API입니다.
+		이메일로 JWT 토큰을 갱신하는 API입니다.<br/>
 		기존 토큰과 비교하여 갱신여부를 판단합니다.
 		""";
 	public static final String SUMMARY_TOKEN_DISPOSE = "JWT 토큰 폐기";
 	public static final String DESCRIPTION_TOKEN_DISPOSE = """
-		이메일로 JWT 토큰을 폐기하는 API입니다.
+		이메일로 JWT 토큰을 폐기하는 API입니다.<br/>
 		토큰을 빈값으로 갱신합니다.
 		""";
 
@@ -263,6 +247,18 @@ public class SwaggerDocs {
 	public static final String SUMMARY_DELETE_USER = "회원 탈퇴";
 	public static final String DESCRIPTION_DELETE_USER = """
 		    사용자를 탈퇴시키고 관련된 정보들을 소프트 딜리트합니다.
+		""";
+	/**
+	 * ****************************************
+	 * Mypage Swagger Docs 모음
+	 * ****************************************
+	 */
+	public static final String SUMMARY_AIOPINION_DAILY = "주식메인 AI 추천종목";
+	public static final String DESCRIPTION_AIOPINION_DAILY = """
+		    1.등락률 기준으로 KIS API 1차 조회 <br/>
+		    2.해당 종목코드 기준으로 AI 종목 3~5건 발췌 <br/>
+		    3.[2]번의 종목으로 수익성/안정성/성장성 검토(KIS API) <br/>
+		    4.AI 추천 종목 프롬프트 전송 <br/>
 		""";
 
 }

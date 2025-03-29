@@ -151,7 +151,7 @@ public class StockService {
 
 					BigDecimal totalDiviAmt = BigDecimal.ZERO;
 					List<Map<String, Object>> output1List = (List<Map<String, Object>>)dividendMap.get("output1");
-
+					
 					if (output1List != null && !output1List.isEmpty()) {
 						for (Map<String, Object> record : output1List) {
 							totalDiviAmt = totalDiviAmt.add(new BigDecimal(record.get("divi_rate").toString()));

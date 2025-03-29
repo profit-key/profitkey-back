@@ -1,15 +1,5 @@
 package com.profitkey.stock.service;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.profitkey.stock.dto.response.mypage.FavoriteStockResponse;
 import com.profitkey.stock.dto.response.mypage.MyPageCommunityResponse;
 import com.profitkey.stock.dto.response.mypage.UserInfoResponse;
@@ -23,9 +13,16 @@ import com.profitkey.stock.repository.mypage.FavoriteStockRepository;
 import com.profitkey.stock.repository.mypage.UserInfoRepository;
 import com.profitkey.stock.repository.stock.StockCodeRepository;
 import com.profitkey.stock.repository.user.AuthRepository;
-
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +34,6 @@ public class MyPageService {
 	private final AuthRepository authRepository;
 	private final S3UploadService s3UploadService;
 	private final StockCodeRepository stockCodeRepository;
-
-	// 📌 회원 정보
 
 	/**
 	 * 내 정보 조회
@@ -60,17 +55,12 @@ public class MyPageService {
 	/**
 	 * 회원 정보 수정 (닉네임, 프로필 이미지)
 	 */
-
-	// 📌 회원 정보 수정 (닉네임, 프로필사진 수정 분리)
-
-	//닉네임 수정
 	@Transactional
 	public UserInfoResponse updateNickname(Long userId, String newNickname) {
 		UserInfo userInfo = userInfoRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
 		userInfo.setNickname(newNickname);
-
 		return UserInfoResponse.fromEntity(userInfo);
 	}
 
@@ -142,8 +132,6 @@ public class MyPageService {
 		}
 	}
 
-	// 📌 댓글
-
 	/**
 	 * 사용자가 작성한 댓글 조회
 	 */
@@ -169,7 +157,6 @@ public class MyPageService {
 			.collect(Collectors.toList());
 	}
 
-	// 📌 관심 종목
 	/*
 	/* 관심 종목 찜하기
 	 */

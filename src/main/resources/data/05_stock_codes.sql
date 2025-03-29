@@ -57,9 +57,7 @@ INSERT INTO stock_codes (stock_code, market_category, stock_name)
 VALUES ('373220', 'KOSPI', 'LG에너지솔루션'),
        ('402340', 'KOSPI', 'SK스퀘어');
 INSERT INTO stock_codes (stock_code, market_category, stock_name)
-VALUES ('ETF', '233740', 'KODEX 코스닥150레버리지'),
-       ('ETF', '251340', 'KODEX 코스닥150선물인버스'),
-       ('462860', 'KOSDAQ', '더즌'),
+VALUES ('462860', 'KOSDAQ', '더즌'),
        ('025820', 'KOSPI', '이구산업'),
        ('065500', 'KOSDAQ', '오리엔트정공'),
        ('007390', 'KOSDAQ', '네이처셀');

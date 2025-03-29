@@ -221,4 +221,19 @@ public class OpenAIService {
 		Optional<AiAnalysisOpinion> aiAnalysisOpinion = openAIRepositiory.findTopByOrderByCreatedAtDesc();
 		return ResponseEntity.ok(aiAnalysisOpinion.get());
 	}
+
+	public ResponseEntity<AiAnalysisOpinion> getOpinionStock(String code)
+		throws InterruptedException, JsonProcessingException {
+		StockCode stockCode = stockCodeRepository.findByStockCode(code);
+		Optional<AiAnalysisOpinion> aiAnalysisOpinion =
+			openAIRepositiory.findTopByStockCodeOrderByCreatedAtDesc(stockCode);
+
+		if (aiAnalysisOpinion.isEmpty()) {
+			String[] stockCodes = new String[] {code};
+			vertifAi(stockCodes);
+			aiAnalysisOpinion =
+				openAIRepositiory.findTopByStockCodeOrderByCreatedAtDesc(stockCode);
+		}
+		return ResponseEntity.ok(aiAnalysisOpinion.get());
+	}
 } 

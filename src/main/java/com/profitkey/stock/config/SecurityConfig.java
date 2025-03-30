@@ -22,17 +22,17 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.cors(cors -> cors.configurationSource(corsConfigurationSource()))  // CORS 설정
-			.csrf(csrf -> csrf.disable())  // CSRF 비활성화
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(auth -> auth.requestMatchers(RequestMatcherPaths.PERMIT_ALL_PATHS)
-				.permitAll()  // permitAllPaths는 누구나 접근 가능
+				.permitAll()
 				.requestMatchers(RequestMatcherPaths.AUTHENTICATED_PATHS)
-				.authenticated()  // authenticatedPaths는 인증된 사용자만
+				.authenticated()
 				.anyRequest()
-				.authenticated()  // 나머지는 인증된 사용자만
+				.authenticated()
 			)
 			.oauth2Login(oauth2 -> oauth2.disable())
-			.logout(logout -> logout.disable()) // 로그아웃 비활성화
+			.logout(logout -> logout.disable())
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
@@ -43,7 +43,7 @@ public class SecurityConfig {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(
 			List.of("http://localhost:3000", "http://localhost:5173", "https://dev-server.profitkey.click",
-				"https://dev.profitkey.click"));
+				"https://dev.profitkey.click", "https://profitkey-inky.vercel.app"));
 		configuration.setAllowedHeaders(List.of("*"));
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		configuration.setAllowCredentials(true);
